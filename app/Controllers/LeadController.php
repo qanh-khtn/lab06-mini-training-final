@@ -19,6 +19,8 @@ class LeadController
 
     public function index(): void
     {
+        require_login();
+
         $q    = trim((string) ($_GET['q'] ?? ''));
         $sort = (string) ($_GET['sort'] ?? 'created_at');
         $dir  = (string) ($_GET['dir'] ?? 'desc');
@@ -48,6 +50,8 @@ class LeadController
 
     public function create(): void
     {
+        require_login();
+
         Response::view('leads/create', [
             'title'        => 'Thêm Lead tư vấn',
             'errors'       => [],
@@ -59,6 +63,7 @@ class LeadController
 
     public function store(): void
     {
+        require_login();
         csrf_verify();
 
         $old = $this->input();
@@ -79,6 +84,8 @@ class LeadController
 
     public function edit(): void
     {
+        require_login();
+
         $id = (int) ($_GET['id'] ?? 0);
         $lead = $this->repository()->find($id);
 
@@ -98,6 +105,7 @@ class LeadController
 
     public function update(): void
     {
+        require_login();
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);
@@ -126,6 +134,7 @@ class LeadController
 
     public function delete(): void
     {
+        require_login();
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);

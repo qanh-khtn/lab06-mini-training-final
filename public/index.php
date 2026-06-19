@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\AuthController;
 use App\Controllers\HealthController;
 use App\Controllers\HomeController;
 use App\Controllers\LeadController;
@@ -40,10 +41,16 @@ session_set_cookie_params([
 ]);
 session_start();
 
+check_remember_me();
+check_session_timeout();
+
 $router = new Router();
 
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/health', [HealthController::class, 'index']);
+$router->get('/login', [AuthController::class, 'loginView']);
+$router->post('/login', [AuthController::class, 'handleLogin']);
+$router->post('/logout', [AuthController::class, 'logout']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);

@@ -18,6 +18,8 @@ class PaymentController
 
     public function index(): void
     {
+        require_login();
+
         $q    = trim((string) ($_GET['q'] ?? ''));
         $sort = (string) ($_GET['sort'] ?? 'created_at');
         $dir  = (string) ($_GET['dir'] ?? 'desc');
@@ -46,6 +48,8 @@ class PaymentController
 
     public function create(): void
     {
+        require_login();
+
         Response::view('payments/create', [
             'title'        => 'Thêm Thanh toán học phí',
             'errors'       => [],
@@ -56,6 +60,7 @@ class PaymentController
 
     public function store(): void
     {
+        require_login();
         csrf_verify();
 
         $old = $this->input();
@@ -76,6 +81,8 @@ class PaymentController
 
     public function edit(): void
     {
+        require_login();
+
         $id = (int) ($_GET['id'] ?? 0);
         $payment = $this->repository()->find($id);
 
@@ -94,6 +101,7 @@ class PaymentController
 
     public function update(): void
     {
+        require_login();
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);
@@ -122,6 +130,7 @@ class PaymentController
 
     public function delete(): void
     {
+        require_login();
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);

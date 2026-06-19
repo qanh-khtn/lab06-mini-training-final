@@ -21,11 +21,22 @@ $flashTypeMap = [
     <header class="navbar">
         <a class="brand" href="/">Training Center CRM</a>
         <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Dashboard</a>
+        <?php if (is_logged_in()): ?>
         <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
         <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán học phí</a>
         <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">+ Lead</a>
         <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">+ Thanh toán</a>
         <a class="<?= $currentPath === '/health' ? 'active' : '' ?>" href="/health">Health</a>
+        <span class="muted" style="font-size:13px;margin-left:auto;padding:0 8px;">
+            <?= h($_SESSION['user_name'] ?? '') ?>
+        </span>
+        <form method="POST" action="/logout" style="display:inline;">
+            <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
+            <button type="submit" class="btn btn-secondary" style="padding:4px 12px;font-size:13px;">Đăng xuất</button>
+        </form>
+        <?php else: ?>
+        <a class="<?= $currentPath === '/login' ? 'active' : '' ?>" href="/login" style="margin-left:auto;">Đăng nhập</a>
+        <?php endif; ?>
     </header>
 
     <?php $flashes = flash_get(); ?>
