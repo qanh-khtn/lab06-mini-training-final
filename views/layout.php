@@ -19,22 +19,13 @@ $flashTypeMap = [
 </head>
 <body>
     <header class="navbar">
-        <a class="brand" href="/">Mini Training Center</a>
-        <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Trang chủ</a>
-        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Đăng ký tư vấn</a>
-        <?php if (is_logged_in()): ?>
-            <a class="<?= $currentPath === '/leads' ? 'active' : '' ?>" href="/leads">Danh sách đăng ký</a>
-            <a class="<?= $currentPath === '/dashboard' ? 'active' : '' ?>" href="/dashboard">Bảng điều khiển</a>
-            <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-                <a class="<?= $currentPath === '/audit-log' ? 'active' : '' ?>" href="/audit-log">Nhật ký bảo mật</a>
-            <?php endif; ?>
-            <form class="inline-form" method="POST" action="/logout">
-                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
-                <button class="link-btn" type="submit">Đăng xuất</button>
-            </form>
-        <?php else: ?>
-            <a class="<?= $currentPath === '/login' ? 'active' : '' ?>" href="/login">Đăng nhập</a>
-        <?php endif; ?>
+        <a class="brand" href="/">Training Center CRM</a>
+        <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Dashboard</a>
+        <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
+        <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán học phí</a>
+        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">+ Lead</a>
+        <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">+ Thanh toán</a>
+        <a class="<?= $currentPath === '/health' ? 'active' : '' ?>" href="/health">Health</a>
     </header>
 
     <?php $flashes = flash_get(); ?>
