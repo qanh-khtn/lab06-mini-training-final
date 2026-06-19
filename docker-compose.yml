@@ -1,0 +1,39 @@
+# Lab05 - MySQL + phpMyAdmin cho Mini Training Center CRM
+# Chạy:   docker compose up -d
+# Dừng:   docker compose down            
+# Xoá DB: docker compose down -v         
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: tc_crm_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: training_center_crm
+    ports:
+      - "3306:3306"
+    volumes:
+      - tc_crm_data:/var/lib/mysql
+      # schema.sql + seed.sql tự chạy theo thứ tự alphabet KHI volume còn rỗng
+      - ./database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: tc_crm_pma
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+
+volumes:
+  tc_crm_data:

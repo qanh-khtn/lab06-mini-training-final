@@ -46,6 +46,35 @@ function redirect(string $url, int $status = 302): void
     exit;
 }
 
+function query_string(array $overrides = []): string
+{
+    $params = array_merge($_GET, $overrides);
+
+    foreach ($params as $key => $value) {
+        if ($value === null || $value === '') {
+            unset($params[$key]);
+        }
+    }
+
+    return http_build_query($params);
+}
+
+function sort_url(string $column, string $currentSort, string $currentDir): string
+{
+    $dir = ($currentSort === $column && strtolower($currentDir) === 'asc') ? 'desc' : 'asc';
+
+    return '?' . query_string(['sort' => $column, 'dir' => $dir, 'page' => 1]);
+}
+
+function sort_caret(string $column, string $currentSort, string $currentDir): string
+{
+    if ($currentSort !== $column) {
+        return '';
+    }
+
+    return strtolower($currentDir) === 'asc' ? ' ▲' : ' ▼';
+}
+
 function flash_set(string $type, string $message): void
 {
     $_SESSION['_flash'][$type][] = $message;
