@@ -1,9 +1,10 @@
 <?php
 /** Form dùng chung cho Create & Edit phiếu thanh toán.
  * @var string $action @var string $submitLabel
- * @var array $old @var array $errors @var array $statusLabels @var int $id
+ * @var array $old @var array $errors @var array $statusLabels @var array $courseOptions @var int $id
  */
-$id = $id ?? 0;
+$id            = $id ?? 0;
+$courseOptions = $courseOptions ?? [];
 ?>
 <form class="card lead-form-card" method="post" action="<?= h($action) ?>">
     <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
@@ -31,15 +32,22 @@ $id = $id ?? 0;
     <div class="form-row">
         <div class="form-group">
             <label>Khóa học *</label>
-            <input type="text" name="course_name" value="<?= h($old['course_name'] ?? '') ?>" class="<?= isset($errors['course_name']) ? 'input-error' : '' ?>">
+            <select name="course_name" class="<?= isset($errors['course_name']) ? 'input-error' : '' ?>">
+                <option value="">-- Chọn khóa học --</option>
+                <?php foreach ($courseOptions as $value => $label): ?>
+                    <option value="<?= h($value) ?>" <?= ($old['course_name'] ?? '') === $value ? 'selected' : '' ?>><?= h($label) ?></option>
+                <?php endforeach; ?>
+            </select>
             <?php if (isset($errors['course_name'])): ?><p class="field-error"><?= h($errors['course_name']) ?></p><?php endif; ?>
         </div>
         <div class="form-group">
             <label>Số tiền *</label>
             <div class="input-group <?= isset($errors['amount']) ? 'input-error' : '' ?>">
-                <input type="number" name="amount" min="0" step="1000"
-                       value="<?= h($old['amount'] ?? '') ?>"
-                       placeholder="0">
+                <input type="text" inputmode="numeric" id="amount_display"
+                       placeholder="0"
+                       value="<?= $old['amount'] ?? '' ? number_format((float)($old['amount'] ?? 0), 0, '.', '.') : '' ?>"
+                       autocomplete="off">
+                <input type="hidden" name="amount" id="amount_raw" value="<?= h($old['amount'] ?? '') ?>">
                 <span class="input-addon">đ</span>
             </div>
             <?php if (isset($errors['amount'])): ?><p class="field-error"><?= h($errors['amount']) ?></p><?php endif; ?>
@@ -65,3 +73,24 @@ $id = $id ?? 0;
         <a class="btn btn-secondary" href="/payments">Hủy</a>
     </div>
 </form>
+<script>
+(function () {
+    const display = document.getElementById('amount_display');
+    const raw     = document.getElementById('amount_raw');
+    if (!display || !raw) return;
+
+    function fmt(n) {
+        return n === '' ? '' : Number(n.replace(/\./g, '')).toLocaleString('vi-VN');
+    }
+
+    display.addEventListener('input', function () {
+        const digits = this.value.replace(/[^\d]/g, '');
+        this.value = digits ? Number(digits).toLocaleString('vi-VN') : '';
+        raw.value  = digits;
+    });
+
+    display.addEventListener('blur', function () {
+        if (!raw.value) { this.value = ''; }
+    });
+})();
+</script>

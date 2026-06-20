@@ -13,8 +13,18 @@ use App\Support\Response;
  */
 class PaymentController
 {
-    private const STATUS_OPTIONS = ['pending', 'paid', 'refunded', 'cancelled'];
-    private const PER_PAGE       = 10;
+    private const STATUS_OPTIONS  = ['pending', 'paid', 'refunded', 'cancelled'];
+    private const COURSE_OPTIONS  = [
+        'Lập trình Web'       => 'Lập trình Web (4.500.000đ)',
+        'Lập trình Mobile'    => 'Lập trình Mobile (5.000.000đ)',
+        'Phân tích dữ liệu'   => 'Phân tích dữ liệu (5.500.000đ)',
+        'AI ứng dụng'         => 'AI ứng dụng (6.500.000đ)',
+        'AI nâng cao'         => 'AI nâng cao (8.000.000đ)',
+        'Thiết kế đồ họa'     => 'Thiết kế đồ họa (4.000.000đ)',
+        'Tiếng Anh CNTT'      => 'Tiếng Anh CNTT (3.500.000đ)',
+        'Quản trị mạng'       => 'Quản trị mạng (4.800.000đ)',
+    ];
+    private const PER_PAGE        = 10;
 
     public function index(): void
     {
@@ -23,12 +33,18 @@ class PaymentController
         $q    = trim((string) ($_GET['q'] ?? ''));
         $sort = (string) ($_GET['sort'] ?? 'id');
         $dir  = (string) ($_GET['dir'] ?? 'asc');
-        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $rawPage = (int) ($_GET['page'] ?? 1);
 
         $repo  = $this->repository();
         $total = $repo->countAll($q);
         $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
-        $page  = min($page, $lastPage);
+        $page  = min(max(1, $rawPage), $lastPage);
+
+        if ($rawPage !== $page) {
+            $qs = query_string(['page' => $page]);
+            redirect('/payments' . ($qs ? '?' . $qs : ''));
+        }
+
         $offset = ($page - 1) * self::PER_PAGE;
 
         $payments = $repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir);
@@ -55,6 +71,7 @@ class PaymentController
             'errors'       => [],
             'old'          => $this->emptyInput(),
             'statusLabels' => $this->statusLabels(),
+            'courseOptions' => self::COURSE_OPTIONS,
         ]);
     }
 
@@ -96,6 +113,7 @@ class PaymentController
             'old'          => $payment,
             'id'           => $id,
             'statusLabels' => $this->statusLabels(),
+            'courseOptions' => self::COURSE_OPTIONS,
         ]);
     }
 
@@ -148,6 +166,7 @@ class PaymentController
             'old'          => $old,
             'id'           => (int) ($old['id'] ?? 0),
             'statusLabels' => $this->statusLabels(),
+            'courseOptions' => self::COURSE_OPTIONS,
         ], $status);
     }
 

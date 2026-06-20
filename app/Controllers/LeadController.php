@@ -24,12 +24,19 @@ class LeadController
         $q    = trim((string) ($_GET['q'] ?? ''));
         $sort = (string) ($_GET['sort'] ?? 'id');
         $dir  = (string) ($_GET['dir'] ?? 'asc');
-        $page = max(1, (int) ($_GET['page'] ?? 1)); // page âm/0 -> về 1
+        $rawPage = (int) ($_GET['page'] ?? 1);
 
         $repo  = $this->repository();
         $total = $repo->countAll($q);
         $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
-        $page  = min($page, $lastPage); // page quá lớn -> về trang cuối
+        $page  = min(max(1, $rawPage), $lastPage);
+
+        // Redirect khi URL có page sai (âm, 0, hoặc vượt lastPage)
+        if ($rawPage !== $page) {
+            $qs = query_string(['page' => $page]);
+            redirect('/leads' . ($qs ? '?' . $qs : ''));
+        }
+
         $offset = ($page - 1) * self::PER_PAGE;
 
         $leads = $repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir);
