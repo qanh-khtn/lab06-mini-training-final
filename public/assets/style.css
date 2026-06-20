@@ -126,6 +126,36 @@ a:hover { color: var(--primary-dark); }
     border-color: rgba(255,255,255,.20);
 }
 
+.navbar-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,.92);
+    white-space: nowrap;
+}
+
+.navbar-user::before {
+    content: "";
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    background-size: 15px 15px;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+html[data-theme="dark"] .navbar-user {
+    color: rgba(255,255,255,.88);
+}
+
 .inline-form { display: inline; }
 
 /* ============================================================

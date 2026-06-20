@@ -27,9 +27,7 @@ $flashTypeMap = [
         <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">+ Lead</a>
         <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">+ Thanh toán</a>
         <a class="<?= $currentPath === '/health' ? 'active' : '' ?>" href="/health">Health</a>
-        <span class="muted" style="font-size:13px;margin-left:auto;padding:0 8px;">
-            <?= h($_SESSION['user_name'] ?? '') ?>
-        </span>
+        <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
         <form method="POST" action="/logout" style="display:inline;">
             <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
             <button type="submit" class="btn btn-secondary" style="padding:4px 12px;font-size:13px;">Đăng xuất</button>
