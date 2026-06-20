@@ -102,8 +102,12 @@ class PaymentRepository
         $params     = [];
 
         if ($keyword !== '') {
-            $conditions[] = '(payment_code LIKE :kw OR student_name LIKE :kw OR student_email LIKE :kw)';
-            $params['kw'] = '%' . $keyword . '%';
+            // Mỗi placeholder phải có tên riêng khi EMULATE_PREPARES = false
+            $conditions[] = '(payment_code LIKE :kw1 OR student_name LIKE :kw2 OR student_email LIKE :kw3)';
+            $like = '%' . $keyword . '%';
+            $params['kw1'] = $like;
+            $params['kw2'] = $like;
+            $params['kw3'] = $like;
         }
 
         if ($status !== '') {

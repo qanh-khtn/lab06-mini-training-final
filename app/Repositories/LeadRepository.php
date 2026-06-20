@@ -102,8 +102,12 @@ class LeadRepository
         $params     = [];
 
         if ($keyword !== '') {
-            $conditions[] = '(full_name LIKE :kw OR email LIKE :kw OR phone LIKE :kw)';
-            $params['kw'] = '%' . $keyword . '%';
+            // Mỗi placeholder phải có tên riêng khi EMULATE_PREPARES = false
+            $conditions[] = '(full_name LIKE :kw1 OR email LIKE :kw2 OR phone LIKE :kw3)';
+            $like = '%' . $keyword . '%';
+            $params['kw1'] = $like;
+            $params['kw2'] = $like;
+            $params['kw3'] = $like;
         }
 
         if ($status !== '') {
