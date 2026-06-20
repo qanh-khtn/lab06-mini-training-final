@@ -4,61 +4,49 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Database;
-use App\Core\DuplicateRecordException;
 use App\Repositories\PaymentRepository;
+use App\Services\PaymentService;
 use App\Support\Response;
 
 /**
- * Module B - Thanh toán học phí. Mã thanh toán (payment_code) là UNIQUE.
+ * Module B — Controller mỏng: chỉ đọc HTTP input và gọi redirect/view.
+ * Toàn bộ validation + logic nghiệp vụ nằm trong PaymentService.
  */
 class PaymentController
 {
-    private const STATUS_OPTIONS  = ['pending', 'paid', 'refunded', 'cancelled'];
-    private const COURSE_OPTIONS  = [
-        'Lập trình Web'       => 'Lập trình Web (4.500.000đ)',
-        'Lập trình Mobile'    => 'Lập trình Mobile (5.000.000đ)',
-        'Phân tích dữ liệu'   => 'Phân tích dữ liệu (5.500.000đ)',
-        'AI ứng dụng'         => 'AI ứng dụng (6.500.000đ)',
-        'AI nâng cao'         => 'AI nâng cao (8.000.000đ)',
-        'Thiết kế đồ họa'     => 'Thiết kế đồ họa (4.000.000đ)',
-        'Tiếng Anh CNTT'      => 'Tiếng Anh CNTT (3.500.000đ)',
-        'Quản trị mạng'       => 'Quản trị mạng (4.800.000đ)',
-    ];
-    private const PER_PAGE        = 10;
+    // -------------------------------------------------------------------------
+    // Actions
+    // -------------------------------------------------------------------------
 
     public function index(): void
     {
         require_login();
 
-        $q    = trim((string) ($_GET['q'] ?? ''));
-        $sort = (string) ($_GET['sort'] ?? 'id');
-        $dir  = (string) ($_GET['dir'] ?? 'asc');
+        $q       = trim((string) ($_GET['q'] ?? ''));
+        $status  = trim((string) ($_GET['status'] ?? ''));
+        $sort    = (string) ($_GET['sort'] ?? 'id');
+        $dir     = (string) ($_GET['dir'] ?? 'asc');
         $rawPage = (int) ($_GET['page'] ?? 1);
 
-        $repo  = $this->repository();
-        $total = $repo->countAll($q);
-        $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
-        $page  = min(max(1, $rawPage), $lastPage);
+        $result = $this->service()->paginate($q, $status, $rawPage, $sort, $dir);
 
-        if ($rawPage !== $page) {
-            $qs = query_string(['page' => $page]);
+        if ($rawPage !== $result['page']) {
+            $qs = query_string(['page' => $result['page']]);
             redirect('/payments' . ($qs ? '?' . $qs : ''));
         }
 
-        $offset = ($page - 1) * self::PER_PAGE;
-
-        $payments = $repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir);
-
         Response::view('payments/index', [
-            'title'        => 'Quản lý Thanh toán học phí',
-            'payments'     => $payments,
-            'q'            => $q,
-            'sort'         => $sort,
-            'dir'          => $dir,
-            'page'         => $page,
-            'lastPage'     => $lastPage,
-            'total'        => $total,
-            'statusLabels' => $this->statusLabels(),
+            'title'         => 'Quản lý Thanh toán học phí',
+            'payments'      => $result['rows'],
+            'q'             => $q,
+            'status'        => $status,
+            'sort'          => $sort,
+            'dir'           => $dir,
+            'page'          => $result['page'],
+            'lastPage'      => $result['lastPage'],
+            'total'         => $result['total'],
+            'statusLabels'  => $this->statusLabels(),
+            'courseOptions' => PaymentService::COURSE_OPTIONS,
         ]);
     }
 
@@ -67,11 +55,11 @@ class PaymentController
         require_login();
 
         Response::view('payments/create', [
-            'title'        => 'Thêm Thanh toán học phí',
-            'errors'       => [],
-            'old'          => $this->emptyInput(),
-            'statusLabels' => $this->statusLabels(),
-            'courseOptions' => self::COURSE_OPTIONS,
+            'title'         => 'Thêm Thanh toán học phí',
+            'errors'        => [],
+            'old'           => $this->emptyInput(),
+            'statusLabels'  => $this->statusLabels(),
+            'courseOptions' => PaymentService::COURSE_OPTIONS,
         ]);
     }
 
@@ -80,40 +68,35 @@ class PaymentController
         require_login();
         csrf_verify();
 
-        $old = $this->input();
-        $errors = $this->validate($old);
+        $input  = $this->input();
+        $result = $this->service()->create($input);
 
-        if ($errors !== []) {
-            $this->renderForm('payments/create', 'Thêm Thanh toán học phí', $errors, $old, 422);
+        if (!$result['ok']) {
+            $this->renderForm('payments/create', 'Thêm Thanh toán học phí', $result['errors'], $input, $result['duplicate'] ? 409 : 422);
         }
 
-        try {
-            $this->repository()->create($old);
-            flash_set('success', 'Đã thêm phiếu thanh toán học phí.');
-            redirect('/payments');
-        } catch (DuplicateRecordException $e) {
-            $this->renderForm('payments/create', 'Thêm Thanh toán học phí', ['payment_code' => $e->getMessage()], $old, 409);
-        }
+        flash_set('success', 'Đã thêm phiếu thanh toán học phí.');
+        redirect('/payments');
     }
 
     public function edit(): void
     {
         require_login();
 
-        $id = (int) ($_GET['id'] ?? 0);
-        $payment = $this->repository()->find($id);
+        $id      = (int) ($_GET['id'] ?? 0);
+        $payment = $this->service()->find($id);
 
         if ($payment === null) {
             Response::notFound('Không tìm thấy phiếu thanh toán cần sửa.');
         }
 
         Response::view('payments/edit', [
-            'title'        => 'Sửa Thanh toán học phí',
-            'errors'       => [],
-            'old'          => $payment,
-            'id'           => $id,
-            'statusLabels' => $this->statusLabels(),
-            'courseOptions' => self::COURSE_OPTIONS,
+            'title'         => 'Sửa Thanh toán học phí',
+            'errors'        => [],
+            'old'           => $payment,
+            'id'            => $id,
+            'statusLabels'  => $this->statusLabels(),
+            'courseOptions' => PaymentService::COURSE_OPTIONS,
         ]);
     }
 
@@ -122,28 +105,22 @@ class PaymentController
         require_login();
         csrf_verify();
 
-        $id = (int) ($_POST['id'] ?? 0);
-        $repo = $this->repository();
+        $id    = (int) ($_POST['id'] ?? 0);
+        $input = $this->input();
+        $input['id'] = $id;
 
-        if ($repo->find($id) === null) {
+        if ($this->service()->find($id) === null) {
             Response::notFound('Không tìm thấy phiếu thanh toán cần cập nhật.');
         }
 
-        $old = $this->input();
-        $old['id'] = $id;
-        $errors = $this->validate($old);
+        $result = $this->service()->update($id, $input);
 
-        if ($errors !== []) {
-            $this->renderForm('payments/edit', 'Sửa Thanh toán học phí', $errors, $old, 422);
+        if (!$result['ok']) {
+            $this->renderForm('payments/edit', 'Sửa Thanh toán học phí', $result['errors'], $input, $result['duplicate'] ? 409 : 422);
         }
 
-        try {
-            $repo->update($id, $old);
-            flash_set('success', 'Đã cập nhật phiếu thanh toán.');
-            redirect('/payments');
-        } catch (DuplicateRecordException $e) {
-            $this->renderForm('payments/edit', 'Sửa Thanh toán học phí', ['payment_code' => $e->getMessage()], $old, 409);
-        }
+        flash_set('success', 'Đã cập nhật phiếu thanh toán.');
+        redirect('/payments');
     }
 
     public function delete(): void
@@ -152,61 +129,31 @@ class PaymentController
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);
-        $this->repository()->delete($id);
+        $this->service()->delete($id);
 
         flash_set('success', 'Đã xóa phiếu thanh toán.');
         redirect('/payments');
     }
 
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private function service(): PaymentService
+    {
+        return new PaymentService(new PaymentRepository(Database::connection()));
+    }
+
     private function renderForm(string $view, string $title, array $errors, array $old, int $status): void
     {
         Response::view($view, [
-            'title'        => $title,
-            'errors'       => $errors,
-            'old'          => $old,
-            'id'           => (int) ($old['id'] ?? 0),
-            'statusLabels' => $this->statusLabels(),
-            'courseOptions' => self::COURSE_OPTIONS,
+            'title'         => $title,
+            'errors'        => $errors,
+            'old'           => $old,
+            'id'            => (int) ($old['id'] ?? 0),
+            'statusLabels'  => $this->statusLabels(),
+            'courseOptions' => PaymentService::COURSE_OPTIONS,
         ], $status);
-    }
-
-    private function validate(array $input): array
-    {
-        $errors = [];
-
-        if (($input['payment_code'] ?? '') === '') {
-            $errors['payment_code'] = 'Vui lòng nhập mã thanh toán.';
-        } elseif ($this->len($input['payment_code']) > 50) {
-            $errors['payment_code'] = 'Mã thanh toán tối đa 50 ký tự.';
-        }
-
-        if (($input['student_name'] ?? '') === '') {
-            $errors['student_name'] = 'Vui lòng nhập tên học viên.';
-        } elseif ($this->len($input['student_name']) > 100) {
-            $errors['student_name'] = 'Tên học viên tối đa 100 ký tự.';
-        }
-
-        if (($input['student_email'] ?? '') !== '' && !filter_var($input['student_email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['student_email'] = 'Email học viên không đúng định dạng.';
-        }
-
-        if (($input['course_name'] ?? '') === '') {
-            $errors['course_name'] = 'Vui lòng nhập tên khóa học.';
-        }
-
-        if (!is_numeric($input['amount']) || (float) $input['amount'] < 0) {
-            $errors['amount'] = 'Số tiền phải là số không âm.';
-        }
-
-        if (!in_array($input['status'] ?? '', self::STATUS_OPTIONS, true)) {
-            $errors['status'] = 'Trạng thái thanh toán không hợp lệ.';
-        }
-
-        if ($this->len((string) ($input['note'] ?? '')) > 500) {
-            $errors['note'] = 'Ghi chú tối đa 500 ký tự.';
-        }
-
-        return $errors;
     }
 
     private function input(): array
@@ -230,11 +177,6 @@ class PaymentController
         ];
     }
 
-    private function repository(): PaymentRepository
-    {
-        return new PaymentRepository(Database::connection());
-    }
-
     private function statusLabels(): array
     {
         return [
@@ -243,10 +185,5 @@ class PaymentController
             'refunded'  => 'Đã hoàn tiền',
             'cancelled' => 'Đã hủy',
         ];
-    }
-
-    private function len(string $value): int
-    {
-        return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
     }
 }

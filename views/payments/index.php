@@ -1,6 +1,7 @@
 <?php
 /** @var array $payments */
 /** @var string $q */
+/** @var string $status */
 /** @var string $sort */
 /** @var string $dir */
 /** @var int $page */
@@ -18,10 +19,16 @@
 
 <form class="toolbar" method="get" action="/payments">
     <input type="text" name="q" value="<?= h($q) ?>" placeholder="Tìm theo mã / tên học viên / email">
+    <select name="status">
+        <option value="">-- Tất cả trạng thái --</option>
+        <?php foreach ($statusLabels as $key => $label): ?>
+            <option value="<?= h($key) ?>" <?= $status === $key ? 'selected' : '' ?>><?= h($label) ?></option>
+        <?php endforeach; ?>
+    </select>
     <input type="hidden" name="sort" value="<?= h($sort) ?>">
     <input type="hidden" name="dir" value="<?= h($dir) ?>">
-    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
-    <?php if ($q !== ''): ?><a class="btn btn-secondary" href="/payments">Xóa lọc</a><?php endif; ?>
+    <button class="btn btn-primary" type="submit">Lọc</button>
+    <?php if ($q !== '' || $status !== ''): ?><a class="btn btn-secondary" href="/payments">Xóa lọc</a><?php endif; ?>
 </form>
 
 <div class="table-wrap">
