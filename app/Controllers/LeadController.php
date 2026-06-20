@@ -22,8 +22,8 @@ class LeadController
         require_login();
 
         $q    = trim((string) ($_GET['q'] ?? ''));
-        $sort = (string) ($_GET['sort'] ?? 'created_at');
-        $dir  = (string) ($_GET['dir'] ?? 'desc');
+        $sort = (string) ($_GET['sort'] ?? 'id');
+        $dir  = (string) ($_GET['dir'] ?? 'asc');
         $page = max(1, (int) ($_GET['page'] ?? 1)); // page âm/0 -> về 1
 
         $repo  = $this->repository();
