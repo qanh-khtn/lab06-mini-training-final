@@ -24,8 +24,8 @@ $flashTypeMap = [
         <?php if (is_logged_in()): ?>
         <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
         <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán học phí</a>
-        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">+ Lead</a>
-        <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">+ Thanh toán</a>
+        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Thêm tư vấn</a>
+        <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">Thêm thanh toán</a>
         <a class="<?= $currentPath === '/health' ? 'active' : '' ?>" href="/health">Health</a>
         <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
         <form method="POST" action="/logout" style="display:inline;">
