@@ -6,15 +6,13 @@
 <section class="page-head">
     <div>
         <h1>Mini Training Center CRM</h1>
-        <p class="muted">Quản lý lead tư vấn &amp; thanh toán học phí — PDO · Repository · CRUD · Search/Pagination · Unique · Index</p>
+        <p class="muted">Hệ thống quản lý tư vấn học viên và thanh toán học phí</p>
     </div>
-    <a class="btn btn-secondary" href="/health">Kiểm tra /health</a>
 </section>
 
 <?php if (!$dbOk): ?>
     <div class="alert alert-warning">
-        ⚠ Chưa kết nối được database. Hãy tạo DB bằng <code>database/schema.sql</code>, nạp <code>database/seed.sql</code>
-        và chỉnh <code>config/database.php</code> cho khớp máy bạn.
+        ⚠ Chưa kết nối được database. Vui lòng kiểm tra lại cấu hình hệ thống.
     </div>
 <?php endif; ?>
 
@@ -29,9 +27,9 @@
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
         </div>
-        <h3>Lead tư vấn</h3>
-        <p>Danh sách + tìm kiếm + phân trang + sort theo cột. Email không trùng (UNIQUE), theo dõi trạng thái chăm sóc.</p>
-        <p class="stat"><?= $leadCount === null ? '—' : h($leadCount) ?> lead</p>
+        <h3>Khách hàng tư vấn</h3>
+        <p>Quản lý danh sách học viên tiềm năng, theo dõi quá trình tư vấn và trạng thái chăm sóc.</p>
+        <p class="stat"><?= $leadCount === null ? '—' : h($leadCount) ?> khách hàng</p>
     </a>
     <a class="card feature-card" href="/payments">
         <div class="feature-icon" style="background: linear-gradient(135deg,#7c3aed,#6d28d9);">
@@ -42,12 +40,7 @@
             </svg>
         </div>
         <h3>Thanh toán học phí</h3>
-        <p>CRUD phiếu thanh toán học phí. Mã thanh toán (payment_code) không trùng (UNIQUE), theo dõi trạng thái thanh toán.</p>
+        <p>Quản lý phiếu thu học phí theo từng khóa học, theo dõi trạng thái thanh toán của học viên.</p>
         <p class="stat"><?= $paymentCount === null ? '—' : h($paymentCount) ?> phiếu</p>
     </a>
-</div>
-
-<div class="dev-note">
-    <strong>Luồng kiến trúc:</strong>
-    Browser → public/index.php → Router → Controller → Repository → PDO → MySQL → View/Redirect → Browser.
 </div>
