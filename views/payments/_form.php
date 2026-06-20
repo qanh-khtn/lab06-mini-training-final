@@ -35,8 +35,13 @@ $id = $id ?? 0;
             <?php if (isset($errors['course_name'])): ?><p class="field-error"><?= h($errors['course_name']) ?></p><?php endif; ?>
         </div>
         <div class="form-group">
-            <label>Số tiền (đ) *</label>
-            <input type="number" name="amount" min="0" step="1000" value="<?= h($old['amount'] ?? '') ?>" class="<?= isset($errors['amount']) ? 'input-error' : '' ?>">
+            <label>Số tiền *</label>
+            <div class="input-group <?= isset($errors['amount']) ? 'input-error' : '' ?>">
+                <input type="number" name="amount" min="0" step="1000"
+                       value="<?= h($old['amount'] ?? '') ?>"
+                       placeholder="0">
+                <span class="input-addon">đ</span>
+            </div>
             <?php if (isset($errors['amount'])): ?><p class="field-error"><?= h($errors['amount']) ?></p><?php endif; ?>
         </div>
         <div class="form-group">

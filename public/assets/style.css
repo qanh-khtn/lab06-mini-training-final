@@ -942,6 +942,101 @@ html[data-theme="dark"] .toggle-sun  { opacity: 0; transform: scale(0.2) rotate(
 html[data-theme="dark"] .toggle-moon { opacity: 1; transform: scale(1) rotate(0deg); }
 
 /* ============================================================
+   INPUT GROUP (prefix / suffix addon)
+   ============================================================ */
+.input-group {
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: #fff;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.input-group:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.14);
+}
+
+.input-group:hover:not(:focus-within) { border-color: #a5b4cb; }
+
+.input-group.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(220,38,38,.10); }
+
+.input-group input[type="number"],
+.input-group input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.input-group input:focus { outline: none; }
+
+.input-addon {
+    display: flex;
+    align-items: center;
+    padding: 0 13px;
+    background: var(--surface-soft);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    border-left: 1.5px solid var(--line-strong);
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+/* Ẩn spinner arrows của input[type="number"] */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* Dark mode — input-group */
+html[data-theme="dark"] .input-group {
+    background: var(--surface-soft);
+    border-color: var(--line-strong);
+}
+html[data-theme="dark"] .input-group:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(96,165,250,.18);
+}
+html[data-theme="dark"] .input-group:hover:not(:focus-within) { border-color: #4a5a72; }
+html[data-theme="dark"] .input-group input[type="number"],
+html[data-theme="dark"] .input-group input[type="text"] { color: var(--text); }
+html[data-theme="dark"] .input-addon {
+    background: var(--surface);
+    border-color: var(--line-strong);
+    color: var(--muted);
+}
+
+/* Dark mode — input[type="number"] standalone */
+html[data-theme="dark"] input[type="number"] {
+    background: var(--surface-soft);
+    color: var(--text);
+    border-color: var(--line-strong);
+}
+html[data-theme="dark"] input[type="number"]:focus {
+    background: var(--surface-soft);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(96,165,250,.18);
+}
+html[data-theme="dark"] input[type="number"]:hover:not(:focus) { border-color: #4a5a72; }
+
+/* Dark mode — dev-note */
+html[data-theme="dark"] .dev-note {
+    background: var(--surface-soft);
+    border-color: var(--line);
+    color: var(--text-soft);
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 920px) {
