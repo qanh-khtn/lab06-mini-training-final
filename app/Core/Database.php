@@ -31,11 +31,8 @@ class Database
         );
 
         self::$pdo = new PDO($dsn, $config['username'], $config['password'], [
-            // DB lỗi -> ném exception để try/catch xử lý
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            // Dữ liệu trả về dạng mảng theo tên cột
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            // Dùng prepared statements THẬT của MySQL (chống SQL Injection tốt hơn)
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
 
