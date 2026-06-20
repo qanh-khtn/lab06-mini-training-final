@@ -71,14 +71,14 @@ class AuthController
                 'email'         => 'admin@center.edu.vn',
                 'name'          => 'Quản trị viên',
                 'role'          => 'admin',
-                'password_hash' => '$2y$12$P1NITKu3gqept.ePCv/yzeZzyYx0./aWPE8Q1o6JChVNYper7Dlka',
+                'password_hash' => '$2y$12$gfs7SXl9uJ4TC6Hq2YlQdeYWQ6Vld.lZi6azaPa4zvGDGFzN06AYW',
             ],
             'staff@center.edu.vn' => [
                 'id'            => '2',
                 'email'         => 'staff@center.edu.vn',
                 'name'          => 'Tư vấn viên',
                 'role'          => 'staff',
-                'password_hash' => '$2y$12$/6GdK2ORALMBJIoPv89GYuLhJofdCGGG63hIKv3vJzEH0CcpaXYlO',
+                'password_hash' => '$2y$12$09c/N4HwxhTg8bLqAzCdGOltyVZ8egG75eqowGX05qYImnz71tIi6',
             ],
         ];
     }
