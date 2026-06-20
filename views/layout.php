@@ -13,7 +13,7 @@ $flashTypeMap = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= h($title ?? 'Mini Training Center Lead Portal') ?></title>
+    <title><?= h($title ?? 'Mini Training Center CRM') ?></title>
     <link rel="stylesheet" href="/assets/style.css">
     <script src="/assets/app.js"></script>
 </head>
@@ -23,17 +23,18 @@ $flashTypeMap = [
         <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Dashboard</a>
         <?php if (is_logged_in()): ?>
         <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
-        <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán học phí</a>
-        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Thêm tư vấn</a>
-        <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">Thêm thanh toán</a>
-        <a class="<?= $currentPath === '/health' ? 'active' : '' ?>" href="/health">Health</a>
-        <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
-        <form method="POST" action="/logout" style="display:inline;">
-            <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
-            <button type="submit" class="btn btn-secondary" style="padding:4px 12px;font-size:13px;">Đăng xuất</button>
-        </form>
+        <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán</a>
+        <div class="navbar-right">
+            <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
+            <form method="POST" action="/logout" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
+                <button type="submit" class="btn btn-sm btn-secondary">Đăng xuất</button>
+            </form>
+        </div>
         <?php else: ?>
-        <a class="<?= $currentPath === '/login' ? 'active' : '' ?>" href="/login" style="margin-left:auto;">Đăng nhập</a>
+        <div class="navbar-right">
+            <a href="/login" style="color:rgba(255,255,255,.7);padding:0 6px;">Đăng nhập</a>
+        </div>
         <?php endif; ?>
     </header>
 
@@ -72,14 +73,14 @@ $flashTypeMap = [
 
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Chuyển giao diện sáng/tối">
         <span class="theme-toggle-inner">
-            <svg class="toggle-sun" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <svg class="toggle-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <circle cx="12" cy="12" r="5"/>
                 <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
                 <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
                 <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
             </svg>
-            <svg class="toggle-moon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <svg class="toggle-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
         </span>

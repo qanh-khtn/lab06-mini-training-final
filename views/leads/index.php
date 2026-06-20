@@ -13,7 +13,7 @@
 <section class="page-head">
     <div>
         <h1>Quản lý Lead tư vấn</h1>
-        <p class="muted">Tổng <?= h($total) ?> lead • Trang <?= h($page) ?>/<?= h($lastPage) ?> • Sort: <?= h($sort) ?> <?= h(strtoupper($dir)) ?></p>
+        <p class="muted">Tổng <?= h($total) ?> khách hàng tư vấn<?= $q !== '' || $statusFilter !== '' ? ' (đang lọc)' : '' ?></p>
     </div>
     <a class="btn btn-primary" href="/leads/create">+ Thêm lead</a>
 </section>

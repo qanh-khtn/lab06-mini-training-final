@@ -3,18 +3,26 @@
 /** @var int|null $paymentCount */
 /** @var bool $dbOk */
 ?>
-<section class="page-head">
-    <div>
-        <h1>Mini Training Center CRM</h1>
-        <p class="muted">Hệ thống quản lý tư vấn học viên và thanh toán học phí</p>
-    </div>
-</section>
 
-<?php if (!$dbOk): ?>
-    <div class="alert alert-warning">
-        ⚠ Chưa kết nối được database. Vui lòng kiểm tra lại cấu hình hệ thống.
+<div class="home-hero">
+    <h1>Chào mừng đến với CRM</h1>
+    <p>Quản lý tư vấn học viên và thanh toán học phí trong một hệ thống thống nhất, dễ sử dụng.</p>
+
+    <?php if (!$dbOk): ?>
+        <div class="db-error">⚠ Chưa kết nối được cơ sở dữ liệu — vui lòng kiểm tra cấu hình.</div>
+    <?php else: ?>
+    <div class="home-stats-row">
+        <div class="home-stat">
+            <span class="stat-num"><?= $leadCount === null ? '—' : number_format($leadCount) ?></span>
+            <span class="stat-lbl">Khách hàng tư vấn</span>
+        </div>
+        <div class="home-stat">
+            <span class="stat-num"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?></span>
+            <span class="stat-lbl">Phiếu thanh toán</span>
+        </div>
     </div>
-<?php endif; ?>
+    <?php endif; ?>
+</div>
 
 <div class="grid-2">
     <a class="card feature-card" href="/leads">
@@ -28,9 +36,10 @@
             </svg>
         </div>
         <h3>Khách hàng tư vấn</h3>
-        <p>Quản lý danh sách học viên tiềm năng, theo dõi quá trình tư vấn và trạng thái chăm sóc.</p>
-        <p class="stat"><?= $leadCount === null ? '—' : h($leadCount) ?> khách hàng</p>
+        <p>Quản lý danh sách học viên tiềm năng, theo dõi quá trình tư vấn và trạng thái chăm sóc từng khách hàng.</p>
+        <span class="stat"><?= $leadCount === null ? '—' : number_format($leadCount) ?> khách hàng</span>
     </a>
+
     <a class="card feature-card" href="/payments">
         <div class="feature-icon" style="background: linear-gradient(135deg,#7c3aed,#6d28d9);">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -40,7 +49,7 @@
             </svg>
         </div>
         <h3>Thanh toán học phí</h3>
-        <p>Quản lý phiếu thu học phí theo từng khóa học, theo dõi trạng thái thanh toán của học viên.</p>
-        <p class="stat"><?= $paymentCount === null ? '—' : h($paymentCount) ?> phiếu</p>
+        <p>Quản lý phiếu thu học phí theo từng khóa học, theo dõi trạng thái thanh toán và lịch sử giao dịch.</p>
+        <span class="stat"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?> phiếu</span>
     </a>
 </div>

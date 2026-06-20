@@ -12,7 +12,7 @@
 <section class="page-head">
     <div>
         <h1>Quản lý Thanh toán học phí</h1>
-        <p class="muted">Tổng <?= h($total) ?> phiếu • Trang <?= h($page) ?>/<?= h($lastPage) ?> • Sort: <?= h($sort) ?> <?= h(strtoupper($dir)) ?></p>
+        <p class="muted">Tổng <?= h($total) ?> phiếu thanh toán<?= $q !== '' || $statusFilter !== '' ? ' (đang lọc)' : '' ?></p>
     </div>
     <a class="btn btn-primary" href="/payments/create">+ Thêm thanh toán</a>
 </section>
