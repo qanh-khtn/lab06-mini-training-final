@@ -7,48 +7,32 @@ use App\Core\DuplicateRecordException;
 use PDO;
 use PDOException;
 
-/**
- * Toàn bộ SQL của module Thanh toán học phí nằm ở đây (Repository pattern).
- */
 class PaymentRepository
 {
     private const SORT_WHITELIST = ['id', 'payment_code', 'student_name', 'student_email', 'course_name', 'amount', 'status', 'created_at'];
     private const DIR_WHITELIST  = ['asc', 'desc'];
 
-    public function __construct(private PDO $db)
+    public function __construct(private PDO $db) {}
+
+    public function countAll(string $keyword = '', string $status = ''): int
     {
-    }
-
-    public function countAll(string $keyword = ''): int
-    {
-        $sql = 'SELECT COUNT(*) AS total FROM payments';
-        $params = [];
-
-        if ($keyword !== '') {
-            $sql .= ' WHERE payment_code LIKE :kw OR student_name LIKE :kw OR student_email LIKE :kw';
-            $params['kw'] = '%' . $keyword . '%';
-        }
-
-        $stmt = $this->db->prepare($sql);
+        [$where, $params] = $this->buildWhere($keyword, $status);
+        $stmt = $this->db->prepare('SELECT COUNT(*) AS total FROM payments' . $where);
         $stmt->execute($params);
 
         return (int) ($stmt->fetch()['total'] ?? 0);
     }
 
-    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction): array
+    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction, string $status = ''): array
     {
-        $sort = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'created_at';
-        $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'desc';
+        $sort      = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'id';
+        $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'asc';
 
-        $sql = 'SELECT id, payment_code, student_name, student_email, course_name, amount, status, created_at FROM payments';
-        $params = [];
-
-        if ($keyword !== '') {
-            $sql .= ' WHERE payment_code LIKE :kw OR student_name LIKE :kw OR student_email LIKE :kw';
-            $params['kw'] = '%' . $keyword . '%';
-        }
-
-        $sql .= " ORDER BY {$sort} {$direction} LIMIT :limit OFFSET :offset";
+        [$where, $params] = $this->buildWhere($keyword, $status);
+        $sql = "SELECT id, payment_code, student_name, student_email, course_name, amount, status, created_at
+                FROM payments{$where}
+                ORDER BY {$sort} {$direction}
+                LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $value) {
@@ -63,7 +47,7 @@ class PaymentRepository
 
     public function find(int $id): ?array
     {
-        $stmt = $this->db->prepare('SELECT * FROM payments WHERE id = :id');
+        $stmt = $this->db->prepare('SELECT * FROM payments WHERE id = :id AND deleted_at IS NULL');
         $stmt->execute(['id' => $id]);
 
         return $stmt->fetch() ?: null;
@@ -73,7 +57,6 @@ class PaymentRepository
     {
         $sql = 'INSERT INTO payments (payment_code, student_name, student_email, course_name, amount, status, note)
                 VALUES (:payment_code, :student_name, :student_email, :course_name, :amount, :status, :note)';
-
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($this->bindData($data));
@@ -89,8 +72,7 @@ class PaymentRepository
         $sql = 'UPDATE payments
                 SET payment_code = :payment_code, student_name = :student_name, student_email = :student_email,
                     course_name = :course_name, amount = :amount, status = :status, note = :note
-                WHERE id = :id';
-
+                WHERE id = :id AND deleted_at IS NULL';
         try {
             $stmt = $this->db->prepare($sql);
             $params = $this->bindData($data);
@@ -102,11 +84,34 @@ class PaymentRepository
         }
     }
 
+    /** Soft delete: đánh dấu deleted_at thay vì xóa hàng khỏi DB. */
     public function delete(int $id): bool
     {
-        $stmt = $this->db->prepare('DELETE FROM payments WHERE id = :id');
+        $stmt = $this->db->prepare('UPDATE payments SET deleted_at = NOW() WHERE id = :id AND deleted_at IS NULL');
 
         return $stmt->execute(['id' => $id]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private function buildWhere(string $keyword, string $status): array
+    {
+        $conditions = ['deleted_at IS NULL'];
+        $params     = [];
+
+        if ($keyword !== '') {
+            $conditions[] = '(payment_code LIKE :kw OR student_name LIKE :kw OR student_email LIKE :kw)';
+            $params['kw'] = '%' . $keyword . '%';
+        }
+
+        if ($status !== '') {
+            $conditions[] = 'status = :status';
+            $params['status'] = $status;
+        }
+
+        return [' WHERE ' . implode(' AND ', $conditions), $params];
     }
 
     private function bindData(array $data): array

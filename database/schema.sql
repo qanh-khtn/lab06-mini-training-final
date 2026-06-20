@@ -30,7 +30,7 @@ CREATE TABLE users (
     UNIQUE KEY unique_user_email (email)
 );
 
--- Module A: leads (lead tư vấn) - email không trùng
+-- Module A: leads (lead tư vấn) - email không trùng; deleted_at cho soft delete
 CREATE TABLE leads (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     full_name       VARCHAR(100) NOT NULL,
@@ -41,13 +41,15 @@ CREATE TABLE leads (
     note            TEXT,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at      DATETIME NULL DEFAULT NULL,
     UNIQUE KEY unique_lead_email (email),
     INDEX idx_leads_created_at (created_at),
     INDEX idx_leads_care_status_created_at (care_status, created_at),
-    INDEX idx_leads_phone (phone)
+    INDEX idx_leads_phone (phone),
+    INDEX idx_leads_deleted_at (deleted_at)
 );
 
--- Module B: payments (đơn thanh toán học phí) - payment_code không trùng
+-- Module B: payments (đơn thanh toán học phí) - payment_code không trùng; deleted_at cho soft delete
 CREATE TABLE payments (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     payment_code  VARCHAR(50)  NOT NULL,
@@ -59,8 +61,10 @@ CREATE TABLE payments (
     note          TEXT,
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at    DATETIME NULL DEFAULT NULL,
     UNIQUE KEY unique_payment_code (payment_code),
     INDEX idx_payments_created_at (created_at),
     INDEX idx_payments_status_created_at (status, created_at),
-    INDEX idx_payments_student_email (student_email)
+    INDEX idx_payments_student_email (student_email),
+    INDEX idx_payments_deleted_at (deleted_at)
 );

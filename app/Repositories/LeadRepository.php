@@ -7,55 +7,32 @@ use App\Core\DuplicateRecordException;
 use PDO;
 use PDOException;
 
-/**
- * Toàn bộ SQL của module Lead tư vấn nằm ở đây (Repository pattern).
- * Controller/View KHÔNG được viết SQL.
- */
 class LeadRepository
 {
-    /** Cột được phép ORDER BY (whitelist chống SQL Injection qua URL). */
     private const SORT_WHITELIST = ['id', 'full_name', 'email', 'phone', 'course_interest', 'care_status', 'created_at'];
     private const DIR_WHITELIST  = ['asc', 'desc'];
 
-    public function __construct(private PDO $db)
+    public function __construct(private PDO $db) {}
+
+    public function countAll(string $keyword = '', string $status = ''): int
     {
-    }
-
-    public function countAll(string $keyword = ''): int
-    {
-        $sql = 'SELECT COUNT(*) AS total FROM leads';
-        $params = [];
-
-        if ($keyword !== '') {
-            $sql .= ' WHERE full_name LIKE :kw OR email LIKE :kw OR phone LIKE :kw';
-            $params['kw'] = '%' . $keyword . '%';
-        }
-
-        $stmt = $this->db->prepare($sql);
+        [$where, $params] = $this->buildWhere($keyword, $status);
+        $stmt = $this->db->prepare('SELECT COUNT(*) AS total FROM leads' . $where);
         $stmt->execute($params);
 
         return (int) ($stmt->fetch()['total'] ?? 0);
     }
 
-    /**
-     * Danh sách có search + pagination + sort an toàn.
-     * Chỉ SELECT cột cần hiển thị (không dùng SELECT *).
-     */
-    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction): array
+    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction, string $status = ''): array
     {
-        $sort = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'created_at';
-        $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'desc';
+        $sort      = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'id';
+        $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'asc';
 
-        $sql = 'SELECT id, full_name, email, phone, course_interest, care_status, created_at FROM leads';
-        $params = [];
-
-        if ($keyword !== '') {
-            $sql .= ' WHERE full_name LIKE :kw OR email LIKE :kw OR phone LIKE :kw';
-            $params['kw'] = '%' . $keyword . '%';
-        }
-
-        // sort/direction đã whitelist nên nhúng an toàn; LIMIT/OFFSET bind kiểu INT
-        $sql .= " ORDER BY {$sort} {$direction} LIMIT :limit OFFSET :offset";
+        [$where, $params] = $this->buildWhere($keyword, $status);
+        $sql = "SELECT id, full_name, email, phone, course_interest, care_status, created_at
+                FROM leads{$where}
+                ORDER BY {$sort} {$direction}
+                LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $value) {
@@ -70,7 +47,7 @@ class LeadRepository
 
     public function find(int $id): ?array
     {
-        $stmt = $this->db->prepare('SELECT * FROM leads WHERE id = :id');
+        $stmt = $this->db->prepare('SELECT * FROM leads WHERE id = :id AND deleted_at IS NULL');
         $stmt->execute(['id' => $id]);
 
         return $stmt->fetch() ?: null;
@@ -80,7 +57,6 @@ class LeadRepository
     {
         $sql = 'INSERT INTO leads (full_name, email, phone, course_interest, care_status, note)
                 VALUES (:full_name, :email, :phone, :course_interest, :care_status, :note)';
-
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($this->bindData($data));
@@ -96,8 +72,7 @@ class LeadRepository
         $sql = 'UPDATE leads
                 SET full_name = :full_name, email = :email, phone = :phone,
                     course_interest = :course_interest, care_status = :care_status, note = :note
-                WHERE id = :id';
-
+                WHERE id = :id AND deleted_at IS NULL';
         try {
             $stmt = $this->db->prepare($sql);
             $params = $this->bindData($data);
@@ -109,11 +84,34 @@ class LeadRepository
         }
     }
 
+    /** Soft delete: đánh dấu deleted_at thay vì xóa hàng khỏi DB. */
     public function delete(int $id): bool
     {
-        $stmt = $this->db->prepare('DELETE FROM leads WHERE id = :id');
+        $stmt = $this->db->prepare('UPDATE leads SET deleted_at = NOW() WHERE id = :id AND deleted_at IS NULL');
 
         return $stmt->execute(['id' => $id]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private function buildWhere(string $keyword, string $status): array
+    {
+        $conditions = ['deleted_at IS NULL'];
+        $params     = [];
+
+        if ($keyword !== '') {
+            $conditions[] = '(full_name LIKE :kw OR email LIKE :kw OR phone LIKE :kw)';
+            $params['kw'] = '%' . $keyword . '%';
+        }
+
+        if ($status !== '') {
+            $conditions[] = 'care_status = :status';
+            $params['status'] = $status;
+        }
+
+        return [' WHERE ' . implode(' AND ', $conditions), $params];
     }
 
     private function bindData(array $data): array
