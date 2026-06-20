@@ -19,13 +19,22 @@ $flashTypeMap = [
 </head>
 <body>
     <header class="navbar">
-        <a class="brand" href="/">Training Center CRM</a>
+        <a class="brand" href="/">
+            <span class="brand-logo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </span>
+            Training Center CRM
+        </a>
         <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Dashboard</a>
         <?php if (is_logged_in()): ?>
         <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
         <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán</a>
         <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Thêm tư vấn</a>
         <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">Thêm thanh toán</a>
+        <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">Thống kê</a>
         <div class="navbar-right">
             <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
             <form method="POST" action="/logout" style="display:inline;">

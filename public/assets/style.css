@@ -135,13 +135,14 @@ body.theme-transitioning * {
   flex-shrink: 0;
 }
 
-.navbar .brand::before {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 28px;
+.navbar .brand .brand-logo {
+  width: 30px;
+  height: 30px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -905,7 +906,150 @@ html[data-theme="dark"] .badge-contacted { background: rgba(3,105,161,.18); }
 html[data-theme="dark"] .alert-warning  { background: rgba(202,138,4,.12); border-color: rgba(202,138,4,.3); color: #fcd34d; }
 html[data-theme="dark"] .alert-danger   { background: rgba(220,38,38,.12); border-color: rgba(220,38,38,.3); color: #fca5a5; }
 
-/* ── 20. Responsive ────────────────────────────────────────────── */
+/* ── 20. Password visibility toggle ───────────────────────────── */
+.pwd-wrap { position: relative; }
+.pwd-wrap input { padding-right: 42px !important; }
+.pwd-toggle {
+  position: absolute;
+  right: 9px; top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--muted-clr);
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  transition: color var(--t);
+}
+.pwd-toggle:hover { color: var(--text-2); }
+
+/* ── 21. Stats page ────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  box-shadow: var(--sh-xs);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.metric-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 20px;
+}
+.metric-body { min-width: 0; }
+.metric-num {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+  color: var(--text);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.metric-lbl {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+/* Distribution bars */
+.distrib-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.distrib-row  { display: flex; align-items: center; gap: 10px; }
+.distrib-row .badge { flex-shrink: 0; min-width: 110px; justify-content: center; }
+.distrib-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.distrib-bar-fill {
+  height: 100%;
+  border-radius: var(--r-full);
+  transition: width .5s var(--ease);
+}
+.distrib-count { font-size: 13px; font-weight: 600; color: var(--text-2); min-width: 28px; text-align: right; }
+
+/* Vertical bar chart */
+.bar-chart-wrap { overflow-x: auto; padding-bottom: 4px; }
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 160px;
+  padding: 0 4px;
+  min-width: 300px;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar-col .bar {
+  width: 100%;
+  background: var(--primary);
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  min-height: 4px;
+  transition: opacity .2s;
+  position: relative;
+}
+.bar-col .bar:hover { opacity: .8; }
+.bar-col .bar-val {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.bar-col .bar-lbl {
+  font-size: 11px;
+  color: var(--muted-clr);
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+/* Card section headers */
+.section-head {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.1px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-head span { font-weight: 400; color: var(--text-2); font-size: 13px; }
+
+/* ── 22. Responsive ────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .grid-2 { grid-template-columns: 1fr; }
   .home-hero { padding: 28px 24px; }

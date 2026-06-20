@@ -6,6 +6,7 @@ use App\Controllers\HealthController;
 use App\Controllers\HomeController;
 use App\Controllers\LeadController;
 use App\Controllers\PaymentController;
+use App\Controllers\StatsController;
 use App\Core\Router;
 use App\Support\Response;
 
@@ -51,6 +52,9 @@ $router->get('/health', [HealthController::class, 'index']);
 $router->get('/login', [AuthController::class, 'loginView']);
 $router->post('/login', [AuthController::class, 'handleLogin']);
 $router->post('/logout', [AuthController::class, 'logout']);
+$router->get('/register', [AuthController::class, 'registerView']);
+$router->post('/register', [AuthController::class, 'handleRegister']);
+$router->get('/stats', [StatsController::class, 'index']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);
