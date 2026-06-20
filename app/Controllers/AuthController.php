@@ -120,6 +120,7 @@ class AuthController
             ], 422);
         }
 
+        $id = 0;
         try {
             $id = (new UserRepository(Database::connection()))->create(
                 $name,
@@ -161,21 +162,21 @@ class AuthController
     // ── Internal helpers ───────────────────────────────────────────
 
     /**
-     * Looks up a user by email: DB first, falls back to hardcoded demo accounts
-     * so the app stays usable even if the users table hasn't been seeded yet.
+     * Hardcoded demo accounts take priority (identical to original behavior).
+     * Registered accounts are looked up in the database.
      */
     private function findUser(string $email): ?array
     {
-        try {
-            $user = (new UserRepository(Database::connection()))->findByEmail($email);
-            if ($user !== null) {
-                return $user;
-            }
-        } catch (Throwable) {
-            // DB unavailable — fall through to hardcoded accounts
+        $hardcoded = $this->hardcodedUsers()[$email] ?? null;
+        if ($hardcoded !== null) {
+            return $hardcoded;
         }
 
-        return $this->hardcodedUsers()[$email] ?? null;
+        try {
+            return (new UserRepository(Database::connection()))->findByEmail($email);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     private function hardcodedUsers(): array
