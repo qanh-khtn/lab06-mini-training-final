@@ -2,6 +2,9 @@
 -- Lab05 - Dữ liệu mẫu (>= 15 bản ghi/module để test pagination)
 -- Chạy SAU schema.sql
 -- ============================================================
+SET NAMES utf8mb4;
+SET character_set_client = utf8mb4;
+
 USE training_center_crm;
 
 -- password_hash mẫu (không dùng để đăng nhập trong Lab05 core)
