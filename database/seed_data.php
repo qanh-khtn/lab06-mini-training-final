@@ -89,8 +89,7 @@ $pdo->beginTransaction();
 while ($inserted < $leadsCount && $attempt < $leadsCount * 3) {
     $attempt++;
     $name  = rand_name($lastNames, $midNames, $firstNames);
-    $slug  = strtolower(preg_replace('/\s+/', '.', iconv('UTF-8', 'ASCII//TRANSLIT', $name)));
-    $email = $slug . '.' . rand(100, 9999) . '@example.vn';
+    $email = 'lead' . str_pad((string) ($inserted + $attempt), 5, '0', STR_PAD_LEFT) . rand(10, 99) . '@example.vn';
 
     try {
         $stmtLead->execute([
@@ -129,13 +128,12 @@ while ($payInserted < $paymentsCount && $payAttempt < $paymentsCount * 3) {
     $seq  = rand(1000, 9999);
     $code = "HP-{$year}-{$seq}";
     $name = rand_name($lastNames, $midNames, $firstNames);
-    $slug = strtolower(preg_replace('/\s+/', '.', iconv('UTF-8', 'ASCII//TRANSLIT', $name)));
 
     try {
         $stmtPay->execute([
             'payment_code'  => $code,
             'student_name'  => $name,
-            'student_email' => $slug . '.' . rand(10, 999) . '@example.vn',
+            'student_email' => 'sv' . str_pad((string) ($payInserted + $payAttempt), 5, '0', STR_PAD_LEFT) . rand(10, 99) . '@example.vn',
             'course_name'   => $courseNames[array_rand($courseNames)],
             'amount'        => $amounts[array_rand($amounts)],
             'status'        => $payStatuses[array_rand($payStatuses)],
