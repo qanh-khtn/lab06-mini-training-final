@@ -1,7 +1,7 @@
 <?php
 /** @var array $payments */
 /** @var string $q */
-/** @var string $status */
+/** @var string $statusFilter */
 /** @var string $sort */
 /** @var string $dir */
 /** @var int $page */
@@ -22,13 +22,13 @@
     <select name="status">
         <option value="">-- Tất cả trạng thái --</option>
         <?php foreach ($statusLabels as $key => $label): ?>
-            <option value="<?= h($key) ?>" <?= $status === $key ? 'selected' : '' ?>><?= h($label) ?></option>
+            <option value="<?= h($key) ?>" <?= $statusFilter === $key ? 'selected' : '' ?>><?= h($label) ?></option>
         <?php endforeach; ?>
     </select>
     <input type="hidden" name="sort" value="<?= h($sort) ?>">
     <input type="hidden" name="dir" value="<?= h($dir) ?>">
     <button class="btn btn-primary" type="submit">Lọc</button>
-    <?php if ($q !== '' || $status !== ''): ?><a class="btn btn-secondary" href="/payments">Xóa lọc</a><?php endif; ?>
+    <?php if ($q !== '' || $statusFilter !== ''): ?><a class="btn btn-secondary" href="/payments">Xóa lọc</a><?php endif; ?>
 </form>
 
 <div class="table-wrap">

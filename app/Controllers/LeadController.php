@@ -39,7 +39,7 @@ class LeadController
             'title'        => 'Quản lý Lead tư vấn',
             'leads'        => $result['rows'],
             'q'            => $q,
-            'status'       => $status,
+            'statusFilter' => $status,
             'sort'         => $sort,
             'dir'          => $dir,
             'page'         => $result['page'],

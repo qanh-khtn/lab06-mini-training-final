@@ -39,7 +39,7 @@ class PaymentController
             'title'         => 'Quản lý Thanh toán học phí',
             'payments'      => $result['rows'],
             'q'             => $q,
-            'status'        => $status,
+            'statusFilter'  => $status,
             'sort'          => $sort,
             'dir'           => $dir,
             'page'          => $result['page'],
