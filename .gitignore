@@ -5,4 +5,5 @@ Thumbs.db
 *.pdf
 /storage/remember_tokens.json
 screenshots/
+img/
 report_lab05.tex
