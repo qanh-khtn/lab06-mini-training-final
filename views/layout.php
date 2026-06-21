@@ -37,6 +37,7 @@ $flashTypeMap = [
         <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">Thống kê</a>
         <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
         <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">Duyệt tài khoản</a>
+        <a class="<?= $currentPath === '/admin/logs' ? 'active' : '' ?>" href="/admin/logs">Nhật ký</a>
         <?php endif; ?>
         <div class="navbar-right">
             <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>

@@ -61,6 +61,7 @@ $router->get('/stats', [StatsController::class, 'index']);
 $router->get('/admin/users/pending', [AdminController::class, 'pendingUsers']);
 $router->post('/admin/users/approve', [AdminController::class, 'approve']);
 $router->post('/admin/users/reject', [AdminController::class, 'reject']);
+$router->get('/admin/logs', [AdminController::class, 'logs']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);
