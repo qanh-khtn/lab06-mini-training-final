@@ -24,7 +24,7 @@ CREATE TABLE users (
     email         VARCHAR(150) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role          ENUM('admin','staff') NOT NULL DEFAULT 'staff',
-    status        ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    status        ENUM('active','inactive','pending') NOT NULL DEFAULT 'pending',
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_user_email (email)
