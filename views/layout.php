@@ -35,6 +35,9 @@ $flashTypeMap = [
         <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Thêm tư vấn</a>
         <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">Thêm thanh toán</a>
         <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">Thống kê</a>
+        <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+        <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">Duyệt tài khoản</a>
+        <?php endif; ?>
         <div class="navbar-right">
             <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
             <form method="POST" action="/logout" style="display:inline;">

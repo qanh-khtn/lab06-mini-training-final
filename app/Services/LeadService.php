@@ -38,7 +38,6 @@ class LeadService
         return $this->repo->find($id);
     }
 
-    /** Validate + create. Trả về ['ok'=>true, 'id'=>int] hoặc ['ok'=>false, 'errors'=>[], 'duplicate'=>bool]. */
     public function create(array $input): array
     {
         $errors = $this->validate($input);

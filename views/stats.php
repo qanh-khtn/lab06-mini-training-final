@@ -146,8 +146,8 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 
         <?php if ($paidRevenue + $pendingRev > 0): ?>
         <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2);display:flex;gap:16px;flex-wrap:wrap;">
-            <span>✅ Đã thu: <strong style="color:var(--success);"><?= number_format($paidRevenue, 0, ',', '.') ?> đ</strong></span>
-            <span>⏳ Chờ thu: <strong style="color:var(--warning);"><?= number_format($pendingRev, 0, ',', '.') ?> đ</strong></span>
+            <span>Đã thu: <strong style="color:var(--success);"><?= number_format($paidRevenue, 0, ',', '.') ?> đ</strong></span>
+            <span>Chờ thu: <strong style="color:var(--warning);"><?= number_format($pendingRev, 0, ',', '.') ?> đ</strong></span>
         </div>
         <?php endif; ?>
     </div>

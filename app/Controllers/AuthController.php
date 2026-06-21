@@ -36,13 +36,28 @@ class AuthController
 
         $user = $this->findUser($email);
 
-        if ($user === null || ($user['status'] ?? 'active') !== 'active'
-            || !password_verify($password, $user['password_hash'])) {
+        if ($user === null || !password_verify($password, $user['password_hash'])) {
             Response::view('auth/login', [
                 'title'  => 'Đăng nhập',
                 'errors' => ['login' => 'Email hoặc mật khẩu không chính xác.'],
                 'old'    => ['email' => $email],
             ], 422);
+        }
+
+        if (($user['status'] ?? 'active') === 'pending') {
+            Response::view('auth/login', [
+                'title'  => 'Đăng nhập',
+                'errors' => ['login' => 'Tài khoản của bạn đang chờ duyệt từ admin. Vui lòng quay lại sau.'],
+                'old'    => ['email' => $email],
+            ], 403);
+        }
+
+        if (($user['status'] ?? 'active') !== 'active') {
+            Response::view('auth/login', [
+                'title'  => 'Đăng nhập',
+                'errors' => ['login' => 'Tài khoản này đã bị vô hiệu hóa.'],
+                'old'    => ['email' => $email],
+            ], 403);
         }
 
         session_regenerate_id(true);
@@ -120,9 +135,8 @@ class AuthController
             ], 422);
         }
 
-        $id = 0;
         try {
-            $id = (new UserRepository(Database::connection()))->create(
+            (new UserRepository(Database::connection()))->create(
                 $name,
                 $email,
                 password_hash($password, PASSWORD_BCRYPT, ['cost' => 12])
@@ -135,15 +149,8 @@ class AuthController
             ], 409);
         }
 
-        session_regenerate_id(true);
-        $_SESSION['user_id']          = (string) $id;
-        $_SESSION['user_email']       = $email;
-        $_SESSION['user_name']        = $name;
-        $_SESSION['user_role']        = 'staff';
-        $_SESSION['last_activity_at'] = time();
-
-        flash_set('success', 'Đăng ký thành công! Chào mừng, ' . $name . '!');
-        redirect('/');
+        flash_set('success', 'Đăng ký thành công! Tài khoản của bạn đang chờ admin duyệt. Vui lòng quay lại sau.');
+        redirect('/login');
     }
 
     // ── Logout ─────────────────────────────────────────────────────

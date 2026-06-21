@@ -34,7 +34,7 @@ class UserRepository
                 'email'  => $email,
                 'ph'     => $passwordHash,
                 'role'   => 'staff',
-                'status' => 'active',
+                'status' => 'pending',
             ]);
             return (int) $this->pdo->lastInsertId();
         } catch (PDOException $e) {
@@ -43,5 +43,27 @@ class UserRepository
             }
             throw $e;
         }
+    }
+
+    public function findPending(): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, name, email, role, status, created_at
+             FROM users WHERE status = :status ORDER BY created_at DESC'
+        );
+        $stmt->execute(['status' => 'pending']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function approve(int $id): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET status = :status WHERE id = :id');
+        return $stmt->execute(['status' => 'active', 'id' => $id]);
+    }
+
+    public function reject(int $id): bool
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM users WHERE id = :id AND status = :status');
+        return $stmt->execute(['id' => $id, 'status' => 'pending']);
     }
 }

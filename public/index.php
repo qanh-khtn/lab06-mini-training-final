@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\AdminController;
 use App\Controllers\AuthController;
 use App\Controllers\HealthController;
 use App\Controllers\HomeController;
@@ -55,6 +56,11 @@ $router->post('/logout', [AuthController::class, 'logout']);
 $router->get('/register', [AuthController::class, 'registerView']);
 $router->post('/register', [AuthController::class, 'handleRegister']);
 $router->get('/stats', [StatsController::class, 'index']);
+
+// Admin
+$router->get('/admin/users/pending', [AdminController::class, 'pendingUsers']);
+$router->post('/admin/users/approve', [AdminController::class, 'approve']);
+$router->post('/admin/users/reject', [AdminController::class, 'reject']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);

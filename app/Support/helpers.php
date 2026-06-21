@@ -110,6 +110,21 @@ function require_login(): void
     redirect('/login');
 }
 
+function require_admin(): void
+{
+    if (!is_logged_in()) {
+        flash_set('danger', 'Vui lòng đăng nhập để tiếp tục.');
+        redirect('/login');
+    }
+
+    if (($_SESSION['user_role'] ?? '') !== 'admin') {
+        http_response_code(403);
+        header('Content-Type: text/plain; charset=UTF-8');
+        echo '403 Forbidden — Chỉ quản trị viên mới có quyền truy cập.';
+        exit;
+    }
+}
+
 function csrf_token(): string
 {
     if (empty($_SESSION['csrf_token'])) {
