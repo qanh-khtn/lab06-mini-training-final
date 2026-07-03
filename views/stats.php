@@ -21,8 +21,8 @@ $pendingRev    = (float) ($summary['pending_revenue'] ?? 0);
 $enrollRate = $totalLeads > 0 ? round($enrolled / $totalLeads * 100) : 0;
 
 function fmt_money(float $n): string {
-    if ($n >= 1_000_000_000) return number_format($n / 1_000_000_000, 1) . ' tỷ';
-    if ($n >= 1_000_000)     return number_format($n / 1_000_000, 1) . ' tr';
+    if ($n >= 1_000_000_000) return number_format($n / 1_000_000_000, 1) . ' tỷ đ';
+    if ($n >= 1_000_000)     return number_format($n / 1_000_000, 1) . ' triệu đ';
     return number_format($n, 0, ',', '.');
 }
 
