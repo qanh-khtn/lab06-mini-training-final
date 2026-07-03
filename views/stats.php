@@ -79,7 +79,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         </div>
         <div class="metric-body">
-            <span class="metric-num"><?= fmt_money($paidRevenue) ?> đ</span>
+            <span class="metric-num"><?= fmt_money($paidRevenue) ?></span>
             <span class="metric-lbl">Doanh thu đã thu</span>
         </div>
     </div>
@@ -89,7 +89,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <div class="metric-body">
-            <span class="metric-num"><?= fmt_money($pendingRev) ?> đ</span>
+            <span class="metric-num"><?= fmt_money($pendingRev) ?></span>
             <span class="metric-lbl">Chờ thu (<?= $totalPayments ?> phiếu)</span>
         </div>
     </div>
