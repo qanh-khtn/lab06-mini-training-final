@@ -7,6 +7,7 @@ use App\Controllers\HealthController;
 use App\Controllers\HomeController;
 use App\Controllers\LeadController;
 use App\Controllers\PaymentController;
+use App\Controllers\PublicLeadController;
 use App\Controllers\StatsController;
 use App\Core\Router;
 use App\Support\Response;
@@ -62,6 +63,10 @@ $router->get('/admin/users/pending', [AdminController::class, 'pendingUsers']);
 $router->post('/admin/users/approve', [AdminController::class, 'approve']);
 $router->post('/admin/users/reject', [AdminController::class, 'reject']);
 $router->get('/admin/logs', [AdminController::class, 'logs']);
+
+// Public lead form (không cần đăng nhập) — honeypot + rate limit
+$router->get('/public-leads/create', [PublicLeadController::class, 'create']);
+$router->post('/public-leads', [PublicLeadController::class, 'store']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);

@@ -1,13 +1,14 @@
-# Mini Training Center CRM — PHP Database CRUD (Lab05)
+# Mini Training Center CRM — PHP Secure MVC Mini CRM (Lab06)
 
-Ứng dụng quản lý lead tư vấn và thanh toán học phí cho một trung tâm đào tạo nhỏ, xây dựng thuần PHP theo mô hình Front Controller với PDO và MySQL.
+Ứng dụng quản lý lead tư vấn và thanh toán học phí cho một trung tâm đào tạo nhỏ, xây dựng thuần PHP theo mô hình Front Controller + MVC với PDO và MySQL.
 
-Nâng cấp từ Lab04 (form/PRG/validation) lên Lab05 với đầy đủ: Database CRUD, Repository pattern, Service layer, Search/Pagination, Auth, Thống kê và phân quyền admin.
+Triển khai hoàn chỉnh Lab06 Final: form công khai với honeypot + rate limit, database CRUD an toàn, Repository/Service/Controller tách lớp, prepared statements, soft delete, unique constraint, search/pagination/sort an toàn, session login/regenerate/timeout, error handling production-safe.
 
 ## Tính năng chính
 
-**Module cốt lõi (Lab05 yêu cầu)**
+**Module cốt lõi (Lab06 yêu cầu)**
 
+- Form công khai tạo lead: `/public-leads/create` (không cần đăng nhập) với honeypot field và rate limit tối thiểu 5 giây giữa 2 lần submit.
 - Ba bảng: `users`, `leads` (Module A), `payments` (Module B) — có primary key, unique key, index.
 - Kết nối PDO chuẩn: `charset=utf8mb4`, `ERRMODE_EXCEPTION`, `FETCH_ASSOC`, `EMULATE_PREPARES=false`.
 - Repository gom toàn bộ SQL, dùng prepared statements cho mọi thao tác INSERT/SELECT/UPDATE/DELETE.
@@ -43,6 +44,8 @@ Nâng cấp từ Lab04 (form/PRG/validation) lên Lab05 với đầy đủ: Data
 | GET | `/admin/users/pending` | AdminController@pendingUsers |
 | POST | `/admin/users/approve` | AdminController@approve |
 | POST | `/admin/users/reject` | AdminController@reject |
+| GET | `/public-leads/create` | PublicLeadController@create |
+| POST | `/public-leads` | PublicLeadController@store |
 | GET | `/leads` | LeadController@index |
 | GET | `/leads/create` | LeadController@create |
 | POST | `/leads/store` | LeadController@store |

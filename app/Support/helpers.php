@@ -363,3 +363,22 @@ function portal_prune_remember_tokens(array $tokens): array
         return (int)($record['expires_at'] ?? 0) >= $now;
     });
 }
+
+/**
+ * Kiểm tra rate limit: cho phép action tối đa 1 lần mỗi $seconds giây.
+ * @param string $key Khóa duy nhất (vd: 'public_lead', 'contact_form')
+ * @param int $seconds Số giây tối thiểu giữa 2 lần thực hiện (mặc định 5)
+ * @return bool true nếu được phép (đã cập nhật timestamp), false nếu vượt quá giới hạn
+ */
+function rate_limit_check(string $key, int $seconds = 5): bool
+{
+    $now = time();
+    $lastTime = (int)($_SESSION['rate_limit'][$key] ?? 0);
+
+    if ($lastTime > 0 && ($now - $lastTime) < $seconds) {
+        return false;
+    }
+
+    $_SESSION['rate_limit'][$key] = $now;
+    return true;
+}

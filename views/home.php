@@ -52,4 +52,16 @@
         <p>Quản lý phiếu thu học phí theo từng khóa học, theo dõi trạng thái thanh toán và lịch sử giao dịch.</p>
         <span class="stat"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?> phiếu</span>
     </a>
+
+    <a class="card feature-card" href="/public-leads/create">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+        </div>
+        <h3>Đăng ký tư vấn</h3>
+        <p>Khách hàng tiềm năng có thể điền thông tin để nhận tư vấn trực tiếp từ đội ngũ chuyên viên của chúng tôi.</p>
+        <span class="cta">Bắt đầu →</span>
+    </a>
 </div>
