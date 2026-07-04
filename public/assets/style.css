@@ -1178,16 +1178,18 @@ html[data-theme="dark"] .log-msg    { color: var(--text); }
 
 /* Error code: LEFT side — large, prominent, orange accent */
 .error-code {
-  font-size: 180px;
+  font-size: 140px;
   font-weight: 900;
-  line-height: 0.85;
+  line-height: 0.9;
   margin: 0;
   position: relative;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.03em;
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  word-break: break-word;
+  min-width: 0;
 }
 
 /* Content area: RIGHT side */
@@ -1268,13 +1270,13 @@ html[data-theme="dark"] .error-page .error-method {
 /* Tablet: 2-column → adjust gap */
 @media (max-width: 768px) {
   .error-page > div {
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 100px 1fr;
     gap: 40px;
     padding: 60px 20px;
   }
 
   .error-code {
-    font-size: 120px;
+    font-size: 100px;
   }
 
   .error-title {
