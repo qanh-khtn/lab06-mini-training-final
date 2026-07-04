@@ -85,8 +85,7 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
             <form method="POST" action="/logout" id="logout-form">
                 <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                 <button type="submit" class="logout-link">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span>Đăng xuất</span>
+                    <span>🚪 Đăng xuất</span>
                 </button>
             </form>
         </div>
@@ -103,7 +102,7 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
-                    <span class="material-symbols-outlined">menu</span>
+                    ☰
                 </button>
                 <div class="topbar-search" id="quick-search-form">
                     <span class="material-symbols-outlined">search</span>
@@ -113,15 +112,15 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
             </div>
             <div class="topbar-right">
                 <button class="topbar-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
-                    <span class="material-symbols-outlined sun-icon">light_mode</span>
-                    <span class="material-symbols-outlined moon-icon">dark_mode</span>
+                    <span class="sun-icon">☀️</span>
+                    <span class="moon-icon">🌙</span>
                 </button>
                 <button class="topbar-btn" id="notif-btn" type="button" title="Thông báo" aria-label="Notifications" style="position:relative;">
-                    <span class="material-symbols-outlined">notifications</span>
+                    🔔
                     <span class="notif-badge">3</span>
                 </button>
                 <button class="topbar-btn" id="help-btn" type="button" title="Trợ giúp" aria-label="Help">
-                    <span class="material-symbols-outlined">help</span>
+                    ❓
                 </button>
                 <div class="user-avatar" title="<?= h($_SESSION['user_name'] ?? '') ?>">
                     <?= h(strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 2))) ?>
