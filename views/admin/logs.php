@@ -15,27 +15,32 @@
 </section>
 
 <div class="log-toolbar card" style="margin-bottom:16px;">
-    <form method="get" action="/admin/logs" class="log-filter-form">
-        <input
-            class="input"
-            type="search"
-            name="q"
-            value="<?= h($q) ?>"
-            placeholder="Tìm trong log..."
-            style="flex:1;min-width:200px;"
-        >
-        <select class="input" name="level" style="width:160px;">
+    <form method="get" action="/admin/logs" class="log-filter-form" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div class="icon-input-group" style="flex:1;min-width:200px;margin-bottom:0;">
+            <span class="material-symbols-outlined">search</span>
+            <input
+                class="input"
+                type="search"
+                name="q"
+                value="<?= h($q) ?>"
+                placeholder="Tìm trong log..."
+                style="margin:0;"
+            >
+        </div>
+        <select class="input" name="level" style="width:160px;margin:0;">
             <option value="" <?= $level === '' ? 'selected' : '' ?>>Tất cả mức độ</option>
             <option value="error"   <?= $level === 'error'   ? 'selected' : '' ?>>Lỗi</option>
             <option value="warning" <?= $level === 'warning' ? 'selected' : '' ?>>Cảnh báo</option>
             <option value="info"    <?= $level === 'info'    ? 'selected' : '' ?>>Thông tin</option>
         </select>
-        <button class="btn btn-primary" type="submit">Lọc</button>
+        <button class="btn btn-primary" type="submit" style="display:inline-flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">filter_alt</span> Lọc
+        </button>
         <?php if ($q !== '' || $level !== ''): ?>
             <a class="btn btn-secondary" href="/admin/logs">Xóa bộ lọc</a>
         <?php endif; ?>
     </form>
-    <p class="muted" style="margin-top:8px;font-size:13px;">
+    <p class="muted" style="margin-top:12px;font-size:13px;">
         Hiển thị <strong><?= count($entries) ?></strong> dòng<?= ($q !== '' || $level !== '') ? ' (đang lọc)' : '' ?>
     </p>
 </div>

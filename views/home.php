@@ -3,65 +3,52 @@
 /** @var int|null $paymentCount */
 /** @var bool $dbOk */
 ?>
-
-<div class="home-hero">
-    <h1>Chào mừng đến với CRM</h1>
-    <p>Quản lý tư vấn học viên và thanh toán học phí trong một hệ thống thống nhất, dễ sử dụng.</p>
-
-    <?php if (!$dbOk): ?>
-        <div class="db-error">⚠ Chưa kết nối được cơ sở dữ liệu — vui lòng kiểm tra cấu hình.</div>
-    <?php else: ?>
-    <div class="home-stats-row">
-        <div class="home-stat">
-            <span class="stat-num"><?= $leadCount === null ? '—' : number_format($leadCount) ?></span>
-            <span class="stat-lbl">Khách hàng tư vấn</span>
-        </div>
-        <div class="home-stat">
-            <span class="stat-num"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?></span>
-            <span class="stat-lbl">Phiếu thanh toán</span>
+<div class="bento-grid">
+    <!-- Hero Banner -->
+    <div class="dashboard-hero">
+        <h1>Chào mừng đến với CRM</h1>
+        <p>Quản lý tư vấn học viên và thanh toán học phí trong một hệ thống thống nhất, dễ sử dụng.</p>
+        
+        <div style="margin-top: 16px;">
+            <?php if (!$dbOk): ?>
+                <span class="badge badge-cancelled" style="background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.4);">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">error</span>
+                    Chưa kết nối được cơ sở dữ liệu — vui lòng kiểm tra cấu hình.
+                </span>
+            <?php else: ?>
+                <span class="badge badge-enrolled" style="background: rgba(34,197,94,.2); color: #86efac; border-color: rgba(34,197,94,.4);">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+                    Hệ thống hoạt động ổn định & Kết nối Database thành công
+                </span>
+            <?php endif; ?>
         </div>
     </div>
-    <?php endif; ?>
-</div>
 
-<div class="grid-2">
-    <a class="card feature-card" href="/leads">
-        <div class="feature-icon" style="background: linear-gradient(135deg,#2563eb,#1d4ed8);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
+    <!-- Feature Cards -->
+    <a class="feature-card" href="/leads">
+        <div class="feature-icon">
+            <span class="material-symbols-outlined">group</span>
         </div>
-        <h3>Khách hàng tư vấn</h3>
+        <h3>Quản lý Lead tư vấn</h3>
         <p>Quản lý danh sách học viên tiềm năng, theo dõi quá trình tư vấn và trạng thái chăm sóc từng khách hàng.</p>
-        <span class="stat"><?= $leadCount === null ? '—' : number_format($leadCount) ?> khách hàng</span>
+        <span class="stat"><?= $leadCount === null ? '—' : number_format($leadCount) ?> leads</span>
     </a>
 
-    <a class="card feature-card" href="/payments">
-        <div class="feature-icon" style="background: linear-gradient(135deg,#7c3aed,#6d28d9);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                <line x1="1" y1="10" x2="23" y2="10"/>
-            </svg>
+    <a class="feature-card" href="/payments">
+        <div class="feature-icon">
+            <span class="material-symbols-outlined">payments</span>
         </div>
         <h3>Thanh toán học phí</h3>
         <p>Quản lý phiếu thu học phí theo từng khóa học, theo dõi trạng thái thanh toán và lịch sử giao dịch.</p>
-        <span class="stat"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?> phiếu</span>
+        <span class="stat"><?= $paymentCount === null ? '—' : number_format($paymentCount) ?> phiếu thu</span>
     </a>
 
-    <a class="card feature-card" href="/public-leads/create">
-        <div class="feature-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+    <a class="feature-card" href="/public-leads/create">
+        <div class="feature-icon">
+            <span class="material-symbols-outlined">campaign</span>
         </div>
-        <h3>Đăng ký tư vấn</h3>
+        <h3>Form đăng ký tư vấn</h3>
         <p>Khách hàng tiềm năng có thể điền thông tin để nhận tư vấn trực tiếp từ đội ngũ chuyên viên của chúng tôi.</p>
-        <span class="cta">Bắt đầu →</span>
+        <span class="stat" style="font-family: inherit; font-size: 14px; font-weight: 700; color: var(--primary)">Bắt đầu đăng ký →</span>
     </a>
 </div>

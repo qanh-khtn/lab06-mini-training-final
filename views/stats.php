@@ -55,8 +55,8 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 <!-- ── Summary cards ───────────────────────────────────────────── -->
 <div class="stats-grid">
     <div class="metric-card">
-        <div class="metric-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="metric-icon">
+            <span class="material-symbols-outlined">group</span>
         </div>
         <div class="metric-body">
             <span class="metric-num"><?= number_format($totalLeads) ?></span>
@@ -65,18 +65,21 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon" style="background:linear-gradient(135deg,#16a34a,#15803d);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="metric-icon">
+            <span class="material-symbols-outlined">check_circle</span>
         </div>
         <div class="metric-body">
-            <span class="metric-num"><?= number_format($enrolled) ?> <small style="font-size:14px;font-weight:500;color:var(--success);"><?= $enrollRate ?>%</small></span>
+            <span class="metric-num">
+                <?= number_format($enrolled) ?> 
+                <small style="font-size:13px; font-weight:700; color:var(--success); margin-left: 4px;"><?= $enrollRate ?>%</small>
+            </span>
             <span class="metric-lbl">Đã ghi danh</span>
         </div>
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <div class="metric-icon">
+            <span class="material-symbols-outlined">payments</span>
         </div>
         <div class="metric-body">
             <span class="metric-num"><?= fmt_money($paidRevenue) ?></span>
@@ -85,8 +88,8 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon" style="background:linear-gradient(135deg,#ca8a04,#a16207);">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="metric-icon">
+            <span class="material-symbols-outlined">pending_actions</span>
         </div>
         <div class="metric-body">
             <span class="metric-num"><?= fmt_money($pendingRev) ?></span>

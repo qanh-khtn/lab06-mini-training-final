@@ -60,11 +60,15 @@
                 <td><span class="badge badge-<?= h($p['status']) ?>"><?= h($statusLabels[$p['status']] ?? $p['status']) ?></span></td>
                 <td><?= h($p['created_at']) ?></td>
                 <td class="actions-cell">
-                    <a class="btn btn-sm btn-secondary" href="/payments/edit?id=<?= h($p['id']) ?>">Sửa</a>
+                    <a class="btn btn-sm btn-secondary" href="/payments/edit?id=<?= h($p['id']) ?>">
+                        <span class="material-symbols-outlined" style="font-size:14px;">edit</span> Sửa
+                    </a>
                     <form class="inline-form" method="post" action="/payments/delete" onsubmit="return confirm('Xóa phiếu thanh toán này?')">
                         <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                         <input type="hidden" name="id" value="<?= h($p['id']) ?>">
-                        <button class="btn btn-sm btn-danger" type="submit">Xóa</button>
+                        <button class="btn btn-sm btn-danger" type="submit">
+                            <span class="material-symbols-outlined" style="font-size:14px;">delete</span> Xóa
+                        </button>
                     </form>
                 </td>
             </tr>
@@ -75,14 +79,22 @@
 
 <div class="pagination">
     <?php if ($page > 1): ?>
-        <a href="/payments?<?= h(query_string(['page' => $page - 1])) ?>">← Trước</a>
+        <a href="/payments?<?= h(query_string(['page' => $page - 1])) ?>">
+            <span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">arrow_back</span> Trước
+        </a>
     <?php else: ?>
-        <span class="disabled">← Trước</span>
+        <span class="disabled">
+            <span class="material-symbols-outlined" style="font-size:16px; margin-right:4px;">arrow_back</span> Trước
+        </span>
     <?php endif; ?>
     <span class="current">Trang <?= h($page) ?> / <?= h($lastPage) ?></span>
     <?php if ($page < $lastPage): ?>
-        <a href="/payments?<?= h(query_string(['page' => $page + 1])) ?>">Sau →</a>
+        <a href="/payments?<?= h(query_string(['page' => $page + 1])) ?>">
+            Sau <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span>
+        </a>
     <?php else: ?>
-        <span class="disabled">Sau →</span>
+        <span class="disabled">
+            Sau <span class="material-symbols-outlined" style="font-size:16px; margin-left:4px;">arrow_forward</span>
+        </span>
     <?php endif; ?>
 </div>

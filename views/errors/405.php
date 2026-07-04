@@ -1,7 +1,10 @@
 <?php $allowedMethods = $allowedMethods ?? []; ?>
 <div class="error-page">
     <div>
-        <div class="error-code">405</div>
+        <div class="error-code">
+            <span class="material-symbols-outlined" style="font-size: 64px; display: block; margin-bottom: 12px; color: var(--warning);">block</span>
+            405
+        </div>
         <div>
             <h1 class="error-title">Phương thức không hợp lệ</h1>
             <p class="error-desc">
@@ -10,7 +13,9 @@
                     Vui lòng sử dụng: <strong><?= h(implode(', ', $allowedMethods)) ?></strong>.
                 <?php endif; ?>
             </p>
-            <a class="btn btn-primary" href="/">← Về trang chủ</a>
+            <a class="btn btn-primary" href="/">
+                <span class="material-symbols-outlined" style="font-size:16px;">home</span> Về trang chủ
+            </a>
         </div>
     </div>
 </div>

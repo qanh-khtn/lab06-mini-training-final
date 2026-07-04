@@ -18,32 +18,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var timer = setTimeout(dismiss, TOAST_DURATION);
 
-        toast.querySelector('.toast-close').addEventListener('click', function () {
-            clearTimeout(timer);
-            dismiss();
-        });
+        var closeBtn = toast.querySelector('.toast-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                clearTimeout(timer);
+                dismiss();
+            });
+        }
     });
 
-    /* --- Theme toggle --- */
+    /* --- Theme toggle (works on all pages) --- */
     var root = document.documentElement;
     var btn  = document.getElementById('theme-toggle');
 
-    if (!btn) return;
+    if (btn) {
+        function updateThemeTitle() {
+            btn.title = root.getAttribute('data-theme') === 'dark'
+                ? 'Chuyển sang chế độ sáng'
+                : 'Chuyển sang chế độ tối';
+        }
+        updateThemeTitle();
 
-    function updateTitle() {
-        btn.title = root.getAttribute('data-theme') === 'dark'
-            ? 'Chuyển sang chế độ sáng'
-            : 'Chuyển sang chế độ tối';
+        btn.addEventListener('click', function () {
+            var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.body.classList.add('theme-transitioning');
+            root.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeTitle();
+            setTimeout(function () { document.body.classList.remove('theme-transitioning'); }, 400);
+        });
     }
 
-    updateTitle();
+    /* --- Mobile Sidebar Toggle (independent of theme toggle) --- */
+    var menuToggle = document.getElementById('menu-toggle');
+    var backdrop   = document.getElementById('sidebar-backdrop');
 
-    btn.addEventListener('click', function () {
-        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.body.classList.add('theme-transitioning');
-        root.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-        updateTitle();
-        setTimeout(function () { document.body.classList.remove('theme-transitioning'); }, 400);
-    });
+    if (menuToggle && backdrop) {
+        menuToggle.addEventListener('click', function () {
+            document.body.classList.toggle('sidebar-active');
+        });
+
+        backdrop.addEventListener('click', function () {
+            document.body.classList.remove('sidebar-active');
+        });
+    }
 });

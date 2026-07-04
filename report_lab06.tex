@@ -1,0 +1,601 @@
+
+\section{THỰC HIỆN CÁC YÊU CẦU CỦA BÀI}
+
+\subsection{Link GitHub Repository}
+
+\textbf{Mã nguồn:} \href{https://github.com/qanh-khtn/lab06-mini-training-final}{GitHub Repo — lab06-mini-training-final}
+
+% ============================================================
+\subsection{Giao diện ứng dụng}
+
+Ứng dụng \textbf{Mini Training Center CRM (Lab06)} được xây dựng theo kiến trúc Front Controller: Browser $\rightarrow$ \texttt{public/index.php} $\rightarrow$ Router $\rightarrow$ Controller $\rightarrow$ Repository $\rightarrow$ PDO $\rightarrow$ MySQL $\rightarrow$ View/Redirect $\rightarrow$ Browser. Giao diện hỗ trợ hai chế độ sáng và tối, chuyển đổi qua nút tròn cố định ở góc dưới phải màn hình. Bài Lab06 bổ sung form công khai (không cần đăng nhập) để khách hàng tiềm năng đăng ký tư vấn, kèm honeypot chống spam và rate limiting 5 giây.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T10_login_test_A.jpg}
+    \caption{Trang đăng nhập — tài khoản demo: \texttt{admin@center.edu.vn} / \texttt{Admin@123}}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T20_leads_list.jpg}
+    \caption{Trang chính quản lý Lead tư vấn — danh sách phân trang, tìm kiếm và sắp xếp theo cột}
+\end{figure}
+
+% ============================================================
+\subsection{Kết quả kiểm thử chức năng (Test Cases T01--T30)}
+
+Phần này trình bày kết quả kiểm thử toàn bộ 30 ca kiểm thử theo checklist Lab06 Final. Mỗi ca kiểm thử bao gồm ảnh chụp màn hình minh chứng và nhận xét ngắn về kết quả thu được.
+
+% ----------------------------------------------------------
+\subsubsection{T01 — Kiểm tra môi trường}
+
+\textbf{Mục đích:} Xác nhận môi trường PHP có extension \texttt{pdo\_mysql} và MySQL đang chạy qua Docker.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/Lab06/basic/T01_php_env.jpg}
+    \caption{Terminal chạy \texttt{php -v} và \texttt{php -m | findstr pdo\_mysql} — PHP 8.1+ với extension PDO MySQL đã được bật}
+\end{figure}
+
+\textbf{Kết luận:} Extension \texttt{pdo\_mysql} được bật trong \texttt{php.ini}. MySQL chạy trong Docker container thay vì cài trực tiếp trên máy, giúp môi trường phát triển sạch và dễ tái tạo.
+
+% ----------------------------------------------------------
+\subsubsection{T02 — Cấu trúc project}
+
+\textbf{Mục đích:} Xác nhận project có cấu trúc thư mục rõ ràng, phân tách đúng vai trò từng tầng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T02_project_structure.jpg}
+    \caption{VS Code Explorer — cây thư mục phân tầng: \texttt{app/Core}, \texttt{app/Controllers}, \texttt{app/Repositories}, \texttt{app/Services}, \texttt{config/}, \texttt{database/}, \texttt{views/}, \texttt{public/}}
+\end{figure}
+
+\textbf{Kết luận:} Dự án kế thừa kiến trúc Front Controller từ Lab05 và bổ sung tầng Service cho Lab06. Toàn bộ request đi qua \texttt{public/index.php}, được Router phân phối đến Controller. Service xử lý logic nghiệp vụ, Repository thực thi SQL. Config tách biệt để dễ thay đổi môi trường mà không cần sửa logic.
+
+% ----------------------------------------------------------
+\subsubsection{T03 — Front Controller và Router}
+
+\textbf{Mục đích:} Xác nhận \texttt{public/index.php} là entry point duy nhất và route table có GET/POST hợp lệ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T03_router_code.jpg}
+    \caption{Code \texttt{public/index.php} — route table hiển thị GET/POST routes cho toàn bộ module bao gồm cả \texttt{/public-leads} công khai}
+\end{figure}
+
+\textbf{Kết luận:} Front Controller pattern đảm bảo mọi request đều đi qua \texttt{public/index.php}. Router phân phối request đến Controller phù hợp. Tất cả route (GET/POST) đều được khai báo tường minh, không sử dụng wildcard hoặc magic routing.
+
+% ----------------------------------------------------------
+\subsubsection{T04 — Session cookie setup}
+
+\textbf{Mục đích:} Xác nhận cookie session được cấu hình với HttpOnly, SameSite, Secure flags.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T04_session_setup.jpg}
+    \caption{Code \texttt{public/index.php} — \texttt{session\_set\_cookie\_params()} với \texttt{httponly: true}, \texttt{samesite: 'Lax'}, \texttt{secure} conditional}
+\end{figure}
+
+\textbf{Kết luận:} HttpOnly flag ngăn JavaScript truy cập cookie session, giúp chống XSS. SameSite=Lax chống CSRF. Secure flag yêu cầu HTTPS (bỏ qua ở localhost). Các flag này được cấu hình trước \texttt{session\_start()}.
+
+% ----------------------------------------------------------
+\subsubsection{T05 — Helpers cơ bản}
+
+\textbf{Mục đích:} Xác nhận có các helper function e(), redirect(), render(), partial(), flash(), old(), require\_login().
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T05_helpers_code_1.jpg}
+    \caption{Code \texttt{app/Support/helpers.php} — phần đầu chứa \texttt{function h()}, \texttt{function e()} (alias), \texttt{function redirect()}}
+\end{figure}
+
+\textbf{Kết luận:} Helper functions cung cấp tiện ích chung: \texttt{e()/h()} escape HTML output (chống XSS), \texttt{redirect()} chuyển hướng HTTP, \texttt{flash()} lưu message tạm, \texttt{old()} giữ lại input cũ khi form lỗi, \texttt{require\_login()} kiểm tra session và buộc đăng nhập.
+
+% ----------------------------------------------------------
+\subsubsection{T06 — Layout và Partial}
+
+\textbf{Mục đích:} Xác nhận có layout chung (navbar, footer), không lặp HTML ở view con.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T06_layout_code.jpg}
+    \caption{Code \texttt{views/layout.php} — navbar, flash messages, footer — layout chung cho mọi page}
+\end{figure}
+
+\textbf{Kết luận:} Layout chung chứa navbar, flash message container, dark mode toggle. View con chỉ chứa nội dung riêng, tránh lặp lại HTML header/footer. Pattern này tăng tốc độ bảo trì và đảm bảo giao diện nhất quán.
+
+% ----------------------------------------------------------
+\subsubsection{T07 — Public form secure}
+
+\textbf{Mục đích:} Xác nhận form công khai validate server-side, giữ old input, hiển thị lỗi đúng field.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T07_public_form_error.jpg}
+    \caption{Form công khai \texttt{/public-leads/create} nhận input không hợp lệ — lỗi hiển thị dưới mỗi field, dữ liệu cũ được giữ lại}
+\end{figure}
+
+\textbf{Kết luận:} Form công khai không tin tưởng client-side validation. Server-side kiểm tra bắt buộc, format email, độ dài field. Nếu lỗi, form render lại kèm \texttt{\$\_GET['old']} để user không phải nhập lại toàn bộ.
+
+% ----------------------------------------------------------
+\subsubsection{T08 — PRG pattern}
+
+\textbf{Mục đích:} Xác nhận sau submit hợp lệ, form redirect (PRG). F5 không tạo dữ liệu trùng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T08_prg_redirect.jpg}
+    \caption{Browser sau submit form — URL bar chỉ \texttt{/public-leads/create}, không hiển thị POST data nữa. F5 load trang GET bình thường}
+\end{figure}
+
+\textbf{Kết luận:} POST request được xử lý, sau đó redirect về GET. Người dùng không thể F5 để resubmit vô tình. Dữ liệu được insert chỉ 1 lần. Flash message "Cảm ơn" hiển thị sau redirect.
+
+% ----------------------------------------------------------
+\subsubsection{T09 — Honeypot và Rate limit}
+
+\textbf{Mục đích:} Xác nhận form chứa honeypot field ẩn; submit quá nhanh bị chặn 5 giây.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T09_honeypot.jpg}
+    \caption{Browser F12 inspect HTML — input \texttt{name="website"} ẩn bằng CSS \texttt{position: absolute; left: -9999px}}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T09_ratelimit.jpg}
+    \caption{Submit form 2 lần trong 3 giây — lần 2 hiển thị lỗi "Vui lòng đợi 5 giây"}
+\end{figure}
+
+\textbf{Kết luận:} Honeypot field được kiểm tra server-side; nếu có giá trị, request bị từ chối. Rate limit dùng session để theo dõi timestamp submit gần nhất. Nếu cách nhau <5s, reject request mới.
+
+% ----------------------------------------------------------
+\subsubsection{T10 — Login test}
+
+\textbf{Mục đích:} Xác nhận login sai báo lỗi; login đúng redirect dashboard.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T10_login_test_A.jpg}
+    \caption{Login form nhập sai password — hiển thị lỗi "Email hoặc mật khẩu không đúng"}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T10_login_test_B.jpg}
+    \caption{Login form nhập đúng (\texttt{admin@center.edu.vn/Admin@123}) — redirect trang dashboard}
+\end{figure}
+
+\textbf{Kết luận:} AuthService xác thực password bằng \texttt{password\_verify()}. Nếu sai, hiển thị lỗi chung (không phân biệt email sai hay password sai, chống user enumeration). Login đúng tạo session user.
+
+% ----------------------------------------------------------
+\subsubsection{T11 — Session regenerate}
+
+\textbf{Mục đích:} Xác nhận \texttt{session\_regenerate\_id(true)} được gọi sau login thành công.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T11_session_regenerate.jpg}
+    \caption{Code \texttt{app/Controllers/AuthController.php} — hàm \texttt{handleLogin()} gọi \texttt{session\_regenerate\_id(true)} sau xác thực password}
+\end{figure}
+
+\textbf{Kết luận:} Session ID được thay đổi sau login, tránh session fixation attack. True parameter xóa file session cũ.
+
+% ----------------------------------------------------------
+\subsubsection{T12 — Timeout và Logout sạch}
+
+\textbf{Mục đích:} Xác nhận logout xóa session, destroy session; timeout redirect login.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T12_logout_code.jpg}
+    \caption{Sau logout, truy cập \texttt{/leads} (cần login) được redirect \texttt{/login}}
+\end{figure}
+
+\textbf{Kết luận:} Logout gọi \texttt{session\_destroy()}, xóa session data và cookie. Timeout dùng helper \texttt{check\_session\_timeout()} kiểm tra \texttt{\$\_SESSION['last\_activity\_at']}; nếu quá 15 phút, logout và redirect.
+
+% ----------------------------------------------------------
+\subsubsection{T13 — Database schema}
+
+\textbf{Mục đích:} Xác nhận database có 3 bảng (\texttt{users}, \texttt{leads}, \texttt{payments}) với primary key, unique, index.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T13_schema_sql.jpg}
+    \caption{phpMyAdmin — bảng \texttt{leads} tab Structure: Primary Key, unique index \texttt{email}, composite index \texttt{care\_status + created\_at}}
+\end{figure}
+
+\textbf{Kết luận:} Bảng \texttt{users}: \texttt{id, email (unique), password, name, role, status, created\_at, updated\_at}. Bảng \texttt{leads}: \texttt{id, full\_name, email (unique), phone, course\_interest, care\_status, note, created\_at, updated\_at, deleted\_at}. Bảng \texttt{payments}: \texttt{id, payment\_code (unique), student\_name, ..., created\_at, updated\_at, deleted\_at}.
+
+% ----------------------------------------------------------
+\subsubsection{T14 — Seed dữ liệu}
+
+\textbf{Mục đích:} Xác nhận đã có ≥20 dữ liệu per module để test pagination.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T14_seed_count_leads.jpg}
+    \caption{phpMyAdmin — bảng \texttt{leads}: COUNT(*) = 23}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T14_seed_count_payments.jpg}
+    \caption{phpMyAdmin — bảng \texttt{payments}: COUNT(*) = 20+}
+\end{figure}
+
+\textbf{Kết luận:} Dữ liệu được nạp từ \texttt{database/schema.sql} và \texttt{database/seed.sql} khi Docker khởi tạo MySQL. Đủ 20+ dòng per module để kiểm thử phân trang (10 dòng/trang = 2+ trang).
+
+% ----------------------------------------------------------
+\subsubsection{T15 — PDO chuẩn}
+
+\textbf{Mục đích:} Xác nhận PDO được cấu hình \texttt{charset=utf8mb4}, \texttt{ERRMODE\_EXCEPTION}, \texttt{FETCH\_ASSOC}, \texttt{EMULATE\_PREPARES=false}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T15_pdo_config.jpg}
+    \caption{Code \texttt{app/Core/Database.php} — DSN và setAttribute}
+\end{figure}
+
+\textbf{Kết luận:} Charset UTF-8 đầy đủ hỗ trợ tiếng Việt. ERRMODE exception buộc ném lỗi thay vì âm thầm. FETCH\_ASSOC trả mảng theo key. EMULATE\_PREPARES=false buộc MySQL xử lý prepared statement thật (chống SQL injection).
+
+% ----------------------------------------------------------
+\subsubsection{T16 — Repository prepared statements}
+
+\textbf{Mục đích:} Xác nhận SQL nằm trong Repository, dùng \texttt{prepare/execute}, không nối chuỗi.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T16_prepared_stmt.jpg}
+    \caption{Code \texttt{app/Repositories/LeadRepository.php} — \texttt{create()} dùng named placeholder (\texttt{:full\_name}, etc.), \texttt{prepare/execute}}
+\end{figure}
+
+\textbf{Kết luận:} Mọi SQL đều dùng named placeholder. Execute truyền dữ liệu riêng biệt với SQL. Loại bỏ hoàn toàn SQL injection.
+
+% ----------------------------------------------------------
+\subsubsection{T17 — Service layer}
+
+\textbf{Mục đích:} Xác nhận Service xử lý validate, duplicate handling; Controller không chứa logic phức tạp.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T17_service_create.jpg}
+    \caption{Code \texttt{app/Services/LeadService.php} — hàm \texttt{create()} gọi \texttt{validate()}, bắt \texttt{DuplicateRecordException}}
+\end{figure}
+
+\textbf{Kết luận:} Service xử lý tất cả logic: validate input, check duplicate, gọi Repository. Controller chỉ điều phối HTTP request/response.
+
+% ----------------------------------------------------------
+\subsubsection{T18 — Controller mỏng}
+
+\textbf{Mục đích:} Xác nhận Controller chỉ đọc request, gọi Service, render/redirect. Không SQL.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T18_controller_thin.jpg}
+    \caption{Code \texttt{app/Controllers/LeadController.php} — method \texttt{store()}: 1-2 dòng logic}
+\end{figure}
+
+\textbf{Kết luận:} Controller mỏng, dễ kiểm thử và maintain. Tất cả business logic nằm Service.
+
+% ----------------------------------------------------------
+\subsubsection{T19 — View an toàn}
+
+\textbf{Mục đích:} Xác nhận mọi output từ DB dùng \texttt{e()} hoặc \texttt{h()} escape.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T19_view_safe.jpg}
+    \caption{Code \texttt{views/leads/index.php} — mỗi output dùng \texttt{h(\$variable)}}
+\end{figure}
+
+\textbf{Kết luận:} View không bao giờ output dữ liệu raw. Tất cả dữ liệu từ DB hoặc user input được escape bằng \texttt{h()}.
+
+% ----------------------------------------------------------
+\subsubsection{T20 — Module A CRUD}
+
+\textbf{Mục đích:} Xác nhận Module A (Lead) có List, Create, Edit, Update, Delete hoạt động đúng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T20_leads_list.jpg}
+    \caption{Trang danh sách \texttt{/leads} — hiển thị bảng lead, nút "Thêm", "Sửa", "Xóa"}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T20_leads_create_form.jpg}
+    \caption{Form tạo lead mới}
+\end{figure}
+
+\textbf{Kết luận:} Module A CRUD đầy đủ: List hiển thị phân trang, Create/Edit form có validate, Delete dùng POST.
+
+% ----------------------------------------------------------
+\subsubsection{T21 — Module A duplicate error}
+
+\textbf{Mục đích:} Xác nhận email trùng báo lỗi thân thiện, không lộ SQLSTATE.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T21_duplicate_error.jpg}
+    \caption{Tạo lead với email đã tồn tại — lỗi "Email đã tồn tại trong hệ thống"}
+\end{figure}
+
+\textbf{Kết luận:} Service bắt \texttt{DuplicateRecordException} từ Repository, chuyển thành lỗi thân thiện cho user.
+
+% ----------------------------------------------------------
+\subsubsection{T22 — Module B CRUD}
+
+\textbf{Mục đích:} Xác nhận Module B (Payment) có List, Create, Edit, Update, Delete.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T22_payments_list.jpg}
+    \caption{Trang danh sách \texttt{/payments}}
+\end{figure}
+
+\textbf{Kết luận:} Module B CRUD đầy đủ tương tự Module A.
+
+% ----------------------------------------------------------
+\subsubsection{T23 — Module B duplicate error}
+
+\textbf{Mục đích:} Xác nhận payment\_code trùng báo lỗi đúng field.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T23_duplicate_payment.jpg}
+    \caption{Tạo payment với code đã tồn tại — lỗi đúng field}
+\end{figure}
+
+\textbf{Kết luận:} Duplicate handling Module B tương tự Module A.
+
+% ----------------------------------------------------------
+\subsubsection{T24 — Search, Pagination, Sort}
+
+\textbf{Mục đích:} Xác nhận search (\texttt{?q=}), pagination (\texttt{?page=}), sort (\texttt{?sort=}) hoạt động đúng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T24_search.jpg}
+    \caption{Search form nhập keyword — danh sách filter hợp lệ}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T24_pagination.jpg}
+    \caption{Click trang 2 — URL bar chỉ \texttt{?page=2}, danh sách page 2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T24_search_pagination.jpg}
+    \caption{Kết hợp search + pagination + sort — URL \texttt{?q=keyword\&page=2\&sort=full\_name\&dir=asc}}
+\end{figure}
+
+\textbf{Kết luận:} Search, pagination, sort đều hoạt động tách biệt và kết hợp được.
+
+% ----------------------------------------------------------
+\subsubsection{T25 — Sort an toàn (SQL injection test)}
+
+\textbf{Mục đích:} Xác nhận tham số sort được whitelist, không thực thi SQL nguy hiểm.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T25_sort_safe.jpg}
+    \caption{URL \texttt{?sort=id;DROP\%20TABLE...} — danh sách vẫn load bình thường, không lỗi SQL}
+\end{figure}
+
+\textbf{Kết luận:} Tham số sort được kiểm tra qua SORT\_WHITELIST; nếu sai dùng mặc định. Không bao giờ thực thi SQL nguy hiểm từ URL.
+
+% ----------------------------------------------------------
+\subsubsection{T26 — Health JSON}
+
+\textbf{Mục đích:} Xác nhận \texttt{GET /health} trả JSON status OK.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/Lab06/basic/T26_health_json.jpg}
+    \caption{Browser \texttt{http://localhost:8000/health} trả JSON}
+\end{figure}
+
+\textbf{Kết luận:} Health check endpoint cung cấp status app/database dưới dạng JSON.
+
+% ----------------------------------------------------------
+\subsubsection{T27 — 404 và 405 Errors}
+
+\textbf{Mục đích:} Xác nhận \texttt{/unknown} trả 404; \texttt{POST /health} trả 405.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T27_404.jpg}
+    \caption{Browser \texttt{/unknown} — trang 404 "Không tìm thấy trang"}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T27_405.jpg}
+    \caption{POST request tới \texttt{/health} — HTTP 405 Method Not Allowed}
+\end{figure}
+
+\textbf{Kết luận:} Error pages được thiết kế theo asymmetric layout, tự động sync với light/dark mode, hiển thị lỗi thân thiện không lộ chi tiết kỹ thuật.
+
+% ----------------------------------------------------------
+\subsubsection{T28 — Production safe error}
+
+\textbf{Mục đích:} Xác nhận \texttt{debug=false} không hiện SQLSTATE, ghi log để developer.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T28_safe_error.jpg}
+    \caption{Trang 500 khi database lỗi — chỉ hiển thị "Đã có lỗi xảy ra", không lộ chi tiết}
+\end{figure}
+
+\textbf{Kết luận:} Khi \texttt{debug=false} (production), error page hiển thị message an toàn. Chi tiết lỗi được ghi vào log file để developer debug sau.
+
+% ----------------------------------------------------------
+\subsubsection{T28b — Error log file}
+
+\textbf{Mục đích:} Xác nhận lỗi được ghi chi tiết vào \texttt{storage/logs/app.log}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T28b_error_log.jpg}
+    \caption{File \texttt{storage/logs/app.log} chứa chi tiết lỗi: timestamp, SQLSTATE, stack trace}
+\end{figure}
+
+\textbf{Kết luận:} Production-safe error handling: user thấy message an toàn, developer có log chi tiết để debug.
+
+% ----------------------------------------------------------
+\subsubsection{T29 — EXPLAIN và Index}
+
+\textbf{Mục đích:} Xác nhận query list/filter có index phù hợp.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T29_explain.jpg}
+    \caption{phpMyAdmin EXPLAIN — query \texttt{WHERE care\_status='new' ORDER BY created\_at DESC} dùng composite index \texttt{idx\_leads\_care\_status\_created\_at}}
+\end{figure}
+
+\textbf{Kết luận:} Index được thiết kế để hỗ trợ query filter + sort. EXPLAIN plan hiển thị \texttt{key=idx\_...}, chứng minh query sử dụng index hiệu quả.
+
+% ----------------------------------------------------------
+\subsubsection{T30 — GitHub và README}
+
+\textbf{Mục đích:} Xác nhận GitHub repo có README, commit history rõ ràng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T30_github_readme.jpg}
+    \caption{GitHub repo — README render, commit history, cấu trúc thư mục}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T30_git_log.jpg}
+    \caption{Terminal \texttt{git log --oneline -10} — 10+ commit rõ ràng}
+\end{figure}
+
+\textbf{Kết luận:} Mã nguồn được push lên GitHub với README đầy đủ (cài đặt, routes, tài khoản demo, cấu trúc). Commit history ghi lại toàn bộ quá trình phát triển.
+
+% ============================================================
+\subsection{Bảng kiểm thử chức năng — Test Result (Câu 1B)}
+
+Phần này trình bày bảng kết quả kiểm thử 25 test case bắt buộc theo yêu cầu Câu 1B của Lab06. Mỗi test case bao gồm: mã test, cách test, kết quả mong đợi, kết quả thực tế, ảnh minh chứng và kết luận Pass/Fail.
+
+\begin{longtable}{|p{0.8cm}|p{2cm}|p{2cm}|p{2cm}|p{1.2cm}|p{0.5cm}|}
+\hline
+\textbf{Mã} & \textbf{Cách test} & \textbf{Kết quả mong đợi} & \textbf{Kết quả thực tế} & \textbf{Ảnh} & \textbf{P/F} \\
+\hline
+\endhead
+
+TC01 & GET /login & Form login hiển thị, không yêu cầu session &  & T10 &  \\
+\hline
+
+TC02 & Login sai mật khẩu & Hiện lỗi thân thiện, không tạo session user &  & T10 &  \\
+\hline
+
+TC03 & Login đúng & Redirect /dashboard, session user tạo, flash 1 lần &  & T10 &  \\
+\hline
+
+TC04 & Truy cập /dashboard khi chưa login & Redirect /login &  & T12 &  \\
+\hline
+
+TC05 & Logout & Destroy session, không truy cập nếu chưa login lại &  & T12 &  \\
+\hline
+
+TC06 & Timeout phiên & Quá thời gian quy định buộc login lại &  & T12 &  \\
+\hline
+
+TC07 & Public form thiếu required field & Lỗi cạnh field, giữ old input &  & T07 &  \\
+\hline
+
+TC08 & Public form honeypot & Field ẩn có dữ liệu → request bị từ chối &  & T09 &  \\
+\hline
+
+TC09 & Public form submit hợp lệ & PRG redirect, flash success, F5 không trùng &  & T08 &  \\
+\hline
+
+TC10 & Module A create thiếu required & Không lưu DB, hiện lỗi đúng field &  & T07 &  \\
+\hline
+
+TC11 & Module A create hợp lệ & Redirect list, flash success, DB có dòng mới &  & T20 &  \\
+\hline
+
+TC12 & Module A duplicate unique key & Lỗi thân thiện, không lộ SQLSTATE &  & T21 &  \\
+\hline
+
+TC13 & Module A edit/update & Form lấy dữ liệu cũ theo id; update redirect list &  & T20 &  \\
+\hline
+
+TC14 & Module A delete bằng POST & Xóa/soft-delete thành công, GET delete từ chối &  & T20 &  \\
+\hline
+
+TC15 & Module B create hợp lệ & Redirect list, flash success &  & T22 &  \\
+\hline
+
+TC16 & Module B duplicate unique key & Hiện lỗi đúng field &  & T23 &  \\
+\hline
+
+TC17 & Search /module-a?q=\ldots & Chỉ hiển thị dữ liệu khớp từ khóa &  & T24 &  \\
+\hline
+
+TC18 & Page âm/quá lớn & Page chuẩn hóa về 1 hoặc totalPages &  & T24 &  \\
+\hline
+
+TC19 & Sort hợp lệ & Danh sách sort đúng cột và direction &  & T24 &  \\
+\hline
+
+TC20 & Sort nguy hiểm & Không chạy SQL nguy hiểm, dùng default &  & T25 &  \\
+\hline
+
+TC21 & GET /health & JSON status app/db &  & T26 &  \\
+\hline
+
+TC22 & POST /health & 405 Method Not Allowed &  & T27 &  \\
+\hline
+
+TC23 & GET /unknown & 404 Not Found &  & T27 &  \\
+\hline
+
+TC24 & DB lỗi, debug=false & Không hiện SQLSTATE/tên bảng/path &  & T28 &  \\
+\hline
+
+TC25 & EXPLAIN query list & Query có index phù hợp khi filter/sort &  & T29 &  \\
+\hline
+
+\end{longtable}
+
+\textbf{Tóm tắt:} Tất cả 25 test case bắt buộc theo Câu 1B, bao quát: login/logout/timeout, public form (validation/honeypot/rate-limit/PRG), Module A+B CRUD, duplicate handling, search/pagination/sort an toàn, health check, error pages (404/405/500) an toàn, EXPLAIN index phù hợp. Sinh viên cần điền đầy đủ: Kết quả thực tế, Ảnh tương ứng, và Pass/Fail sau khi test thực tế trên máy.
+
+% ----------------------------------------------------------
+\subsection{Đẩy code lên GitHub}
+
+Toàn bộ mã nguồn được quản lý phiên bản trên GitHub với lịch sử commit rõ ràng theo từng mốc phát triển. Tất cả commit đều dùng tên tác giả \texttt{qanh-khtn} và message theo quy ước \texttt{type(scope): description}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T30_github_readme.jpg}
+    \caption{GitHub repository \texttt{qanh-khtn/lab06-mini-training-final} — trang chính hiển thị danh sách file, commit message gần nhất và README được render}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/Lab06/basic/T30_git_log.jpg}
+    \caption{Terminal \texttt{git log --oneline -10} — lịch sử commit với tên tác giả \texttt{qanh-khtn}, message đúng quy ước \texttt{feat/fix/refactor/docs} theo tiến độ thực hiện từng tính năng}
+\end{figure}
+
+% ============================================================
+\section{CÁC TÍNH NĂNG MỞ RỘNG (LÀM THÊM)}
+
+[Phần này sẽ được hoàn thành sau]
+
+% ============================================================
+\section{TRẢ LỜI CÂU HỎI PROBLEM SOLVING (CÂU 2)}
+
+[Phần này sẽ được hoàn thành sau]
+
+% ============================================================
+\section{KẾT LUẬN}
+
+[Phần này sẽ được hoàn thành sau]

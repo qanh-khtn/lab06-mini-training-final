@@ -14,45 +14,128 @@ $flashTypeMap = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= h($title ?? 'Mini Training Center CRM') ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/style.css">
     <script src="/assets/app.js"></script>
 </head>
-<body>
-    <header class="navbar">
-        <a class="brand" href="/">
+<?php
+$showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register', '/public-leads/create']);
+?>
+<body class="<?= $showSidebar ? 'flex-layout' : 'no-sidebar' ?>">
+    <?php if ($showSidebar): ?>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <span class="brand-logo">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
+                <span class="material-symbols-outlined" style="color:#fff; font-size: 20px;">school</span>
             </span>
-            Training Center CRM
-        </a>
-        <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">Dashboard</a>
-        <?php if (is_logged_in()): ?>
-        <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">Lead tư vấn</a>
-        <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">Thanh toán</a>
-        <a class="<?= $currentPath === '/leads/create' ? 'active' : '' ?>" href="/leads/create">Thêm tư vấn</a>
-        <a class="<?= $currentPath === '/payments/create' ? 'active' : '' ?>" href="/payments/create">Thêm thanh toán</a>
-        <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">Thống kê</a>
-        <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-        <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">Duyệt tài khoản</a>
-        <a class="<?= $currentPath === '/admin/logs' ? 'active' : '' ?>" href="/admin/logs">Nhật ký</a>
-        <?php endif; ?>
-        <div class="navbar-right">
-            <span class="navbar-user"><?= h($_SESSION['user_name'] ?? '') ?></span>
-            <form method="POST" action="/logout" style="display:inline;">
+            <div>
+                <h2>MTC Admin</h2>
+                <p>Operational Suite</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">
+                        <span class="material-symbols-outlined">group</span>
+                        <span>Leads</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">
+                        <span class="material-symbols-outlined">payments</span>
+                        <span>Payments</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <span>Stats</span>
+                    </a>
+                </li>
+                <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+                <li>
+                    <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">
+                        <span class="material-symbols-outlined">admin_panel_settings</span>
+                        <span>Admin</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="<?= $currentPath === '/admin/logs' ? 'active' : '' ?>" href="/admin/logs">
+                        <span class="material-symbols-outlined">history</span>
+                        <span>Logs</span>
+                    </a>
+                </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="username"><?= h($_SESSION['user_name'] ?? '') ?></span>
+                <span class="role"><?= h($_SESSION['user_role'] ?? '') ?></span>
+            </div>
+            <form method="POST" action="/logout" id="logout-form">
                 <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
-                <button type="submit" class="btn btn-sm btn-secondary">Đăng xuất</button>
+                <button type="submit" class="logout-link">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Đăng xuất</span>
+                </button>
             </form>
         </div>
-        <?php else: ?>
-        <div class="navbar-right">
-            <a href="/login" style="color:rgba(255,255,255,.7);padding:0 6px;">Đăng nhập</a>
-        </div>
-        <?php endif; ?>
-    </header>
+    </aside>
 
+    <!-- Sidebar Backdrop for Mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <?php endif; ?>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <?php if ($showSidebar): ?>
+        <!-- TopNavBar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="topbar-search">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="Tìm kiếm nhanh..." disabled>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="topbar-btn" id="theme-toggle" type="button">
+                    <span class="material-symbols-outlined sun-icon">light_mode</span>
+                    <span class="material-symbols-outlined moon-icon">dark_mode</span>
+                </button>
+                <button class="topbar-btn" type="button" title="Thông báo">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="topbar-btn" type="button" title="Hỗ trợ">
+                    <span class="material-symbols-outlined">help</span>
+                </button>
+                <div class="user-avatar" title="<?= h($_SESSION['user_name'] ?? '') ?>">
+                    <?= h(strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 2))) ?>
+                </div>
+            </div>
+        </header>
+        <?php endif; ?>
+
+        <!-- Canvas -->
+        <main class="canvas">
+            <?php require view_path($view); ?>
+        </main>
+    </div>
+
+    <!-- Toast container -->
     <?php $flashes = flash_get(); ?>
     <?php if ($flashes): ?>
     <div class="toast-container" id="toast-container">
@@ -62,18 +145,18 @@ $flashTypeMap = [
                 <div class="toast toast-<?= h($tone) ?>" role="alert">
                     <span class="toast-icon">
                         <?php if ($tone === 'success'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span class="material-symbols-outlined">check_circle</span>
                         <?php elseif ($tone === 'danger'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            <span class="material-symbols-outlined">error</span>
                         <?php elseif ($tone === 'warning'): ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span class="material-symbols-outlined">warning</span>
                         <?php else: ?>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span class="material-symbols-outlined">info</span>
                         <?php endif; ?>
                     </span>
                     <span class="toast-msg"><?= h($message) ?></span>
                     <button class="toast-close" aria-label="Đóng">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <span class="material-symbols-outlined">close</span>
                     </button>
                     <div class="toast-progress"></div>
                 </div>
@@ -82,23 +165,13 @@ $flashTypeMap = [
     </div>
     <?php endif; ?>
 
-    <main class="container">
-        <?php require view_path($view); ?>
-    </main>
-
+    <?php if (!$showSidebar): ?>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Chuyển giao diện sáng/tối">
         <span class="theme-toggle-inner">
-            <svg class="toggle-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <svg class="toggle-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
+            <span class="material-symbols-outlined sun-icon">light_mode</span>
+            <span class="material-symbols-outlined moon-icon">dark_mode</span>
         </span>
     </button>
+    <?php endif; ?>
 </body>
 </html>

@@ -38,12 +38,16 @@
                     <form class="inline-form" method="post" action="/admin/users/approve">
                         <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                         <input type="hidden" name="id" value="<?= h($user['id']) ?>">
-                        <button class="btn btn-sm btn-primary" type="submit">Phê duyệt</button>
+                        <button class="btn btn-sm btn-success" type="submit">
+                            <span class="material-symbols-outlined" style="font-size:14px;">check</span> Phê duyệt
+                        </button>
                     </form>
                     <form class="inline-form" method="post" action="/admin/users/reject">
                         <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                         <input type="hidden" name="id" value="<?= h($user['id']) ?>">
-                        <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Từ chối tài khoản này?')">Từ chối</button>
+                        <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Từ chối tài khoản này?')">
+                            <span class="material-symbols-outlined" style="font-size:14px;">close</span> Từ chối
+                        </button>
                     </form>
                 </td>
             </tr>

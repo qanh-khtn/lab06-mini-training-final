@@ -12,19 +12,28 @@ $courseOptions = $courseOptions ?? [];
 
     <div class="form-group">
         <label>Mã thanh toán * <span class="muted">(không trùng)</span></label>
-        <input type="text" name="payment_code" value="<?= h($old['payment_code'] ?? '') ?>" class="<?= isset($errors['payment_code']) ? 'input-error' : '' ?>" placeholder="VD: HP-2026-0001">
+        <div class="icon-input-group">
+            <span class="material-symbols-outlined">qr_code</span>
+            <input type="text" name="payment_code" value="<?= h($old['payment_code'] ?? '') ?>" class="<?= isset($errors['payment_code']) ? 'input-error' : '' ?>" placeholder="VD: HP-2026-0001">
+        </div>
         <?php if (isset($errors['payment_code'])): ?><p class="field-error"><?= h($errors['payment_code']) ?></p><?php endif; ?>
     </div>
 
     <div class="form-row">
         <div class="form-group">
             <label>Tên học viên *</label>
-            <input type="text" name="student_name" value="<?= h($old['student_name'] ?? '') ?>" class="<?= isset($errors['student_name']) ? 'input-error' : '' ?>">
+            <div class="icon-input-group">
+                <span class="material-symbols-outlined">person</span>
+                <input type="text" name="student_name" value="<?= h($old['student_name'] ?? '') ?>" class="<?= isset($errors['student_name']) ? 'input-error' : '' ?>" placeholder="Nguyễn Văn A">
+            </div>
             <?php if (isset($errors['student_name'])): ?><p class="field-error"><?= h($errors['student_name']) ?></p><?php endif; ?>
         </div>
         <div class="form-group">
             <label>Email học viên</label>
-            <input type="text" name="student_email" value="<?= h($old['student_email'] ?? '') ?>" class="<?= isset($errors['student_email']) ? 'input-error' : '' ?>">
+            <div class="icon-input-group">
+                <span class="material-symbols-outlined">mail</span>
+                <input type="text" name="student_email" value="<?= h($old['student_email'] ?? '') ?>" class="<?= isset($errors['student_email']) ? 'input-error' : '' ?>" placeholder="ten@example.com">
+            </div>
             <?php if (isset($errors['student_email'])): ?><p class="field-error"><?= h($errors['student_email']) ?></p><?php endif; ?>
         </div>
     </div>
@@ -64,12 +73,14 @@ $courseOptions = $courseOptions ?? [];
 
     <div class="form-group">
         <label>Ghi chú</label>
-        <textarea name="note" rows="3"><?= h($old['note'] ?? '') ?></textarea>
+        <textarea name="note" rows="3" placeholder="Nhập ghi chú chi tiết về phiếu thanh toán..."><?= h($old['note'] ?? '') ?></textarea>
         <?php if (isset($errors['note'])): ?><p class="field-error"><?= h($errors['note']) ?></p><?php endif; ?>
     </div>
 
-    <div class="form-row">
-        <button class="btn btn-primary" type="submit"><?= h($submitLabel) ?></button>
+    <div class="form-row" style="margin-top: 24px;">
+        <button class="btn btn-primary" type="submit">
+            <span class="material-symbols-outlined" style="font-size:16px;">save</span> <?= h($submitLabel) ?>
+        </button>
         <a class="btn btn-secondary" href="/payments">Hủy</a>
     </div>
 </form>
