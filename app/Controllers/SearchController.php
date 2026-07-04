@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\Database;
 use App\Repositories\LeadRepository;
 use App\Repositories\PaymentRepository;
 use App\Support\Response;
@@ -13,18 +14,19 @@ class SearchController {
     public function api() {
         // Require login
         if (!is_logged_in()) {
-            return Response::json(['error' => 'Unauthorized'], 401);
+            Response::json(401, ['error' => 'Unauthorized']);
         }
 
         $query = $_GET['q'] ?? '';
 
         if (strlen(trim($query)) < 2) {
-            return Response::json(['results' => []]);
+            Response::json(200, ['results' => []]);
         }
 
         $query = trim($query);
-        $leadRepo = new LeadRepository();
-        $paymentRepo = new PaymentRepository();
+        $db = Database::connection();
+        $leadRepo = new LeadRepository($db);
+        $paymentRepo = new PaymentRepository($db);
 
         // Search leads by full_name, email, phone
         $leads = $leadRepo->search($query, limit: 5);
@@ -53,6 +55,6 @@ class SearchController {
             ];
         }
 
-        return Response::json(['results' => $results]);
+        Response::json(200, ['results' => $results]);
     }
 }

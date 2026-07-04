@@ -99,6 +99,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 notifMenu.classList.remove('show');
             }
         });
+
+        // Mark notification as read on click
+        var notifItems = notifMenu.querySelectorAll('.notif-item');
+        notifItems.forEach(function (item) {
+            item.addEventListener('click', function (e) {
+                if (!item.classList.contains('unread')) return;
+
+                // Prevent default link behavior temporarily to mark as read
+                e.preventDefault();
+
+                // Mark as read
+                item.classList.remove('unread');
+                item.style.backgroundColor = 'var(--bg-2)';
+
+                // Update unread badge count
+                var unreadCount = notifMenu.querySelectorAll('.notif-item.unread').length;
+                var badge = notifBtn.querySelector('.notif-badge');
+                if (badge) {
+                    badge.textContent = Math.max(0, unreadCount);
+                    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                }
+
+                // Navigate after a short delay
+                setTimeout(function () {
+                    window.location.href = item.href;
+                }, 150);
+            });
+        });
     }
 
     /* --- Help Modal Toggle --- */
