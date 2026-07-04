@@ -8,6 +8,7 @@ use App\Controllers\HomeController;
 use App\Controllers\LeadController;
 use App\Controllers\PaymentController;
 use App\Controllers\PublicLeadController;
+use App\Controllers\SearchController;
 use App\Controllers\StatsController;
 use App\Core\Router;
 use App\Support\Response;
@@ -51,6 +52,7 @@ $router = new Router();
 
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/health', [HealthController::class, 'index']);
+$router->get('/api/search', [SearchController::class, 'api']);
 $router->get('/login', [AuthController::class, 'loginView']);
 $router->post('/login', [AuthController::class, 'handleLogin']);
 $router->post('/logout', [AuthController::class, 'logout']);

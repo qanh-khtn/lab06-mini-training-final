@@ -92,6 +92,31 @@ class LeadRepository
         return $stmt->execute(['id' => $id]);
     }
 
+    /**
+     * Search leads by full_name, email, or phone (for quick search API)
+     */
+    public function search(string $keyword, int $limit = 5): array
+    {
+        $like = '%' . $keyword . '%';
+        $sql = '
+            SELECT id, full_name, email, phone, course_interest, care_status, created_at
+            FROM leads
+            WHERE deleted_at IS NULL
+              AND (full_name LIKE :kw1 OR email LIKE :kw2 OR phone LIKE :kw3)
+            ORDER BY created_at DESC
+            LIMIT :limit
+        ';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':kw1', $like);
+        $stmt->bindValue(':kw2', $like);
+        $stmt->bindValue(':kw3', $like);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------

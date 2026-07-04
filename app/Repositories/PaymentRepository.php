@@ -92,6 +92,30 @@ class PaymentRepository
         return $stmt->execute(['id' => $id]);
     }
 
+    /**
+     * Search payments by payment_code or student_name (for quick search API)
+     */
+    public function search(string $keyword, int $limit = 3): array
+    {
+        $like = '%' . $keyword . '%';
+        $sql = '
+            SELECT id, payment_code, student_name, course_name, amount, status, created_at
+            FROM payments
+            WHERE deleted_at IS NULL
+              AND (payment_code LIKE :kw1 OR student_name LIKE :kw2)
+            ORDER BY created_at DESC
+            LIMIT :limit
+        ';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':kw1', $like);
+        $stmt->bindValue(':kw2', $like);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll() ?: [];
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
