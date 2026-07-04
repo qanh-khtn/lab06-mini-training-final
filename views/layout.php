@@ -85,7 +85,8 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
             <form method="POST" action="/logout" id="logout-form">
                 <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                 <button type="submit" class="logout-link">
-                    <span>🚪 Đăng xuất</span>
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Đăng xuất</span>
                 </button>
             </form>
         </div>
@@ -102,7 +103,7 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
         <header class="topbar">
             <div class="topbar-left">
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
-                    ☰
+                    <span class="material-symbols-outlined">menu</span>
                 </button>
                 <div class="topbar-search" id="quick-search-form">
                     <span class="material-symbols-outlined">search</span>
@@ -112,15 +113,15 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
             </div>
             <div class="topbar-right">
                 <button class="topbar-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
-                    <span class="sun-icon">☀️</span>
-                    <span class="moon-icon">🌙</span>
+                    <span class="material-symbols-outlined sun-icon">light_mode</span>
+                    <span class="material-symbols-outlined moon-icon">dark_mode</span>
                 </button>
                 <button class="topbar-btn" id="notif-btn" type="button" title="Thông báo" aria-label="Notifications" style="position:relative;">
-                    🔔
+                    <span class="material-symbols-outlined">notifications</span>
                     <span class="notif-badge">3</span>
                 </button>
                 <button class="topbar-btn" id="help-btn" type="button" title="Trợ giúp" aria-label="Help">
-                    ❓
+                    <span class="material-symbols-outlined">help</span>
                 </button>
                 <div class="user-avatar" title="<?= h($_SESSION['user_name'] ?? '') ?>">
                     <?= h(strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 2))) ?>
@@ -157,19 +158,19 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                     <button class="btn-close" type="button">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <h3>📋 Quản lý Lead</h3>
+                    <h3>Quản lý Lead</h3>
                     <p>Sử dụng mục "Lead tư vấn" để xem danh sách khách hàng tiềm năng, cập nhật trạng thái chăm sóc và quản lý thông tin liên hệ.</p>
 
-                    <h3>💳 Thanh toán học phí</h3>
+                    <h3>Thanh toán học phí</h3>
                     <p>Mục "Thanh toán" cho phép bạn ghi lại phiếu thu, theo dõi tình trạng thanh toán và lịch sử giao dịch của các khóa học.</p>
 
-                    <h3>📊 Thống kê & báo cáo</h3>
+                    <h3>Thống kê & báo cáo</h3>
                     <p>Xem các KPI chính, biểu đồ doanh thu, phân bổ lead theo trạng thái và top khóa học được đăng ký nhất trong mục "Thống kê".</p>
 
-                    <h3>🔍 Tìm kiếm nhanh</h3>
+                    <h3>Tìm kiếm nhanh</h3>
                     <p>Sử dụng thanh tìm kiếm ở đầu trang để tìm kiếm lead hoặc thanh toán theo tên, email hoặc số điện thoại.</p>
 
-                    <h3>🌓 Chế độ sáng/tối</h3>
+                    <h3>Chế độ sáng/tối</h3>
                     <p>Nhấp vào nút mặt trăng/mặt trời ở góc phải để chuyển đổi giữa chế độ sáng và tối theo sở thích của bạn.</p>
                 </div>
             </div>
