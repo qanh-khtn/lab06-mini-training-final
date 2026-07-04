@@ -76,6 +76,27 @@
   --ease:               cubic-bezier(.4, 0, .2, 1);
   --dur:                .2s;
   --t:                  var(--dur) var(--ease);
+
+  /* Aliases for legacy code compatibility */
+  --bg-1:               #FFFFFF;
+  --bg-2:               #F9FAFB;
+  --bg-3:               #F3F4F6;
+  --text-1:             #191C23;
+  --muted-clr:          #727785;
+  --primary-dark:       #0052A3;
+  --primary-ring:       rgba(0, 102, 204, 0.12);
+  --indigo:             #4F46E5;
+  --indigo-soft:        rgba(79, 70, 229, 0.12);
+  --warning-soft:       rgba(217, 119, 6, 0.12);
+  --danger-soft:        rgba(180, 35, 24, 0.12);
+  --info-soft:          rgba(0, 82, 163, 0.12);
+
+  /* Surface containers (Material Design inspired) */
+  --surface-container-lowest:   #FFFFFF;
+  --surface-container-low:      #FAFAFA;
+  --surface-container:          #F2F2F2;
+  --surface-container-high:     #EFEFEF;
+  --surface-container-highest:  #E5E5E5;
 }
 
 html[data-theme="dark"] {
@@ -110,6 +131,27 @@ html[data-theme="dark"] {
   --surface-2:          #1F2127;
   --border:             #404654;
   --border-strong:      #5A6370;
+
+  /* Aliases for legacy code compatibility */
+  --bg-1:               #1A1C22;
+  --bg-2:               #252930;
+  --bg-3:               #2C2E33;
+  --text-1:             #F5F5F7;
+  --muted-clr:          #9CA3AF;
+  --primary-dark:       #7BB3FF;
+  --primary-ring:       rgba(77, 158, 255, 0.12);
+  --indigo:             #93C5FD;
+  --indigo-soft:        rgba(147, 197, 253, 0.12);
+  --warning-soft:       rgba(255, 183, 77, 0.12);
+  --danger-soft:        rgba(255, 173, 163, 0.12);
+  --info-soft:          rgba(123, 179, 255, 0.12);
+
+  /* Surface containers (darker for dark mode) */
+  --surface-container-lowest:   #0F1115;
+  --surface-container-low:      #1A1C22;
+  --surface-container:          #252930;
+  --surface-container-high:     #2C2E33;
+  --surface-container-highest:  #353943;
 }
 
 /* ── 2. Reset & base ───────────────────────────────────────────── */
@@ -2310,4 +2352,264 @@ dialog.help-modal::backdrop {
 
 [data-theme="dark"] .log-entry.log-info {
   background: linear-gradient(90deg, rgba(0, 102, 204, 0.1) 0%, transparent 100%);
+}
+
+/* ================================================================
+   Missing CSS Classes & Components
+   ================================================================ */
+
+/* Form Layout - Inline actions in tables */
+.inline-form {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+/* Demo note styling */
+.dev-note {
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-md);
+  padding: var(--space-md);
+  margin: var(--space-md) 0;
+  color: var(--text-1);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dev-note strong {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.dev-note code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] .dev-note {
+  background: var(--primary-light);
+  border-color: var(--primary-hover);
+}
+
+[data-theme="dark"] .dev-note code {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 2-Column grid layout */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Button variants */
+.btn-success {
+  background: var(--success);
+  color: white;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #1f5631;
+  box-shadow: 0 2px 8px rgba(45, 122, 62, 0.2);
+}
+
+.btn-success:active {
+  background: #194026;
+}
+
+/* Error page styling */
+.error-page {
+  /* Alias for .error-layout */
+}
+
+.error-code {
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--danger);
+  margin-bottom: var(--space-md);
+}
+
+.error-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: var(--space-sm);
+}
+
+.error-desc {
+  font-size: 16px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: var(--space-lg);
+}
+
+.error-method {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--space-md);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-1);
+  margin-bottom: var(--space-lg);
+  overflow-x: auto;
+}
+
+/* Button states */
+.btn:disabled,
+.btn:disabled:hover {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.btn-secondary:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Form control states */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--surface-2);
+  color: var(--text-3);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+  border-color: var(--primary);
+}
+
+/* Form validation states */
+.input-error {
+  border-color: var(--danger) !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px var(--danger-light);
+  border-color: var(--danger);
+}
+
+.input-success {
+  border-color: var(--success) !important;
+}
+
+.input-success:focus {
+  box-shadow: 0 0 0 3px var(--success-light);
+  border-color: var(--success);
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+.success-message {
+  color: var(--success);
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Utility classes */
+.icon-sm {
+  font-size: 14px !important;
+}
+
+.icon-md {
+  font-size: 16px !important;
+}
+
+.icon-lg {
+  font-size: 20px !important;
+}
+
+.text-muted {
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.text-xs {
+  font-size: 13px;
+}
+
+.text-sm {
+  font-size: 14px;
+}
+
+.text-lg {
+  font-size: 18px;
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-info {
+  color: var(--info);
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+/* Badge info variant */
+.badge-info {
+  background: var(--info-light);
+  color: var(--info);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Focus visible for better accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
