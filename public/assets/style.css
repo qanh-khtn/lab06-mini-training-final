@@ -2179,17 +2179,28 @@ dialog.help-modal::backdrop {
   display: flex;
   gap: var(--space-md);
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .log-filter-form .icon-input-group {
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
   margin-bottom: 0;
 }
 
 .log-filter-form .input {
   margin: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .log-filter-form {
+    flex-wrap: wrap;
+  }
+
+  .log-filter-form .input {
+    flex-shrink: 1;
+  }
 }
 
 .log-list {
