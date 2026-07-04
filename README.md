@@ -16,7 +16,7 @@ Triển khai hoàn chỉnh Lab06 Final: form công khai với honeypot + rate li
 - Tìm kiếm kết hợp từ khóa và lọc theo trạng thái; phân trang với LIMIT/OFFSET bind INT; sắp xếp an toàn theo whitelist.
 - Unique constraint chặn trùng `email` (lead) và `payment_code` (thanh toán), có thông báo lỗi thân thiện đúng field.
 - PRG pattern sau mỗi POST thành công (tạo/sửa/xóa đều redirect).
-- Error view 404/405/500; môi trường production ẩn SQLSTATE, ghi log vào `storage/logs/app.log`.
+- Error pages (404/405/500): thiết kế responsive asymmetric layout, tự động sync với light/dark mode, production-safe (ẩn SQLSTATE, ghi chi tiết vào log file).
 
 **Phần làm thêm (Bonus)**
 
@@ -28,7 +28,9 @@ Triển khai hoàn chỉnh Lab06 Final: form công khai với honeypot + rate li
 - Admin có thể xem danh sách tài khoản chờ duyệt, phê duyệt hoặc từ chối tại `/admin/users/pending`.
 - Trang thống kê `/stats`: tổng lead, tỉ lệ ghi danh, doanh thu, phân bổ theo trạng thái, biểu đồ doanh thu 6 tháng gần nhất và top khóa học.
 - Giao diện thiết kế lại hoàn toàn: design token CSS, dark mode, hiệu ứng chuyển động mượt, responsive.
+- Error pages (404/405/500) với asymmetric layout, gradient error code (orange), sync light/dark theme, production-safe messages.
 - Nút ẩn/hiện mật khẩu trên form đăng nhập và đăng ký.
+- Output escape: helper `e()` + `h()` cho XSS prevention trên mọi template.
 
 ## Routes
 
@@ -128,10 +130,11 @@ app/
         LeadRepository.php
         PaymentRepository.php
     Services/
+        PublicLeadService.php
         LeadService.php
         PaymentService.php
     Support/
-        helpers.php      -- h(), csrf_token(), flash_*, require_login(), require_admin()
+        helpers.php      -- e(), h() (output escape), csrf_token(), flash_*, require_login(), require_admin(), rate_limit_check()
         Response.php     -- view(), redirect(), json()
 
 views/
