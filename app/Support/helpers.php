@@ -39,6 +39,11 @@ function h(mixed $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function e(mixed $value): string
+{
+    return h($value);
+}
+
 function redirect(string $url, int $status = 302): void
 {
     http_response_code($status);
