@@ -1168,10 +1168,10 @@ html[data-theme="dark"] .log-msg    { color: var(--text); }
 }
 
 .error-page > div {
-  max-width: 1000px;
+  max-width: 1100px;
   width: 100%;
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 60px;
   align-items: center;
 }
@@ -1270,13 +1270,13 @@ html[data-theme="dark"] .error-page .error-method {
 /* Tablet: 2-column → adjust gap */
 @media (max-width: 768px) {
   .error-page > div {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 130px 1fr;
     gap: 40px;
     padding: 60px 20px;
   }
 
   .error-code {
-    font-size: 100px;
+    font-size: 110px;
   }
 
   .error-title {
