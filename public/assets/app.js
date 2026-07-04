@@ -129,18 +129,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* --- Help Modal Toggle --- */
+    /* --- Help Modal Toggle (Help & Instructions) --- */
+    /* Default behavior:
+       - Closed by default (no auto-open)
+       - Opens ONLY when clicking ? button
+       - Closes by: clicking X button, clicking outside, or pressing Escape key
+    */
     var helpBtn = document.getElementById('help-btn');
     var helpModal = document.getElementById('help-modal');
     var closeBtn = helpModal ? helpModal.querySelector('.btn-close') : null;
 
     if (helpBtn && helpModal) {
+        // Open modal: Click ? button in top-right
         helpBtn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             helpModal.showModal();
         });
 
+        // Close modal: Click × button
         if (closeBtn) {
             closeBtn.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -149,21 +156,21 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Close on backdrop click
+        // Close modal: Click outside (backdrop)
         helpModal.addEventListener('click', function (e) {
             if (e.target === helpModal) {
                 helpModal.close();
             }
         });
 
-        // Close on Escape key
+        // Close modal: Press Escape key
         helpModal.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 helpModal.close();
             }
         });
 
-        // Prevent modal from auto-opening
+        // Safety: Ensure modal doesn't auto-open on page load
         if (helpModal.open) {
             helpModal.close();
         }
