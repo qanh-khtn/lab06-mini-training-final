@@ -62,4 +62,92 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.classList.remove('sidebar-active');
         });
     }
+
+    /* --- Notification Button Toggle --- */
+    var notifBtn = document.getElementById('notif-btn');
+    var notifMenu = document.getElementById('notif-menu');
+
+    if (notifBtn && notifMenu) {
+        notifBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            notifMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!notifBtn.contains(e.target) && !notifMenu.contains(e.target)) {
+                notifMenu.classList.remove('show');
+            }
+        });
+    }
+
+    /* --- Help Modal Toggle --- */
+    var helpBtn = document.getElementById('help-btn');
+    var helpModal = document.getElementById('help-modal');
+    var closeBtn = helpModal ? helpModal.querySelector('.btn-close') : null;
+
+    if (helpBtn && helpModal) {
+        helpBtn.addEventListener('click', function () {
+            helpModal.showModal();
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                helpModal.close();
+            });
+        }
+
+        helpModal.addEventListener('click', function (e) {
+            if (e.target === helpModal) {
+                helpModal.close();
+            }
+        });
+    }
+
+    /* --- Quick Search Functionality --- */
+    var searchInput = document.getElementById('quick-search-input');
+    var searchResults = document.getElementById('search-results');
+
+    if (searchInput && searchResults) {
+        var searchTimeout;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            var query = this.value.trim();
+
+            if (!query || query.length < 2) {
+                searchResults.classList.remove('show');
+                return;
+            }
+
+            searchTimeout = setTimeout(function () {
+                fetch('/api/search?q=' + encodeURIComponent(query))
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (data.results && data.results.length > 0) {
+                            searchResults.innerHTML = data.results
+                                .map(function (result) {
+                                    return '<a href="' + result.url + '" class="search-result-item">' +
+                                        '<strong>' + result.name + '</strong>' +
+                                        '<p>' + result.email + '</p>' +
+                                        '</a>';
+                                })
+                                .join('');
+                            searchResults.classList.add('show');
+                        } else {
+                            searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: #999;">Không tìm thấy kết quả</div>';
+                            searchResults.classList.add('show');
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('Search error:', err);
+                    });
+            }, 300);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.search-bar')) {
+                searchResults.classList.remove('show');
+            }
+        });
+    }
 });
