@@ -1,21 +1,19 @@
 <?php $allowedMethods = $allowedMethods ?? []; ?>
-<div class="error-page">
-    <div>
-        <div class="error-code">
-            <span class="material-symbols-outlined" style="font-size: 64px; display: block; margin-bottom: 12px; color: var(--warning);">block</span>
-            405
-        </div>
-        <div>
-            <h1 class="error-title">Phương thức không hợp lệ</h1>
-            <p class="error-desc">
-                Phương thức <span class="error-method"><?= h($_SERVER['REQUEST_METHOD'] ?? 'HTTP') ?></span> không được hỗ trợ trên route này.
-                <?php if ($allowedMethods !== []): ?>
-                    Vui lòng sử dụng: <strong><?= h(implode(', ', $allowedMethods)) ?></strong>.
-                <?php endif; ?>
-            </p>
-            <a class="btn btn-primary" href="/">
-                <span class="material-symbols-outlined" style="font-size:16px;">home</span> Về trang chủ
-            </a>
-        </div>
+<div class="error-layout">
+    <div class="error-visual">
+        <span class="material-symbols-outlined icon-lg" style="display: block; margin-bottom: var(--space-md); color: var(--warning);">block</span>
+        <div class="error-code">405</div>
+    </div>
+    <div class="error-info">
+        <h2 class="error-title">Phương thức không hợp lệ</h2>
+        <p class="error-desc">
+            Phương thức <code class="error-method"><?= h($_SERVER['REQUEST_METHOD'] ?? 'HTTP') ?></code> không được hỗ trợ trên route này.
+            <?php if ($allowedMethods !== []): ?>
+                Vui lòng sử dụng: <strong><?= h(implode(', ', $allowedMethods)) ?></strong>.
+            <?php endif; ?>
+        </p>
+        <a class="btn btn-primary" href="/">
+            <span class="material-symbols-outlined icon-md">home</span> Về trang chủ
+        </a>
     </div>
 </div>
