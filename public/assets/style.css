@@ -2139,10 +2139,19 @@ dialog.help-modal {
   color: var(--text-1);
   display: flex;
   flex-direction: column;
+  position: fixed;
+  margin: auto;
+  z-index: 999;
 }
 
 dialog.help-modal::backdrop {
   background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+/* Ensure modal can be interacted with */
+dialog.help-modal * {
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -2159,13 +2168,16 @@ dialog.help-modal::backdrop {
   align-items: center;
   margin-bottom: var(--space-md);
   border-bottom: 1px solid var(--border);
-  padding-bottom: var(--space-md);
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
   font-size: 18px;
   font-weight: 600;
   margin: 0;
+  flex: 1;
 }
 
 .btn-close {
@@ -2177,15 +2189,26 @@ dialog.help-modal::backdrop {
   padding: 0;
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--r);
   transition: background var(--t);
+  pointer-events: auto;
+  position: relative;
+  z-index: 1000;
 }
 
 .btn-close:hover {
   background: var(--primary-soft);
+}
+
+.btn-close:active,
+.btn-close:focus {
+  outline: none;
+  background: var(--primary-light);
 }
 
 .modal-body {

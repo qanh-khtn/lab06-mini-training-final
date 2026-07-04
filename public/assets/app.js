@@ -135,21 +135,38 @@ document.addEventListener('DOMContentLoaded', function () {
     var closeBtn = helpModal ? helpModal.querySelector('.btn-close') : null;
 
     if (helpBtn && helpModal) {
-        helpBtn.addEventListener('click', function () {
+        helpBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             helpModal.showModal();
         });
 
         if (closeBtn) {
-            closeBtn.addEventListener('click', function () {
+            closeBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
                 helpModal.close();
             });
         }
 
+        // Close on backdrop click
         helpModal.addEventListener('click', function (e) {
             if (e.target === helpModal) {
                 helpModal.close();
             }
         });
+
+        // Close on Escape key
+        helpModal.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                helpModal.close();
+            }
+        });
+
+        // Prevent modal from auto-opening
+        if (helpModal.open) {
+            helpModal.close();
+        }
     }
 
     /* --- Topbar Hide on Scroll --- */
