@@ -9,7 +9,7 @@
         <h1>Chào mừng đến với CRM</h1>
         <p>Quản lý tư vấn học viên và thanh toán học phí trong một hệ thống thống nhất, dễ sử dụng.</p>
         
-        <div style="margin-top: 16px;">
+        <div style="margin-top:var(--space-md);">
             <?php if (!$dbOk): ?>
                 <span class="badge badge-cancelled" style="background: rgba(220,38,38,.2); color: #fca5a5; border-color: rgba(220,38,38,.4);">
                     <span class="material-symbols-outlined" style="font-size: 14px;">error</span>

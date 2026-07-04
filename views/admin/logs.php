@@ -14,7 +14,7 @@
     <a class="btn btn-secondary" href="/">&#8592; Trang chủ</a>
 </section>
 
-<div class="log-toolbar card" style="margin-bottom:16px;">
+<div class="log-toolbar card" style="margin-bottom:var(--space-md);">
     <form method="get" action="/admin/logs" class="log-filter-form" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
         <div class="icon-input-group" style="flex:1;min-width:200px;margin-bottom:0;">
             <span class="material-symbols-outlined">search</span>
@@ -40,7 +40,7 @@
             <a class="btn btn-secondary" href="/admin/logs">Xóa bộ lọc</a>
         <?php endif; ?>
     </form>
-    <p class="muted" style="margin-top:12px;font-size:13px;">
+    <p class="muted" class="text-muted" style="margin-top:var(--space-md);">
         Hiển thị <strong><?= count($entries) ?></strong> dòng<?= ($q !== '' || $level !== '') ? ' (đang lọc)' : '' ?>
     </p>
 </div>

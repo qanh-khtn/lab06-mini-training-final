@@ -48,7 +48,7 @@ $old    = $old ?? ['email' => ''];
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
                     <input type="checkbox" id="remember_me" name="remember_me" value="1"
                            style="width:auto;margin:0;accent-color:var(--primary);">
-                    <label for="remember_me" style="margin:0;font-weight:400;color:var(--text-2);">Nhớ tôi trong 30 ngày</label>
+                    <label for="remember_me" class="text-2" style="margin:0;font-weight:400;">Nhớ tôi trong 30 ngày</label>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width:100%;">Đăng nhập</button>
