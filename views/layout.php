@@ -41,38 +41,38 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 <li>
                     <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">
                         <span class="material-symbols-outlined">dashboard</span>
-                        <span>Dashboard</span>
+                        <span>Trang chủ</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">
                         <span class="material-symbols-outlined">group</span>
-                        <span>Leads</span>
+                        <span>Lead tư vấn</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">
                         <span class="material-symbols-outlined">payments</span>
-                        <span>Payments</span>
+                        <span>Thanh toán</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">
                         <span class="material-symbols-outlined">analytics</span>
-                        <span>Stats</span>
+                        <span>Thống kê</span>
                     </a>
                 </li>
                 <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
                 <li>
                     <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">
                         <span class="material-symbols-outlined">admin_panel_settings</span>
-                        <span>Admin</span>
+                        <span>Phê duyệt NV</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= $currentPath === '/admin/logs' ? 'active' : '' ?>" href="/admin/logs">
                         <span class="material-symbols-outlined">history</span>
-                        <span>Logs</span>
+                        <span>Nhật ký</span>
                     </a>
                 </li>
                 <?php endif; ?>
@@ -106,20 +106,22 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <div class="topbar-search">
+                <form class="search-bar" id="quick-search-form">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" placeholder="Tìm kiếm nhanh..." disabled>
-                </div>
+                    <input type="text" id="quick-search-input" placeholder="Tìm kiếm lead, email, SDT...">
+                    <div class="search-results" id="search-results"></div>
+                </form>
             </div>
-            <div class="topbar-right">
-                <button class="topbar-btn" id="theme-toggle" type="button">
+            <div class="topbar-right navbar-icons">
+                <button class="icon-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
                     <span class="material-symbols-outlined sun-icon">light_mode</span>
                     <span class="material-symbols-outlined moon-icon">dark_mode</span>
                 </button>
-                <button class="topbar-btn" type="button" title="Thông báo">
+                <button class="icon-btn" id="notif-btn" type="button" title="Thông báo" aria-label="Notifications">
                     <span class="material-symbols-outlined">notifications</span>
+                    <span class="notif-badge">3</span>
                 </button>
-                <button class="topbar-btn" type="button" title="Hỗ trợ">
+                <button class="icon-btn" id="help-btn" type="button" title="Trợ giúp" aria-label="Help">
                     <span class="material-symbols-outlined">help</span>
                 </button>
                 <div class="user-avatar" title="<?= h($_SESSION['user_name'] ?? '') ?>">
@@ -127,6 +129,53 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 </div>
             </div>
         </header>
+
+        <!-- Notification Dropdown -->
+        <div class="notif-dropdown" id="notif-menu">
+            <div class="notif-list">
+                <a href="/leads" class="notif-item unread">
+                    <strong>Lead mới: Nguyễn Văn A</strong>
+                    <p>Vừa đăng ký tư vấn khóa Web</p>
+                    <span class="notif-time">5 phút trước</span>
+                </a>
+                <a href="/payments" class="notif-item">
+                    <strong>Thanh toán mới</strong>
+                    <p>Lê Hoàng Cường thanh toán Khóa Mobile</p>
+                    <span class="notif-time">20 phút trước</span>
+                </a>
+                <a href="/leads" class="notif-item">
+                    <strong>Cần chăm sóc</strong>
+                    <p>Trần Thị Bình chưa hoàn tất ghi danh</p>
+                    <span class="notif-time">1 giờ trước</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <dialog id="help-modal" class="help-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Trợ giúp & Hướng dẫn</h2>
+                    <button class="btn-close" type="button">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <h3>📋 Quản lý Lead</h3>
+                    <p>Sử dụng mục "Lead tư vấn" để xem danh sách khách hàng tiềm năng, cập nhật trạng thái chăm sóc và quản lý thông tin liên hệ.</p>
+
+                    <h3>💳 Thanh toán học phí</h3>
+                    <p>Mục "Thanh toán" cho phép bạn ghi lại phiếu thu, theo dõi tình trạng thanh toán và lịch sử giao dịch của các khóa học.</p>
+
+                    <h3>📊 Thống kê & báo cáo</h3>
+                    <p>Xem các KPI chính, biểu đồ doanh thu, phân bổ lead theo trạng thái và top khóa học được đăng ký nhất trong mục "Thống kê".</p>
+
+                    <h3>🔍 Tìm kiếm nhanh</h3>
+                    <p>Sử dụng thanh tìm kiếm ở đầu trang để tìm kiếm lead hoặc thanh toán theo tên, email hoặc số điện thoại.</p>
+
+                    <h3>🌓 Chế độ sáng/tối</h3>
+                    <p>Nhấp vào nút mặt trăng/mặt trời ở góc phải để chuyển đổi giữa chế độ sáng và tối theo sở thích của bạn.</p>
+                </div>
+            </div>
+        </dialog>
         <?php endif; ?>
 
         <!-- Canvas -->
