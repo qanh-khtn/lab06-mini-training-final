@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 .join('');
                             searchResults.classList.add('show');
                         } else {
-                            searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: #999;">Không tìm thấy kết quả</div>';
+                            searchResults.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-3);">Không tìm thấy kết quả</div>';
                             searchResults.classList.add('show');
                         }
                     })
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('.search-bar')) {
+            if (!e.target.closest('#quick-search-form')) {
                 searchResults.classList.remove('show');
             }
         });

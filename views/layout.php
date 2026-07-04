@@ -106,22 +106,22 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <form class="search-bar" id="quick-search-form">
+                <div class="topbar-search" id="quick-search-form">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="quick-search-input" placeholder="Tìm kiếm lead, email, SDT...">
+                    <input type="text" id="quick-search-input" placeholder="Tìm kiếm lead, email, SDT..." autocomplete="off">
                     <div class="search-results" id="search-results"></div>
-                </form>
+                </div>
             </div>
-            <div class="topbar-right navbar-icons">
-                <button class="icon-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
+            <div class="topbar-right">
+                <button class="topbar-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
                     <span class="material-symbols-outlined sun-icon">light_mode</span>
                     <span class="material-symbols-outlined moon-icon">dark_mode</span>
                 </button>
-                <button class="icon-btn" id="notif-btn" type="button" title="Thông báo" aria-label="Notifications">
+                <button class="topbar-btn" id="notif-btn" type="button" title="Thông báo" aria-label="Notifications" style="position:relative;">
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="notif-badge">3</span>
                 </button>
-                <button class="icon-btn" id="help-btn" type="button" title="Trợ giúp" aria-label="Help">
+                <button class="topbar-btn" id="help-btn" type="button" title="Trợ giúp" aria-label="Help">
                     <span class="material-symbols-outlined">help</span>
                 </button>
                 <div class="user-avatar" title="<?= h($_SESSION['user_name'] ?? '') ?>">

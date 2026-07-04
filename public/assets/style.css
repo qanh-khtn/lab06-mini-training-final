@@ -436,8 +436,51 @@ body.theme-transitioning * {
   color: var(--text);
 }
 
+/* Search results dropdown (for topbar) */
+#quick-search-form {
+  position: relative;
+  flex: 1;
+  max-width: 380px;
+}
+
+#quick-search-form .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  max-height: 320px;
+  overflow-y: auto;
+  display: none;
+  z-index: 100;
+  margin-top: 4px;
+}
+
 .topbar-btn .material-symbols-outlined {
   font-size: 22px;
+}
+
+.topbar-btn[id="notif-btn"] {
+  position: relative;
+}
+
+.topbar-btn .notif-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--danger);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 2px solid var(--surface);
 }
 
 /* Theme toggle: show only 1 icon depending on current mode */
