@@ -191,11 +191,76 @@ body.theme-transitioning * {
 }
 
 .sidebar-header {
-  padding: 24px;
+  padding: 16px;
   display: flex;
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-2);
+  padding: 4px;
+  border-radius: var(--r);
+  transition: background var(--t), transform var(--t);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-toggle:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.sidebar.collapsed {
+  width: 64px;
+}
+
+.sidebar.collapsed .sidebar-header {
+  padding: 12px;
+  justify-content: center;
+}
+
+.sidebar.collapsed .brand-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar.collapsed h2,
+.sidebar.collapsed p {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  position: static;
+  transform: none;
+}
+
+.sidebar.collapsed .sidebar-nav a {
+  justify-content: center;
+  min-width: auto;
+}
+
+.sidebar.collapsed .sidebar-nav span:not(.material-symbols-outlined) {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  justify-content: center;
+}
+
+.sidebar.collapsed .username,
+.sidebar.collapsed .role {
+  display: none;
 }
 
 .sidebar-header .brand-logo {

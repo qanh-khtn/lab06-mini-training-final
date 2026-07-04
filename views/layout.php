@@ -32,47 +32,56 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 <span class="material-symbols-outlined" style="color:#fff; font-size: 20px;">school</span>
             </span>
             <div>
-                <h2>MTC Admin</h2>
-                <p>Operational Suite</p>
+                <h2>CRM Đào Tạo</h2>
+                <p>Hệ Thống Quản Lý</p>
             </div>
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Ẩn/hiện sidebar">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
         </div>
         <nav class="sidebar-nav">
             <ul>
                 <li>
                     <a class="<?= $currentPath === '/' ? 'active' : '' ?>" href="/">
                         <span class="material-symbols-outlined">dashboard</span>
-                        <span>Trang chủ</span>
+                        <span>📊 Trang chủ</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= str_starts_with($currentPath, '/leads') ? 'active' : '' ?>" href="/leads">
                         <span class="material-symbols-outlined">group</span>
-                        <span>Lead tư vấn</span>
+                        <span>👥 Lead tư vấn</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= str_starts_with($currentPath, '/payments') ? 'active' : '' ?>" href="/payments">
                         <span class="material-symbols-outlined">payments</span>
-                        <span>Thanh toán</span>
+                        <span>💳 Thanh toán</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= $currentPath === '/stats' ? 'active' : '' ?>" href="/stats">
                         <span class="material-symbols-outlined">analytics</span>
-                        <span>Thống kê</span>
+                        <span>📈 Thống kê</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="<?= str_starts_with($currentPath, '/public-leads') ? 'active' : '' ?>" href="/public-leads/create">
+                        <span class="material-symbols-outlined">public</span>
+                        <span>🌐 Form công khai</span>
                     </a>
                 </li>
                 <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
-                <li>
+                <li style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
                     <a class="<?= $currentPath === '/admin/users/pending' ? 'active' : '' ?>" href="/admin/users/pending">
                         <span class="material-symbols-outlined">admin_panel_settings</span>
-                        <span>Phê duyệt NV</span>
+                        <span>✅ Phê duyệt NV</span>
                     </a>
                 </li>
                 <li>
                     <a class="<?= $currentPath === '/admin/logs' ? 'active' : '' ?>" href="/admin/logs">
                         <span class="material-symbols-outlined">history</span>
-                        <span>Nhật ký</span>
+                        <span>📝 Nhật ký</span>
                     </a>
                 </li>
                 <?php endif; ?>
