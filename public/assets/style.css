@@ -186,7 +186,7 @@ body.theme-transitioning * {
   display: flex;
   flex-direction: column;
   z-index: 50;
-  transition: transform var(--t);
+  transition: width 0.3s ease, transform var(--t);
   border-right: 1px solid var(--border);
 }
 
@@ -406,6 +406,7 @@ body.theme-transitioning * {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  transition: margin-left 0.3s ease;
   transition: margin var(--t);
 }
 
@@ -421,6 +422,11 @@ body.theme-transitioning * {
   justify-content: space-between;
   padding: 0 24px;
   z-index: 40;
+  transition: transform 0.3s ease;
+}
+
+.topbar.hidden {
+  transform: translateY(-100%);
 }
 
 .topbar-left {

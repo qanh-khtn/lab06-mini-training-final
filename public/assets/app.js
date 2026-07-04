@@ -72,12 +72,15 @@ document.addEventListener('DOMContentLoaded', function () {
         var isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
         if (isCollapsed) {
             sidebar.classList.add('collapsed');
+            document.documentElement.style.setProperty('--sidebar-w', '64px');
         }
 
         sidebarToggle.addEventListener('click', function () {
             sidebar.classList.toggle('collapsed');
             var newState = sidebar.classList.contains('collapsed');
             localStorage.setItem('sidebar-collapsed', newState);
+            // Update CSS variable for main wrapper margin
+            document.documentElement.style.setProperty('--sidebar-w', newState ? '64px' : '240px');
         });
     }
 
@@ -119,6 +122,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 helpModal.close();
             }
         });
+    }
+
+    /* --- Topbar Hide on Scroll --- */
+    var topbar = document.querySelector('.topbar');
+    if (topbar) {
+        var lastScrollTop = 0;
+        var scrollTimeout;
+
+        window.addEventListener('scroll', function () {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            clearTimeout(scrollTimeout);
+            topbar.classList.remove('hidden');
+
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling DOWN, hide topbar
+                topbar.classList.add('hidden');
+            } else {
+                // Scrolling UP, show topbar
+                topbar.classList.remove('hidden');
+            }
+
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
+            scrollTimeout = setTimeout(function () {
+                if (scrollTop > 0) {
+                    topbar.classList.add('hidden');
+                }
+            }, 3000);
+        }, false);
     }
 
     /* --- Quick Search Functionality --- */
