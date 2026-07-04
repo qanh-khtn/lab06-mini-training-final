@@ -1331,7 +1331,8 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   display: flex;
   align-items: flex-end;
   gap: 16px;
-  height: 180px;
+  height: 220px;
+  padding-top: 24px;
 }
 
 .bar-col {
@@ -1359,14 +1360,16 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 }
 
 .bar-col .bar-val {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
   position: absolute;
-  top: -20px;
+  top: -26px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  font-family: 'Inter', system-ui;
+  line-height: 1;
 }
 
 .bar-col .bar-lbl {
