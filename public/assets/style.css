@@ -2148,3 +2148,133 @@ dialog.help-modal::backdrop {
   align-items: center;
   gap: 8px;
 }
+
+/* ================================================================
+   Log Page Styling
+   ================================================================ */
+
+.log-toolbar {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: var(--space-lg);
+  border-radius: var(--radius);
+}
+
+.log-filter-form {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.log-filter-form .icon-input-group {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+.log-filter-form .input {
+  margin: 0;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.log-entry {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  transition: all 0.2s ease;
+}
+
+.log-entry:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.log-entry.log-error {
+  border-left-color: var(--danger);
+  background: linear-gradient(90deg, rgba(180, 35, 24, 0.05) 0%, transparent 100%);
+}
+
+.log-entry.log-warning {
+  border-left-color: var(--warning);
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.05) 0%, transparent 100%);
+}
+
+.log-entry.log-info {
+  border-left-color: var(--primary);
+  background: linear-gradient(90deg, rgba(0, 102, 204, 0.05) 0%, transparent 100%);
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.log-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.log-badge-error {
+  background-color: rgba(180, 35, 24, 0.15);
+  color: var(--danger);
+}
+
+.log-badge-warning {
+  background-color: rgba(217, 119, 6, 0.15);
+  color: var(--warning);
+}
+
+.log-badge-info {
+  background-color: rgba(0, 102, 204, 0.15);
+  color: var(--primary);
+}
+
+.log-ts {
+  color: var(--text-2);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.log-msg {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: var(--space-md);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-1);
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Dark mode adjustments for log entries */
+[data-theme="dark"] .log-entry.log-error {
+  background: linear-gradient(90deg, rgba(180, 35, 24, 0.1) 0%, transparent 100%);
+}
+
+[data-theme="dark"] .log-entry.log-warning {
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.1) 0%, transparent 100%);
+}
+
+[data-theme="dark"] .log-entry.log-info {
+  background: linear-gradient(90deg, rgba(0, 102, 204, 0.1) 0%, transparent 100%);
+}
