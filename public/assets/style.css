@@ -2142,6 +2142,15 @@ dialog.help-modal {
   position: fixed;
   margin: auto;
   z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+dialog.help-modal[open] {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 dialog.help-modal::backdrop {

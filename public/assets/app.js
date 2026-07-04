@@ -140,6 +140,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var closeBtn = helpModal ? helpModal.querySelector('.btn-close') : null;
 
     if (helpBtn && helpModal) {
+        // Force modal closed on page load
+        setTimeout(function () {
+            helpModal.close();
+        }, 50);
+
         // Open modal: Click ? button in top-right
         helpBtn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -159,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close modal: Click outside (backdrop)
         helpModal.addEventListener('click', function (e) {
             if (e.target === helpModal) {
+                e.preventDefault();
                 helpModal.close();
             }
         });
@@ -166,14 +172,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close modal: Press Escape key
         helpModal.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
+                e.preventDefault();
                 helpModal.close();
             }
         });
 
-        // Safety: Ensure modal doesn't auto-open on page load
-        if (helpModal.open) {
+        // Safety: Double-check modal is closed on page load
+        document.addEventListener('DOMContentLoaded', function () {
             helpModal.close();
-        }
+        });
     }
 
     /* --- Topbar Hide on Scroll --- */
