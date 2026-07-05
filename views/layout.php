@@ -21,7 +21,10 @@ $flashTypeMap = [
     <script src="/assets/app.js"></script>
 </head>
 <?php
-$showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register', '/public-leads/create']);
+// /public-leads/create không loại trừ ở đây: nhân viên đã đăng nhập bấm vào
+// link "Form công khai" trong sidebar vẫn cần thấy sidebar như mọi trang khác.
+// Trang này chỉ hiện topbar công khai khi KHÔNG đăng nhập (khách vãng lai).
+$showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register']);
 ?>
 <body class="<?= $showSidebar ? 'flex-layout' : 'no-sidebar' ?>">
     <?php if ($showSidebar): ?>
