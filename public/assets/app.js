@@ -176,40 +176,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 helpModal.close();
             }
         });
-
-        // Safety: Double-check modal is closed on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            helpModal.close();
-        });
     }
 
     /* --- Topbar Hide on Scroll --- */
     var topbar = document.querySelector('.topbar');
     if (topbar) {
         var lastScrollTop = 0;
-        var scrollTimeout;
 
         window.addEventListener('scroll', function () {
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            clearTimeout(scrollTimeout);
-            topbar.classList.remove('hidden');
 
             if (scrollTop > lastScrollTop && scrollTop > 100) {
                 // Scrolling DOWN, hide topbar
                 topbar.classList.add('hidden');
             } else {
-                // Scrolling UP, show topbar
+                // Scrolling UP or near top, show topbar
                 topbar.classList.remove('hidden');
             }
 
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-
-            scrollTimeout = setTimeout(function () {
-                if (scrollTop > 0) {
-                    topbar.classList.add('hidden');
-                }
-            }, 3000);
         }, false);
     }
 

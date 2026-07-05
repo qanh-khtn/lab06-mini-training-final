@@ -175,6 +175,36 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
                 </div>
             </div>
         </dialog>
+        <?php else: ?>
+        <!-- Public Navigation Bar -->
+        <header class="public-header">
+            <div class="public-header-container">
+                <a href="/" class="public-brand">
+                    <div class="brand-logo">
+                        <span class="material-symbols-outlined" style="color:white; font-size:20px;">school</span>
+                    </div>
+                    <span class="brand-name">CRM Đào Tạo</span>
+                </a>
+                
+                <nav class="public-nav">
+                    <a href="/" class="<?= $currentPath === '/' ? 'active' : '' ?>">Trang chủ</a>
+                    <a href="/public-leads/create" class="<?= $currentPath === '/public-leads/create' ? 'active' : '' ?>">Đăng ký tư vấn</a>
+                    <a href="/register" class="<?= $currentPath === '/register' ? 'active' : '' ?>">Đăng ký nhân viên</a>
+                </nav>
+                
+                <div class="public-actions">
+                    <button class="topbar-btn" id="theme-toggle" type="button" title="Chế độ sáng/tối">
+                        <span class="material-symbols-outlined sun-icon">light_mode</span>
+                        <span class="material-symbols-outlined moon-icon">dark_mode</span>
+                    </button>
+                    <?php if (is_logged_in()): ?>
+                        <a href="/leads" class="btn btn-primary btn-sm">Vào Dashboard</a>
+                    <?php else: ?>
+                        <a href="/login" class="btn btn-primary btn-sm">Đăng nhập</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </header>
         <?php endif; ?>
 
         <!-- Canvas -->
@@ -213,13 +243,6 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
     </div>
     <?php endif; ?>
 
-    <?php if (!$showSidebar): ?>
-    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Chuyển giao diện sáng/tối">
-        <span class="theme-toggle-inner">
-            <span class="material-symbols-outlined sun-icon">light_mode</span>
-            <span class="material-symbols-outlined moon-icon">dark_mode</span>
-        </span>
-    </button>
-    <?php endif; ?>
+
 </body>
 </html>
