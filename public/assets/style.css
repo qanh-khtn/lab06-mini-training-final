@@ -1830,19 +1830,18 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 
 /* ── 14. Error Page Asymmetric Layout ────────────────────────── */
 .error-layout {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--nav-h) - 96px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 48px 24px;
-  background: var(--bg);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .error-layout::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: -10%; right: -5%;
   width: 40vw; height: 40vw;
   background: var(--primary-soft);
@@ -1853,7 +1852,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 
 .error-layout::after {
   content: '';
-  position: fixed;
+  position: absolute;
   bottom: -10%; left: -5%;
   width: 35vw; height: 35vw;
   background: var(--indigo-soft);
@@ -1974,6 +1973,28 @@ html[data-theme="dark"] .bento-status-card .system-row {
 
 .bento-status-card .system-row .status-icon {
   color: var(--success);
+}
+
+a.system-row {
+  text-decoration: none;
+  border-radius: var(--r-sm);
+  margin: 0 -8px;
+  padding: 8px;
+  transition: background var(--t);
+}
+
+a.system-row:hover {
+  background: var(--surface-container-high);
+}
+
+a.system-row .status-icon {
+  color: var(--text-3);
+  transition: transform var(--t), color var(--t);
+}
+
+a.system-row:hover .status-icon {
+  color: var(--primary);
+  transform: translateX(2px);
 }
 
 .bento-incident-card {
@@ -2601,39 +2622,16 @@ dialog.help-modal * {
   background: #194026;
 }
 
-/* Error page styling */
-.error-code {
-  font-size: 120px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--danger);
-  margin-bottom: var(--space-md);
-}
-
-.error-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text-1);
-  margin-bottom: var(--space-sm);
-}
-
-.error-desc {
-  font-size: 16px;
-  color: var(--text-2);
-  line-height: 1.6;
-  margin-bottom: var(--space-lg);
-}
-
+/* Error page: inline method badge (used inside .error-info p on the 405 page) */
 .error-method {
-  background: var(--surface-2);
+  display: inline-block;
+  background: var(--surface-container-low);
   border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: var(--space-md);
+  border-radius: var(--r-sm);
+  padding: 2px 8px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--text-1);
-  margin-bottom: var(--space-lg);
-  overflow-x: auto;
+  font-size: 13px;
+  color: var(--danger);
 }
 
 /* Button states */
