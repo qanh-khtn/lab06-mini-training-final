@@ -10,39 +10,39 @@
   src: url('/assets/fonts/MaterialSymbolsOutlined.woff2') format('woff2');
 }
 
-/* ── 1. Design tokens (NEW: Professional Color Palette) ────────────── */
+/* ── 1. Design tokens ("Sổ Cái" — Ledger/Registrar palette) ────────── */
 :root {
-  /* Primary — Professional Blue (Education/Trust) */
-  --primary:            #0066CC;
-  --primary-hover:      #0052A3;
-  --primary-light:      #E3EFFF;
-  --primary-soft:       rgba(0, 102, 204, 0.08);
+  /* Primary — Fresh cerulean ink (bright, not muted slate) */
+  --primary:            #1F6FA0;
+  --primary-hover:      #17587F;
+  --primary-light:      #DCEEF7;
+  --primary-soft:       rgba(31, 111, 160, 0.08);
 
-  /* Success — Enrollment/Growth Green */
-  --success:            #2D7A3E;
-  --success-light:      rgba(45, 122, 62, 0.12);
+  /* Success — Fresh ledger green */
+  --success:            #22885A;
+  --success-light:      rgba(34, 136, 90, 0.12);
 
-  /* Warning — Follow-up Amber */
-  --warning:            #D97706;
-  --warning-light:      rgba(217, 119, 6, 0.12);
+  /* Warning — Gold (chờ xử lý) */
+  --warning:            #D6971E;
+  --warning-light:      rgba(214, 151, 30, 0.12);
 
-  /* Danger — Cancelled/Dropped Red */
-  --danger:             #B42318;
-  --danger-light:       rgba(180, 35, 24, 0.12);
+  /* Danger — Warm coral-red (huỷ, ngừng) */
+  --danger:             #D1452C;
+  --danger-light:       rgba(209, 69, 44, 0.12);
 
-  /* Info — Secondary Blue */
-  --info:               #0052A3;
-  --info-light:         rgba(0, 82, 163, 0.12);
+  /* Info — lighter secondary blue */
+  --info:               #4C93BE;
+  --info-light:         rgba(76, 147, 190, 0.12);
 
-  /* Neutral — Grayscale */
-  --text:               #191C23;
-  --text-2:             #414754;
-  --text-3:             #727785;
-  --bg:                 #F5F5F7;
+  /* Neutral — warm charcoal ink & bright paper */
+  --text:               #262019;
+  --text-2:             #5C5647;
+  --text-3:             #857F6C;
+  --bg:                 #FBF7EC;
   --surface:            #FFFFFF;
-  --surface-2:          #F9FAFB;
-  --border:             #D1D5DB;
-  --border-strong:      #9CA3AF;
+  --surface-2:          #F3EEDF;
+  --border:             #E4DCC3;
+  --border-strong:      #C7B98C;
 
   /* Dimensions */
   --nav-h:              64px;
@@ -56,21 +56,21 @@
   --space-xl:           32px;
   --space-2xl:          48px;
 
-  /* Shape/Radius */
-  --r-xs:               2px;
-  --r-sm:               4px;
-  --r:                  6px;
-  --r-md:               8px;
-  --r-lg:               12px;
-  --r-xl:               16px;
+  /* Shape/Radius — a ledger is ruled, not rounded; keep corners restrained */
+  --r-xs:               1px;
+  --r-sm:               3px;
+  --r:                  3px;
+  --r-md:               4px;
+  --r-lg:               6px;
+  --r-xl:               8px;
   --r-full:             9999px;
 
-  /* Shadows */
-  --sh-xs:              0 1px 2px rgba(0,0,0,.03);
-  --sh-sm:              0 1px 3px rgba(0,0,0,.05);
-  --sh:                 0 4px 6px rgba(0,0,0,.07);
-  --sh-md:              0 8px 16px rgba(0,0,0,.1);
-  --sh-lg:              0 16px 32px rgba(0,0,0,.15);
+  /* Shadows — flatter; hairlines carry most of the separation */
+  --sh-xs:              0 1px 1px rgba(38,32,25,.04);
+  --sh-sm:              0 1px 2px rgba(38,32,25,.06);
+  --sh:                 0 2px 4px rgba(38,32,25,.08);
+  --sh-md:              0 4px 10px rgba(38,32,25,.10);
+  --sh-lg:              0 8px 20px rgba(38,32,25,.14);
 
   /* Motion */
   --ease:               cubic-bezier(.4, 0, .2, 1);
@@ -79,79 +79,79 @@
 
   /* Aliases for legacy code compatibility */
   --bg-1:               #FFFFFF;
-  --bg-2:               #F9FAFB;
-  --bg-3:               #F3F4F6;
-  --text-1:             #191C23;
-  --muted-clr:          #727785;
-  --primary-dark:       #0052A3;
-  --primary-ring:       rgba(0, 102, 204, 0.12);
-  --indigo:             #4F46E5;
-  --indigo-soft:        rgba(79, 70, 229, 0.12);
-  --warning-soft:       rgba(217, 119, 6, 0.12);
-  --danger-soft:        rgba(180, 35, 24, 0.12);
-  --info-soft:          rgba(0, 82, 163, 0.12);
+  --bg-2:               #F3EEDF;
+  --bg-3:               #EAE2CA;
+  --text-1:             #262019;
+  --muted-clr:          #857F6C;
+  --primary-dark:       #17587F;
+  --primary-ring:       rgba(31, 111, 160, 0.12);
+  --indigo:             #8656A8;
+  --indigo-soft:        rgba(134, 86, 168, 0.12);
+  --warning-soft:       rgba(214, 151, 30, 0.12);
+  --danger-soft:        rgba(209, 69, 44, 0.12);
+  --info-soft:          rgba(76, 147, 190, 0.12);
 
-  /* Surface containers (Material Design inspired) */
+  /* Surface containers */
   --surface-container-lowest:   #FFFFFF;
-  --surface-container-low:      #FAFAFA;
-  --surface-container:          #F2F2F2;
-  --surface-container-high:     #EFEFEF;
-  --surface-container-highest:  #E5E5E5;
+  --surface-container-low:      #FBF7EC;
+  --surface-container:          #F3EEDF;
+  --surface-container-high:     #EAE2CA;
+  --surface-container-highest:  #E4DCC3;
 }
 
 html[data-theme="dark"] {
-  /* Primary — Lighter for dark mode */
-  --primary:            #4D9EFF;
-  --primary-hover:      #7BB3FF;
-  --primary-light:      rgba(77, 158, 255, 0.12);
-  --primary-soft:       rgba(77, 158, 255, 0.08);
+  /* Bright accents on a deep warm-green ground — vivid, not muted lamplight */
+  --primary:            #5FB8E0;
+  --primary-hover:      #7FC8E8;
+  --primary-light:      rgba(95, 184, 224, 0.14);
+  --primary-soft:       rgba(95, 184, 224, 0.08);
 
   /* Success */
-  --success:            #81C784;
-  --success-light:      rgba(129, 199, 132, 0.12);
+  --success:            #4FD48A;
+  --success-light:      rgba(79, 212, 138, 0.14);
 
   /* Warning */
-  --warning:            #FFB74D;
-  --warning-light:      rgba(255, 183, 77, 0.12);
+  --warning:            #F0B429;
+  --warning-light:      rgba(240, 180, 41, 0.14);
 
   /* Danger */
-  --danger:             #FFADA3;
-  --danger-light:       rgba(255, 173, 163, 0.12);
+  --danger:             #FF7052;
+  --danger-light:       rgba(255, 112, 82, 0.14);
 
   /* Info */
-  --info:               #7BB3FF;
-  --info-light:         rgba(123, 179, 255, 0.12);
+  --info:               #7FC3E0;
+  --info-light:         rgba(127, 195, 224, 0.14);
 
   /* Neutral */
-  --text:               #F5F5F7;
-  --text-2:             #D1D5DB;
-  --text-3:             #9CA3AF;
-  --bg:                 #1A1C22;
-  --surface:            #2C2E33;
-  --surface-2:          #1F2127;
-  --border:             #404654;
-  --border-strong:      #5A6370;
+  --text:               #F2EEDD;
+  --text-2:             #C9C2A6;
+  --text-3:             #99927A;
+  --bg:                 #14201C;
+  --surface:            #1C2A24;
+  --surface-2:          #1F2D26;
+  --border:             #2E3D34;
+  --border-strong:      #46584C;
 
   /* Aliases for legacy code compatibility */
-  --bg-1:               #1A1C22;
-  --bg-2:               #252930;
-  --bg-3:               #2C2E33;
-  --text-1:             #F5F5F7;
-  --muted-clr:          #9CA3AF;
-  --primary-dark:       #7BB3FF;
-  --primary-ring:       rgba(77, 158, 255, 0.12);
-  --indigo:             #93C5FD;
-  --indigo-soft:        rgba(147, 197, 253, 0.12);
-  --warning-soft:       rgba(255, 183, 77, 0.12);
-  --danger-soft:        rgba(255, 173, 163, 0.12);
-  --info-soft:          rgba(123, 179, 255, 0.12);
+  --bg-1:               #14201C;
+  --bg-2:               #1F2D26;
+  --bg-3:               #263630;
+  --text-1:             #F2EEDD;
+  --muted-clr:          #99927A;
+  --primary-dark:       #7FC8E8;
+  --primary-ring:       rgba(95, 184, 224, 0.14);
+  --indigo:             #B48FD0;
+  --indigo-soft:        rgba(180, 143, 208, 0.14);
+  --warning-soft:       rgba(240, 180, 41, 0.14);
+  --danger-soft:        rgba(255, 112, 82, 0.14);
+  --info-soft:          rgba(127, 195, 224, 0.14);
 
   /* Surface containers (darker for dark mode) */
-  --surface-container-lowest:   #0F1115;
-  --surface-container-low:      #1A1C22;
-  --surface-container:          #252930;
-  --surface-container-high:     #2C2E33;
-  --surface-container-highest:  #353943;
+  --surface-container-lowest:   #0F1814;
+  --surface-container-low:      #14201C;
+  --surface-container:          #1C2A24;
+  --surface-container-high:     #223229;
+  --surface-container-highest:  #2C3F34;
 }
 
 /* ── 2. Reset & base ───────────────────────────────────────────── */
@@ -166,10 +166,18 @@ html {
 
 body {
   min-height: 100vh;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.5;
+}
+
+/* Display face — headings, page titles, big KPI numerals. Used sparingly. */
+h1, h2, h3,
+.error-visual-code,
+.metric-num,
+.sidebar-header h2 {
+  font-family: 'Fraunces', Georgia, serif;
 }
 
 a { color: var(--primary); text-decoration: none; transition: color var(--t); }
@@ -753,7 +761,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 }
 .btn-primary:hover {
   background: var(--primary-hover);
-  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+  box-shadow: 0 2px 8px rgba(31, 111, 160, 0.2);
 }
 
 .btn-secondary {
@@ -921,13 +929,12 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   accent-color: var(--primary);
 }
 
-/* ── 7. Data Tables & Pagination ──────────────────────────────── */
+/* ── 7. Data Tables & Pagination — ruled ledger rows, not a boxed card ── */
 .table-wrap {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--r-md);
+  border-radius: var(--r-xs);
   overflow: hidden;
-  box-shadow: var(--sh-xs);
   margin-bottom: 16px;
 }
 
@@ -935,19 +942,22 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   width: 100%;
   border-collapse: collapse;
   font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
 }
 
 .table thead tr {
   background: var(--surface-container-low);
-  border-bottom: 1.5px solid var(--border);
+  border-bottom: 2px solid var(--text);
+  box-shadow: 0 2px 0 -1px var(--border);
 }
 
 .table th {
   padding: 12px 16px;
-  font-size: 11.5px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: .07em;
   color: var(--text-2);
   text-align: left;
 }
@@ -1043,17 +1053,37 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   color: var(--muted-clr);
 }
 
-/* ── 8. Status Badges ──────────────────────────────────────────── */
+/* ── 8. Status Badges — rendered as an ink stamp (signature element) ──
+   Every status across the app (lead care_status, payment status, admin
+   approval, log level) shares this one motif: a slightly rotated, double-
+   ringed mark in the status's ink color. Not decoration — the domain
+   model itself is a chain of stamped approvals, so a stamp encodes what
+   is true about the data. ─────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: var(--r-full);
-  font-size: 12px;
-  font-weight: 500;
-  border: none;
+  padding: 3px 10px;
+  border-radius: var(--r-xs);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
   white-space: nowrap;
+  border: 1.5px solid currentColor;
+  position: relative;
+  transform: rotate(-1.5deg);
+}
+
+.badge::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  opacity: .45;
+  pointer-events: none;
 }
 
 /* Care status colors */
@@ -1061,12 +1091,12 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 .badge-contacted  { background: var(--info-light);      color: var(--info); }
 .badge-consulting { background: var(--warning-light);   color: var(--warning); }
 .badge-enrolled   { background: var(--success-light);   color: var(--success); }
-.badge-dropped    { background: rgba(119, 119, 119, 0.1); color: var(--text-3); }
+.badge-dropped    { background: var(--surface-container-high); color: var(--text-3); }
 
 /* Payment status colors */
 .badge-pending    { background: var(--warning-light);   color: var(--warning); }
 .badge-paid       { background: var(--success-light);   color: var(--success); }
-.badge-refunded   { background: var(--primary-light);   color: var(--primary); }
+.badge-refunded   { background: var(--indigo-soft);      color: var(--indigo); }
 .badge-cancelled  { background: var(--danger-light);    color: var(--danger); }
 
 /* ── 9. Toolbar / Filter Cards ─────────────────────────────────── */
@@ -1158,8 +1188,8 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   line-height: 1.5;
 }
 
-.alert-warning { background: var(--warning-soft); color: var(--warning); border-color: #fde68a; }
-.alert-danger  { background: var(--danger-soft);  color: var(--danger);  border-color: #fca5a5; }
+.alert-warning { background: var(--warning-soft); color: var(--warning); border-color: var(--warning); }
+.alert-danger  { background: var(--danger-soft);  color: var(--danger);  border-color: var(--danger); }
 
 /* Toasts notifications overlay */
 .toast-container {
@@ -1256,7 +1286,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 
 .dashboard-hero {
   grid-column: 1 / -1;
-  background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--indigo) 100%);
   color: #ffffff;
   border-radius: var(--r-xl);
   padding: 32px 40px;
@@ -1326,7 +1356,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-size: 22px;
   font-weight: 800;
   color: var(--primary);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 /* Call-to-action variant (e.g. "Bắt đầu đăng ký →") instead of a numeric stat */
@@ -1380,7 +1410,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-size: 24px;
   font-weight: 800;
   color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   line-height: 1.2;
 }
 
@@ -1429,7 +1459,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   color: var(--text);
   min-width: 32px;
   text-align: right;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 /* CSS vertical bar chart */
@@ -1478,7 +1508,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-family: 'Inter', system-ui;
+  font-family: 'IBM Plex Sans', system-ui;
   line-height: 1;
 }
 
@@ -1820,7 +1850,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 }
 
 .terminal-header .title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   font-weight: 600;
   color: #858585;
@@ -1830,7 +1860,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   padding: 16px;
   max-height: 480px;
   overflow-y: auto;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 12.5px;
   line-height: 1.6;
 }
@@ -1917,7 +1947,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-weight: 900;
   line-height: .9;
   letter-spacing: -0.05em;
-  background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--indigo) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -2054,7 +2084,7 @@ a.system-row:hover .status-icon {
 }
 
 .bento-incident-card .incident-code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   background: var(--surface-container);
   padding: 8px 12px;
@@ -2250,7 +2280,7 @@ a.system-row:hover .status-icon {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 102, 204, 0.05);
+  background: rgba(31, 111, 160, 0.05);
   border-radius: var(--r);
   padding: 8px 12px;
 }
@@ -2439,7 +2469,7 @@ dialog.help-modal * {
   border-bottom-width: 2px;
   border-radius: var(--r-sm);
   padding: 2px 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   color: var(--text);
 }
@@ -2511,17 +2541,17 @@ dialog.help-modal * {
 
 .log-entry.log-error {
   border-left-color: var(--danger);
-  background: linear-gradient(90deg, rgba(180, 35, 24, 0.05) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(209, 69, 44, 0.05) 0%, transparent 100%);
 }
 
 .log-entry.log-warning {
   border-left-color: var(--warning);
-  background: linear-gradient(90deg, rgba(217, 119, 6, 0.05) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(214, 151, 30, 0.05) 0%, transparent 100%);
 }
 
 .log-entry.log-info {
   border-left-color: var(--primary);
-  background: linear-gradient(90deg, rgba(0, 102, 204, 0.05) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(31, 111, 160, 0.05) 0%, transparent 100%);
 }
 
 .log-header {
@@ -2535,33 +2565,47 @@ dialog.help-modal * {
 .log-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: var(--r-xs);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: .05em;
+  border: 1.5px solid currentColor;
+  position: relative;
+  transform: rotate(-1.5deg);
+}
+
+.log-badge::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  opacity: .45;
+  pointer-events: none;
 }
 
 .log-badge-error {
-  background-color: rgba(180, 35, 24, 0.15);
+  background-color: var(--danger-light);
   color: var(--danger);
 }
 
 .log-badge-warning {
-  background-color: rgba(217, 119, 6, 0.15);
+  background-color: var(--warning-light);
   color: var(--warning);
 }
 
 .log-badge-info {
-  background-color: rgba(0, 102, 204, 0.15);
+  background-color: var(--primary-light);
   color: var(--primary);
 }
 
 .log-ts {
   color: var(--text-2);
   font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .log-msg {
@@ -2572,7 +2616,7 @@ dialog.help-modal * {
   font-size: 12px;
   line-height: 1.6;
   color: var(--text-1);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   overflow-x: auto;
   margin: 0;
   white-space: pre-wrap;
@@ -2581,15 +2625,15 @@ dialog.help-modal * {
 
 /* Dark mode adjustments for log entries */
 [data-theme="dark"] .log-entry.log-error {
-  background: linear-gradient(90deg, rgba(180, 35, 24, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(255, 112, 82, 0.1) 0%, transparent 100%);
 }
 
 [data-theme="dark"] .log-entry.log-warning {
-  background: linear-gradient(90deg, rgba(217, 119, 6, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(240, 180, 41, 0.1) 0%, transparent 100%);
 }
 
 [data-theme="dark"] .log-entry.log-info {
-  background: linear-gradient(90deg, rgba(0, 102, 204, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(95, 184, 224, 0.1) 0%, transparent 100%);
 }
 
 /* ================================================================
@@ -2627,7 +2671,7 @@ dialog.help-modal * {
   background: rgba(0, 0, 0, 0.05);
   padding: 2px 6px;
   border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 [data-theme="dark"] .dev-note {
@@ -2660,12 +2704,12 @@ dialog.help-modal * {
 }
 
 .btn-success:hover {
-  background: #1f5631;
-  box-shadow: 0 2px 8px rgba(45, 122, 62, 0.2);
+  background: #1a6b46;
+  box-shadow: 0 2px 8px rgba(34, 136, 90, 0.2);
 }
 
 .btn-success:active {
-  background: #194026;
+  background: #134f34;
 }
 
 /* Error page: inline method badge (used inside .error-info p on the 405 page) */
@@ -2675,7 +2719,7 @@ dialog.help-modal * {
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   padding: 2px 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   color: var(--danger);
 }
@@ -2832,7 +2876,7 @@ textarea:focus {
 }
 
 .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 .font-bold {
@@ -2841,13 +2885,30 @@ textarea:focus {
 
 /* Badge info variant */
 .badge-info {
+  display: inline-flex;
+  align-items: center;
   background: var(--info-light);
   color: var(--info);
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--r-xs);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  position: relative;
+  transform: rotate(-1.5deg);
+}
+
+.badge-info::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  opacity: .45;
+  pointer-events: none;
 }
 
 /* Focus visible for better accessibility */
