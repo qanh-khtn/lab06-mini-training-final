@@ -246,6 +246,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /* --- Keyboard Shortcuts --- */
+    document.addEventListener('keydown', function (e) {
+        var tag = (e.target.tagName || '').toLowerCase();
+        var isTyping = tag === 'input' || tag === 'textarea' || tag === 'select';
+
+        // Ctrl+K (or Cmd+K on Mac): focus quick search
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            if (searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            return;
+        }
+
+        // Escape: close search results and notification dropdown
+        // (help modal has its own Escape handler)
+        if (e.key === 'Escape' && !isTyping) {
+            if (searchResults) searchResults.classList.remove('show');
+            if (notifMenu) notifMenu.classList.remove('show');
+        }
+    });
+
     /* --- Password visibility toggle (login/register forms) --- */
     document.querySelectorAll('.pwd-toggle').forEach(function (btn) {
         btn.addEventListener('click', function () {

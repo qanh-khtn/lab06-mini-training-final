@@ -71,6 +71,37 @@ function sort_url(string $column, string $currentSort, string $currentDir): stri
     return '?' . query_string(['sort' => $column, 'dir' => $dir, 'page' => 1]);
 }
 
+/**
+ * Tính dải số trang để hiển thị, dùng dấu "…" (null) cho khoảng bị bỏ qua.
+ * Ví dụ: current=5, last=10 -> [1, null, 4, 5, 6, null, 10]
+ * @return array<int, int|null>
+ */
+function pagination_range(int $current, int $last, int $window = 1): array
+{
+    if ($last <= 1) {
+        return [1];
+    }
+
+    $pages = [];
+    for ($p = 1; $p <= $last; $p++) {
+        if ($p === 1 || $p === $last || ($p >= $current - $window && $p <= $current + $window)) {
+            $pages[] = $p;
+        }
+    }
+
+    $result = [];
+    $prev = null;
+    foreach ($pages as $p) {
+        if ($prev !== null && $p - $prev > 1) {
+            $result[] = null;
+        }
+        $result[] = $p;
+        $prev = $p;
+    }
+
+    return $result;
+}
+
 function sort_caret(string $column, string $currentSort, string $currentDir): string
 {
     if ($currentSort !== $column) {

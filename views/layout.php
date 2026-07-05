@@ -172,6 +172,12 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register',
 
                     <h3>Chế độ sáng/tối</h3>
                     <p>Nhấp vào nút mặt trăng/mặt trời ở góc phải để chuyển đổi giữa chế độ sáng và tối theo sở thích của bạn.</p>
+
+                    <h3>Phím tắt</h3>
+                    <p>
+                        <kbd>Ctrl</kbd> + <kbd>K</kbd> — focus vào ô tìm kiếm nhanh<br>
+                        <kbd>Esc</kbd> — đóng kết quả tìm kiếm, thông báo hoặc hộp thoại đang mở
+                    </p>
                 </div>
             </div>
         </dialog>

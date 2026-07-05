@@ -1029,6 +1029,20 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   cursor: default;
 }
 
+.pagination .page-num,
+.pagination .current {
+  min-width: 36px;
+  padding: 8px;
+  justify-content: center;
+}
+
+.pagination .page-ellipsis {
+  border: none;
+  background: none;
+  padding: 8px 2px;
+  color: var(--muted-clr);
+}
+
 /* ── 8. Status Badges ──────────────────────────────────────────── */
 .badge {
   display: inline-flex;
@@ -2416,6 +2430,18 @@ dialog.help-modal * {
 .modal-body p {
   color: var(--text-2);
   line-height: 1.6;
+}
+
+.modal-body kbd {
+  display: inline-block;
+  background: var(--surface-container-low);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--r-sm);
+  padding: 2px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
 }
 
 /* Top Navbar Icons Container */

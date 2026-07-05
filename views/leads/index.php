@@ -116,7 +116,15 @@ $isFiltered = $q !== '' || $statusFilter !== '' || $dateFrom !== '' || $dateTo !
             <span class="material-symbols-outlined icon-md" style="margin-right:4px;">arrow_back</span> Trước
         </span>
     <?php endif; ?>
-    <span class="current">Trang <?= h($page) ?> / <?= h($lastPage) ?></span>
+    <?php foreach (pagination_range($page, $lastPage) as $n): ?>
+        <?php if ($n === null): ?>
+            <span class="page-ellipsis">…</span>
+        <?php elseif ($n === $page): ?>
+            <span class="current"><?= h($n) ?></span>
+        <?php else: ?>
+            <a class="page-num" href="/leads?<?= h(query_string(['page' => $n])) ?>"><?= h($n) ?></a>
+        <?php endif; ?>
+    <?php endforeach; ?>
     <?php if ($page < $lastPage): ?>
         <a href="/leads?<?= h(query_string(['page' => $page + 1])) ?>">
             Sau <span class="material-symbols-outlined icon-md" style="margin-left:4px;">arrow_forward</span>
