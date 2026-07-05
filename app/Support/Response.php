@@ -33,6 +33,28 @@ class Response
         \redirect($url, $status);
     }
 
+    /**
+     * Xuất CSV cho Excel (UTF-8 BOM để hiển thị đúng tiếng Việt).
+     * @param string[] $headers Tên cột (dòng đầu)
+     * @param array<int, array<int, string>> $rows Mỗi dòng là mảng giá trị theo đúng thứ tự $headers
+     */
+    public static function csv(string $filename, array $headers, array $rows): void
+    {
+        http_response_code(200);
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        echo "\xEF\xBB\xBF"; // BOM UTF-8
+
+        $out = fopen('php://output', 'w');
+        fputcsv($out, $headers);
+        foreach ($rows as $row) {
+            fputcsv($out, $row);
+        }
+        fclose($out);
+        exit;
+    }
+
     public static function notFound(string $message = 'Không tìm thấy trang bạn yêu cầu.'): void
     {
         self::view('errors/404', [

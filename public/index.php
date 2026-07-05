@@ -74,19 +74,23 @@ $router->post('/public-leads', [PublicLeadController::class, 'store']);
 
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);
+$router->get('/leads/export', [LeadController::class, 'export']);
 $router->get('/leads/create', [LeadController::class, 'create']);
 $router->post('/leads/store', [LeadController::class, 'store']);
 $router->get('/leads/edit', [LeadController::class, 'edit']);
 $router->post('/leads/update', [LeadController::class, 'update']);
 $router->post('/leads/delete', [LeadController::class, 'delete']);
+$router->post('/leads/bulk-delete', [LeadController::class, 'bulkDelete']);
 
 // Module B - Thanh toán học phí
 $router->get('/payments', [PaymentController::class, 'index']);
+$router->get('/payments/export', [PaymentController::class, 'export']);
 $router->get('/payments/create', [PaymentController::class, 'create']);
 $router->post('/payments/store', [PaymentController::class, 'store']);
 $router->get('/payments/edit', [PaymentController::class, 'edit']);
 $router->post('/payments/update', [PaymentController::class, 'update']);
 $router->post('/payments/delete', [PaymentController::class, 'delete']);
+$router->post('/payments/bulk-delete', [PaymentController::class, 'bulkDelete']);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';

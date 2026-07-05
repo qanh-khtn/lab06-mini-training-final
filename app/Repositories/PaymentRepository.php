@@ -14,21 +14,21 @@ class PaymentRepository
 
     public function __construct(private PDO $db) {}
 
-    public function countAll(string $keyword = '', string $status = ''): int
+    public function countAll(string $keyword = '', string $status = '', string $dateFrom = '', string $dateTo = ''): int
     {
-        [$where, $params] = $this->buildWhere($keyword, $status);
+        [$where, $params] = $this->buildWhere($keyword, $status, $dateFrom, $dateTo);
         $stmt = $this->db->prepare('SELECT COUNT(*) AS total FROM payments' . $where);
         $stmt->execute($params);
 
         return (int) ($stmt->fetch()['total'] ?? 0);
     }
 
-    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction, string $status = ''): array
+    public function paginate(string $keyword, int $limit, int $offset, string $sort, string $direction, string $status = '', string $dateFrom = '', string $dateTo = ''): array
     {
         $sort      = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'id';
         $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'asc';
 
-        [$where, $params] = $this->buildWhere($keyword, $status);
+        [$where, $params] = $this->buildWhere($keyword, $status, $dateFrom, $dateTo);
         $sql = "SELECT id, payment_code, student_name, student_email, course_name, amount, status, created_at
                 FROM payments{$where}
                 ORDER BY {$sort} {$direction}
@@ -41,6 +41,23 @@ class PaymentRepository
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /** Trả toàn bộ danh sách khớp filter (không LIMIT) — dùng cho export CSV. */
+    public function all(string $keyword, string $status, string $sort, string $direction, string $dateFrom = '', string $dateTo = ''): array
+    {
+        $sort      = in_array($sort, self::SORT_WHITELIST, true) ? $sort : 'id';
+        $direction = in_array(strtolower($direction), self::DIR_WHITELIST, true) ? strtolower($direction) : 'asc';
+
+        [$where, $params] = $this->buildWhere($keyword, $status, $dateFrom, $dateTo);
+        $sql = "SELECT id, payment_code, student_name, student_email, course_name, amount, status, created_at
+                FROM payments{$where}
+                ORDER BY {$sort} {$direction}";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         return $stmt->fetchAll();
     }
@@ -92,6 +109,31 @@ class PaymentRepository
         return $stmt->execute(['id' => $id]);
     }
 
+    /** Soft delete hàng loạt trong 1 transaction. Trả về số dòng thực sự bị xóa. */
+    public function deleteMany(array $ids): int
+    {
+        if ($ids === []) {
+            return 0;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare(
+                "UPDATE payments SET deleted_at = NOW() WHERE id IN ({$placeholders}) AND deleted_at IS NULL"
+            );
+            $stmt->execute($ids);
+            $affected = $stmt->rowCount();
+            $this->db->commit();
+
+            return $affected;
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     /**
      * Search payments by payment_code or student_name (for quick search API)
      */
@@ -120,7 +162,7 @@ class PaymentRepository
     // Helpers
     // -------------------------------------------------------------------------
 
-    private function buildWhere(string $keyword, string $status): array
+    private function buildWhere(string $keyword, string $status, string $dateFrom = '', string $dateTo = ''): array
     {
         $conditions = ['deleted_at IS NULL'];
         $params     = [];
@@ -137,6 +179,16 @@ class PaymentRepository
         if ($status !== '') {
             $conditions[] = 'status = :status';
             $params['status'] = $status;
+        }
+
+        if ($dateFrom !== '') {
+            $conditions[] = 'created_at >= :date_from';
+            $params['date_from'] = $dateFrom . ' 00:00:00';
+        }
+
+        if ($dateTo !== '') {
+            $conditions[] = 'created_at <= :date_to';
+            $params['date_to'] = $dateTo . ' 23:59:59';
         }
 
         return [' WHERE ' . implode(' AND ', $conditions), $params];

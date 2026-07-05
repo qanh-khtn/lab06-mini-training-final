@@ -245,4 +245,31 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    /* --- Bulk select (leads/payments tables) --- */
+    var checkAll   = document.getElementById('check-all');
+    var bulkBar    = document.getElementById('bulk-actions');
+    var bulkCount  = document.getElementById('bulk-count');
+
+    if (checkAll && bulkBar && bulkCount) {
+        function rowChecks() {
+            return document.querySelectorAll('.row-check');
+        }
+
+        function updateBulkBar() {
+            var checked = document.querySelectorAll('.row-check:checked').length;
+            bulkBar.style.display = checked > 0 ? 'flex' : 'none';
+            bulkCount.textContent = 'Đã chọn ' + checked + ' dòng';
+            checkAll.checked = checked > 0 && checked === rowChecks().length;
+        }
+
+        checkAll.addEventListener('change', function () {
+            rowChecks().forEach(function (cb) { cb.checked = checkAll.checked; });
+            updateBulkBar();
+        });
+
+        rowChecks().forEach(function (cb) {
+            cb.addEventListener('change', updateBulkBar);
+        });
+    }
 });

@@ -22,13 +22,15 @@ class PaymentController
     {
         require_login();
 
-        $q       = trim((string) ($_GET['q'] ?? ''));
-        $status  = trim((string) ($_GET['status'] ?? ''));
-        $sort    = (string) ($_GET['sort'] ?? 'id');
-        $dir     = (string) ($_GET['dir'] ?? 'asc');
-        $rawPage = (int) ($_GET['page'] ?? 1);
+        $q        = trim((string) ($_GET['q'] ?? ''));
+        $status   = trim((string) ($_GET['status'] ?? ''));
+        $sort     = (string) ($_GET['sort'] ?? 'id');
+        $dir      = (string) ($_GET['dir'] ?? 'asc');
+        $rawPage  = (int) ($_GET['page'] ?? 1);
+        $dateFrom = trim((string) ($_GET['date_from'] ?? ''));
+        $dateTo   = trim((string) ($_GET['date_to'] ?? ''));
 
-        $result = $this->service()->paginate($q, $status, $rawPage, $sort, $dir);
+        $result = $this->service()->paginate($q, $status, $rawPage, $sort, $dir, $dateFrom, $dateTo);
 
         if ($rawPage !== $result['page']) {
             $qs = query_string(['page' => $result['page']]);
@@ -42,12 +44,46 @@ class PaymentController
             'statusFilter'  => $status,
             'sort'          => $sort,
             'dir'           => $dir,
+            'dateFrom'      => $dateFrom,
+            'dateTo'        => $dateTo,
             'page'          => $result['page'],
             'lastPage'      => $result['lastPage'],
             'total'         => $result['total'],
             'statusLabels'  => $this->statusLabels(),
             'courseOptions' => PaymentService::COURSE_OPTIONS,
         ]);
+    }
+
+    public function export(): void
+    {
+        require_login();
+
+        $q        = trim((string) ($_GET['q'] ?? ''));
+        $status   = trim((string) ($_GET['status'] ?? ''));
+        $sort     = (string) ($_GET['sort'] ?? 'id');
+        $dir      = (string) ($_GET['dir'] ?? 'asc');
+        $dateFrom = trim((string) ($_GET['date_from'] ?? ''));
+        $dateTo   = trim((string) ($_GET['date_to'] ?? ''));
+
+        $rows         = $this->service()->all($q, $status, $sort, $dir, $dateFrom, $dateTo);
+        $statusLabels = $this->statusLabels();
+
+        $csvRows = array_map(static fn (array $r): array => [
+            $r['id'],
+            $r['payment_code'],
+            $r['student_name'],
+            $r['student_email'] ?? '',
+            $r['course_name'],
+            number_format((float) $r['amount'], 0, ',', '.'),
+            $statusLabels[$r['status']] ?? $r['status'],
+            $r['created_at'],
+        ], $rows);
+
+        Response::csv(
+            'payments_' . date('Y-m-d') . '.csv',
+            ['ID', 'Mã thanh toán', 'Tên học viên', 'Email học viên', 'Khóa học', 'Số tiền (đ)', 'Trạng thái', 'Ngày tạo'],
+            $csvRows
+        );
     }
 
     public function create(): void
@@ -125,13 +161,33 @@ class PaymentController
 
     public function delete(): void
     {
-        require_login();
+        require_admin();
         csrf_verify();
 
         $id = (int) ($_POST['id'] ?? 0);
         $this->service()->delete($id);
 
+        audit_log('PAYMENT_DELETE', ['id' => $id, 'by' => $_SESSION['user_email'] ?? 'unknown']);
         flash_set('success', 'Đã xóa phiếu thanh toán.');
+        redirect('/payments');
+    }
+
+    public function bulkDelete(): void
+    {
+        require_admin();
+        csrf_verify();
+
+        $ids = array_values(array_filter(array_map('intval', (array) ($_POST['ids'] ?? []))));
+
+        if ($ids === []) {
+            flash_set('warning', 'Vui lòng chọn ít nhất một phiếu thanh toán để xóa.');
+            redirect('/payments');
+        }
+
+        $deleted = (new PaymentRepository(Database::connection()))->deleteMany($ids);
+
+        audit_log('PAYMENT_BULK_DELETE', ['ids' => implode(',', $ids), 'by' => $_SESSION['user_email'] ?? 'unknown']);
+        flash_set('success', "Đã xóa {$deleted} phiếu thanh toán.");
         redirect('/payments');
     }
 

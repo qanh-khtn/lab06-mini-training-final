@@ -22,15 +22,30 @@ class LeadService
      * Trả về mảng chứa rows, total, page (đã clamp) và lastPage.
      * Controller so sánh rawPage vs page để quyết định có redirect hay không.
      */
-    public function paginate(string $q, string $status, int $rawPage, string $sort, string $dir): array
+    public function paginate(string $q, string $status, int $rawPage, string $sort, string $dir, string $dateFrom = '', string $dateTo = ''): array
     {
-        $total    = $this->repo->countAll($q, $status);
+        $dateFrom = $this->validDate($dateFrom);
+        $dateTo   = $this->validDate($dateTo);
+
+        $total    = $this->repo->countAll($q, $status, $dateFrom, $dateTo);
         $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
         $page     = min(max(1, $rawPage), $lastPage);
         $offset   = ($page - 1) * self::PER_PAGE;
-        $rows     = $this->repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir, $status);
+        $rows     = $this->repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir, $status, $dateFrom, $dateTo);
 
         return compact('rows', 'total', 'page', 'lastPage');
+    }
+
+    /** Trả toàn bộ danh sách khớp filter (không phân trang) — dùng cho export CSV. */
+    public function all(string $q, string $status, string $sort, string $dir, string $dateFrom = '', string $dateTo = ''): array
+    {
+        return $this->repo->all($q, $status, $sort, $dir, $this->validDate($dateFrom), $this->validDate($dateTo));
+    }
+
+    /** Chuẩn hóa ngày dạng YYYY-MM-DD; sai định dạng thì coi như không lọc. */
+    private function validDate(string $value): string
+    {
+        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : '';
     }
 
     public function find(int $id): ?array

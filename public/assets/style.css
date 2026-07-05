@@ -1088,6 +1088,36 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   background: var(--surface);
 }
 
+.toolbar input[type="date"] {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 7px 10px;
+  font-size: 13.5px;
+  background: var(--surface-container-low);
+  color: var(--text);
+  outline: none;
+  transition: all var(--t);
+}
+
+.toolbar input[type="date"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+  background: var(--surface);
+}
+
+/* Bulk select actions bar (leads/payments tables) */
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--danger-light);
+  border: 1px solid var(--danger);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+}
+
 /* ── 10. Alerts & Toasts ───────────────────────────────────────── */
 .alert {
   display: flex;
