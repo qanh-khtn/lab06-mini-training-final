@@ -1372,6 +1372,9 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   justify-content: center;
 }
 
+.feature-card:nth-of-type(2) .feature-icon { background: var(--success-light); color: var(--success); }
+.feature-card:nth-of-type(3) .feature-icon { background: var(--warning-light); color: var(--warning); }
+
 .feature-card h3 {
   font-size: 16px;
   font-weight: 700;
@@ -1391,7 +1394,11 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-weight: 800;
   color: var(--primary);
   font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
 }
+
+.feature-card:nth-of-type(2) .stat { color: var(--success); }
+.feature-card:nth-of-type(3) .stat { color: var(--warning); }
 
 /* Call-to-action variant (e.g. "Bắt đầu đăng ký →") instead of a numeric stat */
 .feature-card .stat.stat-cta {
