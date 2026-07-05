@@ -44,21 +44,7 @@ class AuthController
             ], 422);
         }
 
-        if (($user['status'] ?? 'active') === 'pending') {
-            Response::view('auth/login', [
-                'title'  => 'Đăng nhập',
-                'errors' => ['login' => 'Tài khoản của bạn đang chờ duyệt từ admin. Vui lòng quay lại sau.'],
-                'old'    => ['email' => $email],
-            ], 403);
-        }
-
-        if (($user['status'] ?? 'active') !== 'active') {
-            Response::view('auth/login', [
-                'title'  => 'Đăng nhập',
-                'errors' => ['login' => 'Tài khoản này đã bị vô hiệu hóa.'],
-                'old'    => ['email' => $email],
-            ], 403);
-        }
+        $this->checkAccountStatus($user, $email);
 
         $this->establishSession($user);
 
@@ -71,11 +57,15 @@ class AuthController
     }
 
     // ── Social login (mock) ──────────────────────────────────────────
-    // Đây là mô phỏng luồng OAuth cho mục đích demo (không gọi API Google/Facebook
-    // thật). Mỗi nhà cung cấp ánh xạ tới một tài khoản demo cố định: nếu tài khoản
-    // đó chưa tồn tại trong DB, hệ thống tự tạo (giống hành vi "tự động tạo tài
-    // khoản nháp từ email nhà cung cấp"), rồi đăng nhập ngay — không có bước phê
-    // duyệt vì được xem là email đã được nhà cung cấp xác thực sẵn.
+    // Mô phỏng luồng OAuth cho mục đích demo (không gọi API Google/Facebook
+    // thật). Mỗi nhà cung cấp ánh xạ tới một tài khoản demo cố định. QUAN
+    // TRỌNG: tài khoản mới tạo qua social vẫn ở trạng thái 'pending' giống
+    // hệt đăng ký thủ công (UserRepository::create() mặc định 'pending') và
+    // đi qua đúng checkAccountStatus() dùng chung với handleLogin() — không
+    // có ngoại lệ bypass phê duyệt nào cho luồng social. Việc xác thực email
+    // qua nhà cung cấp (trong OAuth thật) không đồng nghĩa với việc được cấp
+    // quyền truy cập hệ thống; quyền đó chỉ do admin quyết định qua
+    // /admin/users/pending, không phân biệt tài khoản được tạo bằng cách nào.
 
     public function loginGoogle(): void
     {
@@ -95,18 +85,38 @@ class AuthController
 
         csrf_verify();
 
-        $user = (new UserRepository(Database::connection()))->findOrCreateActive($name, $email);
+        $user = (new UserRepository(Database::connection()))->findOrCreate($name, $email);
 
-        if (($user['status'] ?? 'active') !== 'active') {
-            flash_set('danger', 'Tài khoản này hiện không hoạt động.');
-            redirect('/login');
-        }
+        $this->checkAccountStatus($user, $email);
 
         $this->establishSession($user);
 
         $providerLabel = $provider === 'google' ? 'Google' : 'Facebook';
-        flash_set('success', "Đăng nhập bằng {$providerLabel} thành công (mô phỏng). Xin chào, {$user['name']}!");
+        flash_set('success', "Đăng nhập bằng {$providerLabel} thành công. Xin chào, {$user['name']}!");
         redirect('/');
+    }
+
+    /**
+     * Cổng kiểm tra trạng thái tài khoản dùng chung cho MỌI luồng đăng nhập
+     * (password lẫn social) — đảm bảo không có đường tắt nào bỏ qua phê duyệt.
+     */
+    private function checkAccountStatus(array $user, string $email): void
+    {
+        if (($user['status'] ?? 'active') === 'pending') {
+            Response::view('auth/login', [
+                'title'  => 'Đăng nhập',
+                'errors' => ['login' => 'Tài khoản của bạn đang chờ duyệt từ admin. Vui lòng quay lại sau.'],
+                'old'    => ['email' => $email],
+            ], 403);
+        }
+
+        if (($user['status'] ?? 'active') !== 'active') {
+            Response::view('auth/login', [
+                'title'  => 'Đăng nhập',
+                'errors' => ['login' => 'Tài khoản này đã bị vô hiệu hóa.'],
+                'old'    => ['email' => $email],
+            ], 403);
+        }
     }
 
     private function establishSession(array $user): void

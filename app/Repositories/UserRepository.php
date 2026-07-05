@@ -46,29 +46,28 @@ class UserRepository
     }
 
     /**
-     * Find an active user by email, or create one on first login (used by
-     * mock social login — simulates "auto-create account from provider email").
+     * Find a user by email, or create one on first login (used by mock social
+     * login). Reuses create() as-is, so the new account starts as 'pending' —
+     * exactly like manual registration. Social sign-in proves nothing about
+     * authorization to use this system, only (in a real OAuth flow) email
+     * ownership, so it must go through the same admin-approval gate as
+     * everyone else; there is no bypass here.
      */
-    public function findOrCreateActive(string $name, string $email): array
+    public function findOrCreate(string $name, string $email): array
     {
         $existing = $this->findByEmail($email);
         if ($existing !== null) {
             return $existing;
         }
 
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO users (name, email, password_hash, role, status)
-             VALUES (:name, :email, :ph, :role, :status)'
-        );
-        $stmt->execute([
-            'name'   => $name,
-            'email'  => $email,
-            'ph'     => password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT, ['cost' => 12]),
-            'role'   => 'staff',
-            'status' => 'active',
-        ]);
+        try {
+            $this->create($name, $email, password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT, ['cost' => 12]));
+        } catch (DuplicateRecordException) {
+            // Lost a race with a concurrent request that inserted the same
+            // email first — fall through and read what it created.
+        }
 
-        return $this->findByEmail($email);
+        return $this->findByEmail($email) ?? throw new \RuntimeException('Không thể tạo hoặc tìm thấy tài khoản.');
     }
 
     public function findPending(): array
