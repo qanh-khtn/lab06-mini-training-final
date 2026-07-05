@@ -55,46 +55,26 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 <!-- ── Summary cards ───────────────────────────────────────────── -->
 <div class="stats-grid">
     <div class="metric-card">
-        <div class="metric-icon">
-            <span class="material-symbols-outlined">group</span>
-        </div>
-        <div class="metric-body">
-            <span class="metric-num"><?= number_format($totalLeads) ?></span>
-            <span class="metric-lbl">Tổng khách hàng</span>
-        </div>
+        <span class="metric-lbl">Tổng khách hàng</span>
+        <span class="metric-num"><?= number_format($totalLeads) ?></span>
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon">
-            <span class="material-symbols-outlined">check_circle</span>
-        </div>
-        <div class="metric-body">
-            <span class="metric-num">
-                <?= number_format($enrolled) ?>
-                <small class="text-success font-bold text-xs" style="margin-left:4px;"><?= $enrollRate ?>%</small>
-            </span>
-            <span class="metric-lbl">Đã ghi danh</span>
-        </div>
+        <span class="metric-lbl">Đã ghi danh</span>
+        <span class="metric-num">
+            <?= number_format($enrolled) ?>
+            <small class="text-success font-bold text-xs" style="margin-left:4px;"><?= $enrollRate ?>%</small>
+        </span>
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon">
-            <span class="material-symbols-outlined">payments</span>
-        </div>
-        <div class="metric-body">
-            <span class="metric-num"><?= fmt_money($paidRevenue) ?></span>
-            <span class="metric-lbl">Doanh thu đã thu</span>
-        </div>
+        <span class="metric-lbl">Doanh thu đã thu</span>
+        <span class="metric-num"><?= fmt_money($paidRevenue) ?></span>
     </div>
 
     <div class="metric-card">
-        <div class="metric-icon">
-            <span class="material-symbols-outlined">pending_actions</span>
-        </div>
-        <div class="metric-body">
-            <span class="metric-num"><?= fmt_money($pendingRev) ?></span>
-            <span class="metric-lbl">Chờ thu (<?= $totalPayments ?> phiếu)</span>
-        </div>
+        <span class="metric-lbl">Chờ thu (<?= $totalPayments ?> phiếu)</span>
+        <span class="metric-num"><?= fmt_money($pendingRev) ?></span>
     </div>
 </div>
 
@@ -114,7 +94,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
                 $color = $careColors[$key] ?? 'var(--primary)';
             ?>
             <div class="distrib-row">
-                <span class="badge badge-<?= h($key) ?>" style="min-width:120px;justify-content:center;"><?= h($label) ?></span>
+                <span class="badge badge-<?= h($key) ?>"><?= h($label) ?></span>
                 <div class="distrib-bar">
                     <div class="distrib-bar-fill" style="width:<?= $pct ?>%;background:<?= $color ?>;"></div>
                 </div>
@@ -138,7 +118,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
                 $color = $payColors[$key] ?? 'var(--primary)';
             ?>
             <div class="distrib-row">
-                <span class="badge badge-<?= h($key) ?>" style="min-width:130px;justify-content:center;"><?= h($label) ?></span>
+                <span class="badge badge-<?= h($key) ?>"><?= h($label) ?></span>
                 <div class="distrib-bar">
                     <div class="distrib-bar-fill" style="width:<?= $pct ?>%;background:<?= $color ?>;"></div>
                 </div>

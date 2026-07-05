@@ -1366,59 +1366,45 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-weight: 700;
 }
 
-/* Statistics Grid page */
+/* Statistics Grid page — KPI cards styled as index cards: a tab label,
+   a big Fraunces numeral, a thin accent stripe. No icon-in-circle. */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .metric-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: var(--sh-sm);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--r);
+  padding: 18px 20px 20px;
 }
 
-.metric-card .metric-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  border-radius: var(--r-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  flex-shrink: 0;
-}
+.metric-card:nth-child(2) { border-top-color: var(--success); }
+.metric-card:nth-child(3) { border-top-color: var(--indigo); }
+.metric-card:nth-child(4) { border-top-color: var(--warning); }
 
-.metric-card:nth-child(2) .metric-icon { background: var(--success-light); color: var(--success); }
-.metric-card:nth-child(3) .metric-icon { background: var(--indigo-soft); color: var(--indigo); }
-.metric-card:nth-child(4) .metric-icon { background: var(--warning-soft); color: var(--warning); }
-
-.metric-card .metric-body {
-  min-width: 0;
+.metric-card .metric-lbl {
+  display: block;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 10px;
 }
 
 .metric-card .metric-num {
-  font-size: 24px;
-  font-weight: 800;
+  display: block;
+  font-size: 32px;
+  font-weight: 600;
   color: var(--text);
-  font-family: 'IBM Plex Mono', monospace;
-  line-height: 1.2;
-}
-
-.metric-card .metric-lbl {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-2);
-  margin-top: 2px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Horizontal care status bars */
@@ -1435,8 +1421,9 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
 }
 
 .distrib-row .badge {
-  width: 120px;
+  width: 138px;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .distrib-bar {
@@ -1490,6 +1477,7 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   max-width: 44px;
   background: var(--primary);
   border-radius: var(--r-sm) var(--r-sm) 0 0;
+  border-bottom: 2px solid var(--text);
   min-height: 4px;
   position: relative;
   transition: background var(--t);
