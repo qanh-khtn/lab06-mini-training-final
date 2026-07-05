@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Core\Database;
 use App\Repositories\LeadRepository;
+use App\Repositories\UserRepository;
 use App\Services\LeadService;
 use App\Support\Response;
 
@@ -30,7 +31,8 @@ class LeadController
         $dateFrom = trim((string) ($_GET['date_from'] ?? ''));
         $dateTo   = trim((string) ($_GET['date_to'] ?? ''));
 
-        $result = $this->service()->paginate($q, $status, $rawPage, $sort, $dir, $dateFrom, $dateTo);
+        $assignedToUserId = ($_SESSION['user_role'] ?? '') === 'staff' ? (int)$_SESSION['user_id'] : null;
+        $result = $this->service()->paginate($q, $status, $rawPage, $sort, $dir, $dateFrom, $dateTo, $assignedToUserId);
 
         if ($rawPage !== $result['page']) {
             $qs = query_string(['page' => $result['page']]);
@@ -65,7 +67,8 @@ class LeadController
         $dateFrom = trim((string) ($_GET['date_from'] ?? ''));
         $dateTo   = trim((string) ($_GET['date_to'] ?? ''));
 
-        $rows         = $this->service()->all($q, $status, $sort, $dir, $dateFrom, $dateTo);
+        $assignedToUserId = ($_SESSION['user_role'] ?? '') === 'staff' ? (int)$_SESSION['user_id'] : null;
+        $rows         = $this->service()->all($q, $status, $sort, $dir, $dateFrom, $dateTo, $assignedToUserId);
         $courseLabels = $this->courseLabels();
         $careLabels   = $this->careLabels();
 
@@ -90,12 +93,18 @@ class LeadController
     {
         require_login();
 
+        $users = [];
+        if (($_SESSION['user_role'] ?? '') === 'admin') {
+            $users = (new UserRepository(Database::connection()))->allActive();
+        }
+
         Response::view('leads/create', [
             'title'        => 'Thêm Lead tư vấn',
             'errors'       => [],
             'old'          => $this->emptyInput(),
             'courseLabels' => $this->courseLabels(),
             'careLabels'   => $this->careLabels(),
+            'users'        => $users,
         ]);
     }
 
@@ -126,6 +135,16 @@ class LeadController
             Response::notFound('Không tìm thấy lead cần sửa.');
         }
 
+        // Bảo vệ tầng Controller: Staff không được sửa lead của người khác (trả về 404)
+        if (($_SESSION['user_role'] ?? '') === 'staff' && (int)($lead['assigned_to'] ?? 0) !== (int)$_SESSION['user_id']) {
+            Response::notFound('Không tìm thấy lead cần sửa.');
+        }
+
+        $users = [];
+        if (($_SESSION['user_role'] ?? '') === 'admin') {
+            $users = (new UserRepository(Database::connection()))->allActive();
+        }
+
         Response::view('leads/edit', [
             'title'        => 'Sửa Lead tư vấn',
             'errors'       => [],
@@ -133,6 +152,7 @@ class LeadController
             'id'           => $id,
             'courseLabels' => $this->courseLabels(),
             'careLabels'   => $this->careLabels(),
+            'users'        => $users,
         ]);
     }
 
@@ -142,12 +162,19 @@ class LeadController
         csrf_verify();
 
         $id    = (int) ($_POST['id'] ?? 0);
-        $input = $this->input();
-        $input['id'] = $id;
+        $lead  = $this->service()->find($id);
 
-        if ($this->service()->find($id) === null) {
+        if ($lead === null) {
             Response::notFound('Không tìm thấy lead cần cập nhật.');
         }
+
+        // Bảo vệ tầng Controller: Staff không được sửa lead của người khác (trả về 404)
+        if (($_SESSION['user_role'] ?? '') === 'staff' && (int)($lead['assigned_to'] ?? 0) !== (int)$_SESSION['user_id']) {
+            Response::notFound('Không tìm thấy lead cần cập nhật.');
+        }
+
+        $input = $this->input();
+        $input['id'] = $id;
 
         $result = $this->service()->update($id, $input);
 
@@ -191,6 +218,175 @@ class LeadController
         redirect('/leads');
     }
 
+    public function importView(): void
+    {
+        require_login();
+        Response::view('leads/import', [
+            'title' => 'Nhập hàng loạt Lead từ CSV',
+            'errors' => [],
+            'success' => null,
+        ]);
+    }
+
+    public function handleImport(): void
+    {
+        require_login();
+        csrf_verify();
+
+        // Ghi chú: import render THẲNG view trong cùng request (không flash_set +
+        // redirect) vì flash_set() chỉ nhận string cho $message (strict_types=1) —
+        // danh sách lỗi từng dòng là mảng, không thể đi qua cơ chế toast chuẩn.
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            Response::view('leads/import', [
+                'title' => 'Nhập hàng loạt Lead từ CSV',
+                'errors' => ['Vui lòng chọn một tệp CSV hợp lệ.'],
+                'success' => null,
+            ], 422);
+        }
+
+        $filePath = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($filePath, 'r');
+        if (!$handle) {
+            Response::view('leads/import', [
+                'title' => 'Nhập hàng loạt Lead từ CSV',
+                'errors' => ['Không thể mở tệp CSV.'],
+                'success' => null,
+            ], 422);
+        }
+
+        // Bỏ qua BOM nếu có
+        $bom = fread($handle, 3);
+        if ($bom !== "\xEF\xBB\xBF") {
+            rewind($handle);
+        }
+
+        $rowErrors = [];
+        $validItems = [];
+        $lineNo = 0;
+
+        $service = $this->service();
+
+        while (($row = fgetcsv($handle, 2000, ',')) !== false) {
+            $lineNo++;
+
+            // Bỏ qua dòng trống
+            if (array_filter($row) === []) {
+                continue;
+            }
+
+            // Bỏ qua dòng tiêu đề nếu phát hiện từ khóa tiêu đề ở cột 1
+            if ($lineNo === 1 && (
+                str_contains(strtolower($row[0]), 'họ tên') ||
+                str_contains(strtolower($row[0]), 'name') ||
+                str_contains(strtolower($row[1]), 'email')
+            )) {
+                continue;
+            }
+
+            $fullName       = trim($row[0] ?? '');
+            $email          = trim($row[1] ?? '');
+            $phone          = trim($row[2] ?? '');
+            $courseInterest = trim($row[3] ?? '');
+            $careStatus     = trim($row[4] ?? '');
+            $note           = trim($row[5] ?? '');
+
+            $item = [
+                'full_name'       => $fullName,
+                'email'           => $email,
+                'phone'           => $phone,
+                'course_interest' => $this->normalizeCourse($courseInterest),
+                'care_status'     => $this->normalizeStatus($careStatus),
+                'note'            => $note,
+            ];
+
+            if (($_SESSION['user_role'] ?? '') === 'admin') {
+                $item['assigned_to'] = null;
+            } else {
+                $item['assigned_to'] = (int)$_SESSION['user_id'];
+            }
+
+            // Validate bằng đúng logic LeadService::validate()
+            $errors = $service->validate($item);
+            if ($errors !== []) {
+                $errMsgs = [];
+                foreach ($errors as $field => $msg) {
+                    $errMsgs[] = $msg;
+                }
+                $rowErrors[] = "Dòng " . $lineNo . " (" . ($fullName ?: 'Chưa có tên') . "): " . implode(' ', $errMsgs);
+            } else {
+                $validItems[$lineNo] = $item;
+            }
+        }
+        fclose($handle);
+
+        $imported = 0;
+        if ($validItems !== []) {
+            $db = Database::connection();
+            $db->beginTransaction();
+            try {
+                $repo = new LeadRepository($db);
+                foreach ($validItems as $originalLineNo => $item) {
+                    try {
+                        $repo->create($item);
+                        $imported++;
+                    } catch (\App\Core\DuplicateRecordException $e) {
+                        $rowErrors[] = "Dòng " . $originalLineNo . " (" . $item['full_name'] . "): Email '" . $item['email'] . "' đã tồn tại trong hệ thống.";
+                    }
+                }
+                $db->commit();
+            } catch (\Throwable $e) {
+                $db->rollBack();
+                Response::view('leads/import', [
+                    'title' => 'Nhập hàng loạt Lead từ CSV',
+                    'errors' => ['Lỗi hệ thống khi import: ' . $e->getMessage()],
+                    'success' => null,
+                ], 500);
+            }
+        }
+
+        Response::view('leads/import', [
+            'title' => 'Nhập hàng loạt Lead từ CSV',
+            'errors' => $rowErrors,
+            'success' => $imported > 0 ? "Đã nhập thành công {$imported} lead tư vấn." : null,
+        ]);
+    }
+
+    private function normalizeCourse(string $val): string
+    {
+        $val = trim(mb_strtolower($val, 'UTF-8'));
+        $map = [
+            'lập trình web' => 'web',
+            'lập trình mobile' => 'mobile',
+            'phân tích dữ liệu' => 'data',
+            'ai ứng dụng' => 'ai',
+            'khác' => 'other',
+            'web' => 'web',
+            'mobile' => 'mobile',
+            'data' => 'data',
+            'ai' => 'ai',
+            'other' => 'other'
+        ];
+        return $map[$val] ?? 'other';
+    }
+
+    private function normalizeStatus(string $val): string
+    {
+        $val = trim(mb_strtolower($val, 'UTF-8'));
+        $map = [
+            'mới' => 'new',
+            'đã liên hệ' => 'contacted',
+            'đang tư vấn' => 'consulting',
+            'đã ghi danh' => 'enrolled',
+            'ngừng theo dõi' => 'dropped',
+            'new' => 'new',
+            'contacted' => 'contacted',
+            'consulting' => 'consulting',
+            'enrolled' => 'enrolled',
+            'dropped' => 'dropped'
+        ];
+        return $map[$val] ?? 'new';
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
@@ -202,6 +398,11 @@ class LeadController
 
     private function renderForm(string $view, string $title, array $errors, array $old, int $status): void
     {
+        $users = [];
+        if (($_SESSION['user_role'] ?? '') === 'admin') {
+            $users = (new UserRepository(Database::connection()))->allActive();
+        }
+
         Response::view($view, [
             'title'        => $title,
             'errors'       => $errors,
@@ -209,12 +410,13 @@ class LeadController
             'id'           => (int) ($old['id'] ?? 0),
             'courseLabels' => $this->courseLabels(),
             'careLabels'   => $this->careLabels(),
+            'users'        => $users,
         ], $status);
     }
 
     private function input(): array
     {
-        return [
+        $data = [
             'full_name'       => trim((string) ($_POST['full_name'] ?? '')),
             'email'           => trim((string) ($_POST['email'] ?? '')),
             'phone'           => trim((string) ($_POST['phone'] ?? '')),
@@ -222,6 +424,14 @@ class LeadController
             'care_status'     => trim((string) ($_POST['care_status'] ?? 'new')),
             'note'            => trim((string) ($_POST['note'] ?? '')),
         ];
+
+        if (($_SESSION['user_role'] ?? '') === 'admin') {
+            $data['assigned_to'] = isset($_POST['assigned_to']) && $_POST['assigned_to'] !== '' ? (int)$_POST['assigned_to'] : null;
+        } else {
+            $data['assigned_to'] = (int)($_SESSION['user_id'] ?? 0);
+        }
+
+        return $data;
     }
 
     private function emptyInput(): array

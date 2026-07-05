@@ -18,7 +18,12 @@ $isFiltered = $q !== '' || $statusFilter !== '' || $dateFrom !== '' || $dateTo !
         <h1>Quản lý Lead tư vấn</h1>
         <p class="muted">Tổng <?= h($total) ?> khách hàng tư vấn<?= $isFiltered ? ' (đang lọc)' : '' ?></p>
     </div>
-    <a class="btn btn-primary" href="/leads/create">+ Thêm lead</a>
+    <div style="display:flex;gap:8px;">
+        <a class="btn btn-secondary" href="/leads/import">
+            <span class="material-symbols-outlined icon-sm">upload</span> Nhập CSV
+        </a>
+        <a class="btn btn-primary" href="/leads/create">+ Thêm lead</a>
+    </div>
 </section>
 
 <form class="toolbar" method="get" action="/leads">
@@ -67,13 +72,14 @@ $isFiltered = $q !== '' || $statusFilter !== '' || $dateFrom !== '' || $dateTo !
                 <th>SĐT</th>
                 <th>Khóa quan tâm</th>
                 <th><a href="/leads<?= h(sort_url('care_status', $sort, $dir)) ?>">Chăm sóc<?= h(sort_caret('care_status', $sort, $dir)) ?></a></th>
+                <th>Phụ trách</th>
                 <th><a href="/leads<?= h(sort_url('created_at', $sort, $dir)) ?>">Ngày tạo<?= h(sort_caret('created_at', $sort, $dir)) ?></a></th>
                 <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
         <?php if ($leads === []): ?>
-            <tr><td colspan="<?= is_admin() ? 9 : 8 ?>" class="muted" style="text-align:center;padding:24px">Không có dữ liệu phù hợp.</td></tr>
+            <tr><td colspan="<?= is_admin() ? 10 : 9 ?>" class="muted" style="text-align:center;padding:24px">Không có dữ liệu phù hợp.</td></tr>
         <?php else: foreach ($leads as $lead): ?>
             <tr>
                 <?php if (is_admin()): ?>
@@ -85,6 +91,7 @@ $isFiltered = $q !== '' || $statusFilter !== '' || $dateFrom !== '' || $dateTo !
                 <td><?= h($lead['phone']) ?></td>
                 <td><?= h($courseLabels[$lead['course_interest']] ?? $lead['course_interest']) ?></td>
                 <td><span class="badge badge-<?= h($lead['care_status']) ?>"><?= h($careLabels[$lead['care_status']] ?? $lead['care_status']) ?></span></td>
+                <td><?= h($lead['assigned_to_name'] ?? 'Chưa phân công') ?></td>
                 <td><?= h($lead['created_at']) ?></td>
                 <td class="actions-cell">
                     <a class="btn btn-sm btn-secondary" href="/leads/edit?id=<?= h($lead['id']) ?>">

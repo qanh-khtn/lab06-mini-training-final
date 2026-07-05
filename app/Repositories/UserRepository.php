@@ -80,6 +80,16 @@ class UserRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function allActive(): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, name, email, role, status
+             FROM users WHERE status = :status ORDER BY name ASC'
+        );
+        $stmt->execute(['status' => 'active']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function approve(int $id): bool
     {
         $stmt = $this->pdo->prepare('UPDATE users SET status = :status WHERE id = :id');

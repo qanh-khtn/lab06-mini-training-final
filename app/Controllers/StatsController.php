@@ -86,6 +86,21 @@ class StatsController
              ORDER BY created_at DESC LIMIT 6'
         )->fetchAll(PDO::FETCH_ASSOC);
 
+        $leaderboard = [];
+        if (is_admin()) {
+            $leaderboard = $pdo->query(
+                'SELECT u.id, u.name, u.email,
+                        COUNT(l.id) AS total_leads,
+                        SUM(CASE WHEN l.care_status = "enrolled" THEN 1 ELSE 0 END) AS enrolled_leads,
+                        CASE WHEN COUNT(l.id) > 0 THEN ROUND(SUM(CASE WHEN l.care_status = "enrolled" THEN 1 ELSE 0 END) * 100.0 / COUNT(l.id), 2) ELSE 0 END AS conversion_rate
+                 FROM users u
+                 LEFT JOIN leads l ON l.assigned_to = u.id AND l.deleted_at IS NULL
+                 WHERE u.status = "active"
+                 GROUP BY u.id
+                 ORDER BY conversion_rate DESC, total_leads DESC'
+            )->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         Response::view('stats', [
             'title'           => 'Thống kê & Báo cáo',
             'summary'         => $summary,
@@ -95,6 +110,7 @@ class StatsController
             'revenueByCourse' => $revenueByCourse,
             'monthly'         => $monthly,
             'recentLeads'     => $recentLeads,
+            'leaderboard'     => $leaderboard,
             'careLabels'      => [
                 'new'        => 'Mới',
                 'contacted'  => 'Đã liên hệ',

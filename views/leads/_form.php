@@ -55,6 +55,21 @@ $id = $id ?? 0;
         </div>
     </div>
 
+    <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>
+    <div class="form-group">
+        <label>Nhân viên phụ trách</label>
+        <select name="assigned_to">
+            <option value="">-- Chưa phân công --</option>
+            <?php foreach ($users ?? [] as $user): ?>
+                <option value="<?= h($user['id']) ?>" <?= ((int)($old['assigned_to'] ?? 0) === (int)$user['id']) ? 'selected' : '' ?>>
+                    <?= h($user['name']) ?> (<?= h($user['email']) ?>)
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?php if (isset($errors['assigned_to'])): ?><p class="field-error"><?= h($errors['assigned_to']) ?></p><?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <div class="form-group">
         <label>Ghi chú</label>
         <textarea name="note" rows="3" placeholder="Nhập ghi chú chi tiết về nhu cầu khách hàng..."><?= h($old['note'] ?? '') ?></textarea>

@@ -224,6 +224,40 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 
 </div>
 
+<!-- ── Staff Leaderboard (Admin Only) ─────────────────────────── -->
+<?php if (is_admin() && !empty($leaderboard)): ?>
+<div class="card mb-lg">
+    <div class="section-head">
+        Bảng xếp hạng hiệu suất nhân viên
+        <span>Chỉ quản trị viên xem được</span>
+    </div>
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên nhân viên</th>
+                    <th>Email</th>
+                    <th class="text-right">Số lead phụ trách</th>
+                    <th class="text-right">Đã ghi danh</th>
+                    <th class="text-right">Tỉ lệ chốt</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($leaderboard as $row): ?>
+                <tr>
+                    <td><strong><?= h($row['name']) ?></strong></td>
+                    <td class="text-2"><?= h($row['email']) ?></td>
+                    <td class="text-right"><?= number_format((int)$row['total_leads']) ?></td>
+                    <td class="text-right"><?= number_format((int)$row['enrolled_leads']) ?></td>
+                    <td class="text-right amount text-success" style="font-weight: bold;"><?= h($row['conversion_rate']) ?>%</td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- ── Recent leads ─────────────────────────────────────────────── -->
 <?php if ($recentLeads !== []): ?>
 <div class="card">

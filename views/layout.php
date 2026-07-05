@@ -63,7 +63,7 @@ $showSidebar = is_logged_in() && !in_array($currentPath, ['/login', '/register']
                 </li>
                 <li>
                     <a class="<?= str_starts_with($currentPath, '/public-leads') ? 'active' : '' ?>" href="/public-leads/create">
-                        <span>Form công khai</span>
+                        <span>Thêm Lead tư vấn</span>
                     </a>
                 </li>
                 <?php if (($_SESSION['user_role'] ?? '') === 'admin'): ?>

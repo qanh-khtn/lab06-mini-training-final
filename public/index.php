@@ -10,6 +10,7 @@ use App\Controllers\PaymentController;
 use App\Controllers\PublicLeadController;
 use App\Controllers\SearchController;
 use App\Controllers\StatsController;
+use App\Controllers\WebhookController;
 use App\Core\Router;
 use App\Support\Response;
 
@@ -72,9 +73,15 @@ $router->get('/admin/logs', [AdminController::class, 'logs']);
 $router->get('/public-leads/create', [PublicLeadController::class, 'create']);
 $router->post('/public-leads', [PublicLeadController::class, 'store']);
 
+// Webhook Facebook Messenger (Mô phỏng)
+$router->get('/webhooks/facebook', [WebhookController::class, 'verify']);
+$router->post('/webhooks/facebook', [WebhookController::class, 'handle']);
+
 // Module A - Lead tư vấn
 $router->get('/leads', [LeadController::class, 'index']);
 $router->get('/leads/export', [LeadController::class, 'export']);
+$router->get('/leads/import', [LeadController::class, 'importView']);
+$router->post('/leads/import', [LeadController::class, 'handleImport']);
 $router->get('/leads/create', [LeadController::class, 'create']);
 $router->post('/leads/store', [LeadController::class, 'store']);
 $router->get('/leads/edit', [LeadController::class, 'edit']);

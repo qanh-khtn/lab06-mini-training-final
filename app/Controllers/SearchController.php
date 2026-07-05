@@ -28,8 +28,11 @@ class SearchController {
         $leadRepo = new LeadRepository($db);
         $paymentRepo = new PaymentRepository($db);
 
+        // Staff chỉ tìm thấy lead mình phụ trách — khớp với LeadController::index()
+        $assignedToUserId = ($_SESSION['user_role'] ?? '') === 'staff' ? (int) $_SESSION['user_id'] : null;
+
         // Search leads by full_name, email, phone
-        $leads = $leadRepo->search($query, limit: 5);
+        $leads = $leadRepo->search($query, limit: 5, assignedToUserId: $assignedToUserId);
 
         // Search payments by payment_code, student_name
         $payments = $paymentRepo->search($query, limit: 3);

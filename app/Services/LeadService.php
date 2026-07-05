@@ -22,24 +22,24 @@ class LeadService
      * Trả về mảng chứa rows, total, page (đã clamp) và lastPage.
      * Controller so sánh rawPage vs page để quyết định có redirect hay không.
      */
-    public function paginate(string $q, string $status, int $rawPage, string $sort, string $dir, string $dateFrom = '', string $dateTo = ''): array
+    public function paginate(string $q, string $status, int $rawPage, string $sort, string $dir, string $dateFrom = '', string $dateTo = '', ?int $assignedToUserId = null): array
     {
         $dateFrom = $this->validDate($dateFrom);
         $dateTo   = $this->validDate($dateTo);
 
-        $total    = $this->repo->countAll($q, $status, $dateFrom, $dateTo);
+        $total    = $this->repo->countAll($q, $status, $dateFrom, $dateTo, $assignedToUserId);
         $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
         $page     = min(max(1, $rawPage), $lastPage);
         $offset   = ($page - 1) * self::PER_PAGE;
-        $rows     = $this->repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir, $status, $dateFrom, $dateTo);
+        $rows     = $this->repo->paginate($q, self::PER_PAGE, $offset, $sort, $dir, $status, $dateFrom, $dateTo, $assignedToUserId);
 
         return compact('rows', 'total', 'page', 'lastPage');
     }
 
     /** Trả toàn bộ danh sách khớp filter (không phân trang) — dùng cho export CSV. */
-    public function all(string $q, string $status, string $sort, string $dir, string $dateFrom = '', string $dateTo = ''): array
+    public function all(string $q, string $status, string $sort, string $dir, string $dateFrom = '', string $dateTo = '', ?int $assignedToUserId = null): array
     {
-        return $this->repo->all($q, $status, $sort, $dir, $this->validDate($dateFrom), $this->validDate($dateTo));
+        return $this->repo->all($q, $status, $sort, $dir, $this->validDate($dateFrom), $this->validDate($dateTo), $assignedToUserId);
     }
 
     /** Chuẩn hóa ngày dạng YYYY-MM-DD; sai định dạng thì coi như không lọc. */
