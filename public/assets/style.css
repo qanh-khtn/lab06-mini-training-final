@@ -97,6 +97,12 @@
   --surface-container:          #F3EEDF;
   --surface-container-high:     #EAE2CA;
   --surface-container-highest:  #E4DCC3;
+
+  /* Sidebar — deliberately stays dark ink in both themes, like a book spine */
+  --sidebar-bg:           #201A14;
+  --sidebar-text:         rgba(251, 247, 236, 0.68);
+  --sidebar-text-active:  #FBF7EC;
+  --sidebar-accent:       #D6971E;
 }
 
 html[data-theme="dark"] {
@@ -152,6 +158,12 @@ html[data-theme="dark"] {
   --surface-container:          #1C2A24;
   --surface-container-high:     #223229;
   --surface-container-highest:  #2C3F34;
+
+  /* Sidebar — one shade darker than the dark-mode canvas, same idea as light mode */
+  --sidebar-bg:           #0C120F;
+  --sidebar-text:         rgba(242, 238, 221, 0.68);
+  --sidebar-text-active:  #F2EEDD;
+  --sidebar-accent:       #F0B429;
 }
 
 /* ── 2. Reset & base ───────────────────────────────────────────── */
@@ -231,12 +243,11 @@ body.theme-transitioning * {
   top: 0;
   bottom: 0;
   width: var(--sidebar-w);
-  background: var(--surface-container-low);
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   z-index: 50;
   transition: width 0.3s ease, transform var(--t);
-  border-right: 1px solid var(--border);
 }
 
 .sidebar-header {
@@ -244,7 +255,7 @@ body.theme-transitioning * {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(251, 247, 236, 0.12);
   position: relative;
 }
 
@@ -256,7 +267,7 @@ body.theme-transitioning * {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--text-2);
+  color: var(--sidebar-text);
   padding: 4px;
   border-radius: var(--r);
   transition: background var(--t), transform var(--t);
@@ -266,8 +277,8 @@ body.theme-transitioning * {
 }
 
 .sidebar-toggle:hover {
-  background: var(--primary-soft);
-  color: var(--primary);
+  background: rgba(251, 247, 236, 0.1);
+  color: var(--sidebar-text-active);
 }
 
 .sidebar.collapsed {
@@ -324,18 +335,18 @@ body.theme-transitioning * {
 }
 
 .sidebar-header h2 {
-  font-size: 16px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -.5px;
-  color: var(--text);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--sidebar-text-active);
   line-height: 1.2;
 }
 
 .sidebar-header p {
   font-size: 11px;
-  color: var(--text-2);
+  color: var(--sidebar-text);
   font-weight: 500;
+  margin-top: 2px;
 }
 
 .sidebar-nav {
@@ -356,26 +367,26 @@ body.theme-transitioning * {
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
-  color: var(--text-2);
+  color: var(--sidebar-text);
   font-weight: 500;
   font-size: 14px;
-  border-radius: var(--r-md);
-  border-left: 4px solid transparent;
+  border-radius: 0;
+  border-left: 3px solid transparent;
   transition: background var(--t), color var(--t), border-color var(--t);
   cursor: pointer;
 }
 
 .sidebar-nav a:hover {
-  background: var(--primary-soft);
-  color: var(--text);
+  background: rgba(251, 247, 236, 0.06);
+  color: var(--sidebar-text-active);
   text-decoration: none;
 }
 
 .sidebar-nav a.active {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: rgba(251, 247, 236, 0.08);
+  color: var(--sidebar-text-active);
   font-weight: 600;
-  border-left-color: var(--primary);
+  border-left-color: var(--sidebar-accent);
 }
 
 .sidebar-nav a .material-symbols-outlined {
@@ -384,7 +395,7 @@ body.theme-transitioning * {
 
 .sidebar-footer {
   padding: 16px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(251, 247, 236, 0.12);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -392,8 +403,8 @@ body.theme-transitioning * {
 
 .sidebar-footer .user-info {
   padding: 8px 12px;
-  background: var(--surface-container);
-  border-radius: var(--r-md);
+  background: rgba(251, 247, 236, 0.06);
+  border-radius: var(--r);
   display: flex;
   flex-direction: column;
 }
@@ -401,12 +412,12 @@ body.theme-transitioning * {
 .sidebar-footer .user-info .username {
   font-size: 13.5px;
   font-weight: 600;
-  color: var(--text);
+  color: var(--sidebar-text-active);
 }
 
 .sidebar-footer .user-info .role {
   font-size: 11px;
-  color: var(--muted-clr);
+  color: var(--sidebar-accent);
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: .5px;
@@ -418,10 +429,10 @@ body.theme-transitioning * {
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
-  color: var(--text-2);
+  color: var(--sidebar-text);
   font-weight: 500;
   font-size: 13.5px;
-  border-radius: var(--r-full);
+  border-radius: var(--r);
   background: none;
   border: none;
   width: 100%;
@@ -432,8 +443,8 @@ body.theme-transitioning * {
 
 .sidebar-footer .logout-link:hover,
 .sidebar-footer .login-link:hover {
-  background: var(--surface-container-highest);
-  color: var(--text);
+  background: rgba(251, 247, 236, 0.1);
+  color: var(--sidebar-text-active);
   text-decoration: none;
 }
 
