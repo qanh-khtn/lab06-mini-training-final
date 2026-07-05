@@ -106,64 +106,65 @@
 }
 
 html[data-theme="dark"] {
-  /* Bright accents on a deep warm-green ground — vivid, not muted lamplight */
-  --primary:            #5FB8E0;
-  --primary-hover:      #7FC8E8;
-  --primary-light:      rgba(95, 184, 224, 0.14);
-  --primary-soft:       rgba(95, 184, 224, 0.08);
+  /* Refined night ledger — neutral near-black ground (not saturated green),
+     accents kept clear but not neon so they read as elegant, not candy */
+  --primary:            #5AA9D6;
+  --primary-hover:      #7CC0E5;
+  --primary-light:      rgba(90, 169, 214, 0.14);
+  --primary-soft:       rgba(90, 169, 214, 0.08);
 
   /* Success */
-  --success:            #4FD48A;
-  --success-light:      rgba(79, 212, 138, 0.14);
+  --success:            #52B788;
+  --success-light:      rgba(82, 183, 136, 0.14);
 
   /* Warning */
-  --warning:            #F0B429;
-  --warning-light:      rgba(240, 180, 41, 0.14);
+  --warning:            #E0A33D;
+  --warning-light:      rgba(224, 163, 61, 0.14);
 
   /* Danger */
-  --danger:             #FF7052;
-  --danger-light:       rgba(255, 112, 82, 0.14);
+  --danger:             #E2664A;
+  --danger-light:       rgba(226, 102, 74, 0.14);
 
   /* Info */
-  --info:               #7FC3E0;
-  --info-light:         rgba(127, 195, 224, 0.14);
+  --info:               #7EB6D9;
+  --info-light:         rgba(126, 182, 217, 0.14);
 
   /* Neutral */
-  --text:               #F2EEDD;
-  --text-2:             #C9C2A6;
-  --text-3:             #99927A;
-  --bg:                 #14201C;
-  --surface:            #1C2A24;
-  --surface-2:          #1F2D26;
-  --border:             #2E3D34;
-  --border-strong:      #46584C;
+  --text:               #ECE7D8;
+  --text-2:             #B5AF9C;
+  --text-3:             #86806E;
+  --bg:                 #1A1B18;
+  --surface:             #221F1B;
+  --surface-2:          #26241F;
+  --border:             #38352E;
+  --border-strong:      #4A4740;
 
   /* Aliases for legacy code compatibility */
-  --bg-1:               #14201C;
-  --bg-2:               #1F2D26;
-  --bg-3:               #263630;
-  --text-1:             #F2EEDD;
-  --muted-clr:          #99927A;
-  --primary-dark:       #7FC8E8;
-  --primary-ring:       rgba(95, 184, 224, 0.14);
-  --indigo:             #B48FD0;
-  --indigo-soft:        rgba(180, 143, 208, 0.14);
-  --warning-soft:       rgba(240, 180, 41, 0.14);
-  --danger-soft:        rgba(255, 112, 82, 0.14);
-  --info-soft:          rgba(127, 195, 224, 0.14);
+  --bg-1:               #1A1B18;
+  --bg-2:               #26241F;
+  --bg-3:               #2C2A23;
+  --text-1:             #ECE7D8;
+  --muted-clr:          #86806E;
+  --primary-dark:       #7CC0E5;
+  --primary-ring:       rgba(90, 169, 214, 0.14);
+  --indigo:             #A78BC2;
+  --indigo-soft:        rgba(167, 139, 194, 0.14);
+  --warning-soft:       rgba(224, 163, 61, 0.14);
+  --danger-soft:        rgba(226, 102, 74, 0.14);
+  --info-soft:          rgba(126, 182, 217, 0.14);
 
   /* Surface containers (darker for dark mode) */
-  --surface-container-lowest:   #0F1814;
-  --surface-container-low:      #14201C;
-  --surface-container:          #1C2A24;
-  --surface-container-high:     #223229;
-  --surface-container-highest:  #2C3F34;
+  --surface-container-lowest:   #16140F;
+  --surface-container-low:      #1A1B18;
+  --surface-container:          #221F1B;
+  --surface-container-high:     #2A2721;
+  --surface-container-highest:  #363228;
 
   /* Sidebar — one shade darker than the dark-mode canvas, same idea as light mode */
-  --sidebar-bg:           #0C120F;
-  --sidebar-text:         rgba(242, 238, 221, 0.68);
-  --sidebar-text-active:  #F2EEDD;
-  --sidebar-accent:       #F0B429;
+  --sidebar-bg:           #100F0C;
+  --sidebar-text:         rgba(236, 231, 216, 0.65);
+  --sidebar-text-active:  #ECE7D8;
+  --sidebar-accent:       #E0A33D;
 }
 
 /* ── 2. Reset & base ───────────────────────────────────────────── */
@@ -2657,15 +2658,15 @@ dialog.help-modal * {
 
 /* Dark mode adjustments for log entries */
 [data-theme="dark"] .log-entry.log-error {
-  background: linear-gradient(90deg, rgba(255, 112, 82, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(226, 102, 74, 0.1) 0%, transparent 100%);
 }
 
 [data-theme="dark"] .log-entry.log-warning {
-  background: linear-gradient(90deg, rgba(240, 180, 41, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(224, 163, 61, 0.1) 0%, transparent 100%);
 }
 
 [data-theme="dark"] .log-entry.log-info {
-  background: linear-gradient(90deg, rgba(95, 184, 224, 0.1) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(90, 169, 214, 0.1) 0%, transparent 100%);
 }
 
 /* ================================================================
@@ -2742,6 +2743,15 @@ dialog.help-modal * {
 
 .btn-success:active {
   background: #134f34;
+}
+
+[data-theme="dark"] .btn-success:hover {
+  background: #6BC99A;
+  box-shadow: 0 2px 8px rgba(82, 183, 136, 0.25);
+}
+
+[data-theme="dark"] .btn-success:active {
+  background: #3D9A6E;
 }
 
 /* Error page: inline method badge (used inside .error-info p on the 405 page) */
