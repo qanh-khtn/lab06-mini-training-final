@@ -45,6 +45,32 @@ class UserRepository
         }
     }
 
+    /**
+     * Find an active user by email, or create one on first login (used by
+     * mock social login — simulates "auto-create account from provider email").
+     */
+    public function findOrCreateActive(string $name, string $email): array
+    {
+        $existing = $this->findByEmail($email);
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO users (name, email, password_hash, role, status)
+             VALUES (:name, :email, :ph, :role, :status)'
+        );
+        $stmt->execute([
+            'name'   => $name,
+            'email'  => $email,
+            'ph'     => password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT, ['cost' => 12]),
+            'role'   => 'staff',
+            'status' => 'active',
+        ]);
+
+        return $this->findByEmail($email);
+    }
+
     public function findPending(): array
     {
         $stmt = $this->pdo->prepare(

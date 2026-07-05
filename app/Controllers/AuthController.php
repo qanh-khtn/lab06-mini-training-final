@@ -60,12 +60,7 @@ class AuthController
             ], 403);
         }
 
-        session_regenerate_id(true);
-        $_SESSION['user_id']          = (string) $user['id'];
-        $_SESSION['user_email']       = $user['email'];
-        $_SESSION['user_name']        = $user['name'];
-        $_SESSION['user_role']        = $user['role'];
-        $_SESSION['last_activity_at'] = time();
+        $this->establishSession($user);
 
         if ($remember) {
             set_remember_token($user);
@@ -73,6 +68,55 @@ class AuthController
 
         flash_set('success', 'Đăng nhập thành công. Xin chào, ' . $user['name'] . '!');
         redirect('/');
+    }
+
+    // ── Social login (mock) ──────────────────────────────────────────
+    // Đây là mô phỏng luồng OAuth cho mục đích demo (không gọi API Google/Facebook
+    // thật). Mỗi nhà cung cấp ánh xạ tới một tài khoản demo cố định: nếu tài khoản
+    // đó chưa tồn tại trong DB, hệ thống tự tạo (giống hành vi "tự động tạo tài
+    // khoản nháp từ email nhà cung cấp"), rồi đăng nhập ngay — không có bước phê
+    // duyệt vì được xem là email đã được nhà cung cấp xác thực sẵn.
+
+    public function loginGoogle(): void
+    {
+        $this->socialLogin('google', 'google.demo@center.edu.vn', 'Người dùng Google Demo');
+    }
+
+    public function loginFacebook(): void
+    {
+        $this->socialLogin('facebook', 'facebook.demo@center.edu.vn', 'Người dùng Facebook Demo');
+    }
+
+    private function socialLogin(string $provider, string $email, string $name): void
+    {
+        if (is_logged_in()) {
+            redirect('/');
+        }
+
+        csrf_verify();
+
+        $user = (new UserRepository(Database::connection()))->findOrCreateActive($name, $email);
+
+        if (($user['status'] ?? 'active') !== 'active') {
+            flash_set('danger', 'Tài khoản này hiện không hoạt động.');
+            redirect('/login');
+        }
+
+        $this->establishSession($user);
+
+        $providerLabel = $provider === 'google' ? 'Google' : 'Facebook';
+        flash_set('success', "Đăng nhập bằng {$providerLabel} thành công (mô phỏng). Xin chào, {$user['name']}!");
+        redirect('/');
+    }
+
+    private function establishSession(array $user): void
+    {
+        session_regenerate_id(true);
+        $_SESSION['user_id']          = (string) $user['id'];
+        $_SESSION['user_email']       = $user['email'];
+        $_SESSION['user_name']        = $user['name'];
+        $_SESSION['user_role']        = $user['role'];
+        $_SESSION['last_activity_at'] = time();
     }
 
     // ── Register ───────────────────────────────────────────────────

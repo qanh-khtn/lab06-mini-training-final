@@ -1672,7 +1672,12 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   gap: 12px;
 }
 
+.social-grid form {
+  display: contents;
+}
+
 .btn-social {
+  width: 100%;
   border: 1.5px solid var(--border);
   background: var(--surface);
   border-radius: var(--r-sm);

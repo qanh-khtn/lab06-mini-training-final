@@ -56,6 +56,8 @@ $router->get('/api/search', [SearchController::class, 'api']);
 $router->get('/login', [AuthController::class, 'loginView']);
 $router->post('/login', [AuthController::class, 'handleLogin']);
 $router->post('/logout', [AuthController::class, 'logout']);
+$router->post('/auth/google', [AuthController::class, 'loginGoogle']);
+$router->post('/auth/facebook', [AuthController::class, 'loginFacebook']);
 $router->get('/register', [AuthController::class, 'registerView']);
 $router->post('/register', [AuthController::class, 'handleRegister']);
 $router->get('/stats', [StatsController::class, 'index']);
