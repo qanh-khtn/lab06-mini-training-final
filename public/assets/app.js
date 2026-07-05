@@ -246,6 +246,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /* --- Password visibility toggle (login/register forms) --- */
+    document.querySelectorAll('.pwd-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var wrap  = btn.closest('.pwd-wrap');
+            var input = wrap ? wrap.querySelector('input') : null;
+            var eye   = btn.querySelector('.material-symbols-outlined');
+            if (!input || !eye) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                eye.textContent = 'visibility';
+            }
+        });
+    });
+
     /* --- Bulk select (leads/payments tables) --- */
     var checkAll   = document.getElementById('check-all');
     var bulkBar    = document.getElementById('bulk-actions');

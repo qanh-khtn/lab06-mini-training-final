@@ -908,6 +908,19 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   color: var(--text);
 }
 
+.remember-me-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.remember-me-row input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
 /* ── 7. Data Tables & Pagination ──────────────────────────────── */
 .table-wrap {
   background: var(--surface);
@@ -1300,6 +1313,13 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-weight: 800;
   color: var(--primary);
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* Call-to-action variant (e.g. "Bắt đầu đăng ký →") instead of a numeric stat */
+.feature-card .stat.stat-cta {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* Statistics Grid page */
@@ -2709,6 +2729,47 @@ textarea:focus {
 
 .icon-lg {
   font-size: 20px !important;
+}
+
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
+
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+
+.text-2 {
+  color: var(--text-2);
+}
+
+/* Stats page: label for a distribution row that should truncate rather than wrap */
+.course-label {
+  font-size: 13px;
+  color: var(--text-2);
+  min-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stats page: borderless table nested inside a .card (card already has border/shadow) */
+.recent-leads-table {
+  border: none;
+  box-shadow: none;
+  margin: 0 -24px -24px;
+}
+
+/* Stats page: paid/pending totals row under the payment-status distribution */
+.revenue-summary {
+  margin-top: var(--space-md);
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-2);
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
 }
 
 .text-muted {

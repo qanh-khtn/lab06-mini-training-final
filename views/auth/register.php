@@ -44,14 +44,14 @@ $old    = $old ?? ['name' => '', 'email' => ''];
                 </div>
 
                 <div class="form-group">
-                    <label for="reg-password">Mật khẩu * <span class="muted" style="font-size:11px;">(ít nhất 8 ký tự)</span></label>
+                    <label for="reg-password">Mật khẩu * <span class="text-muted">(ít nhất 8 ký tự)</span></label>
                     <div class="icon-input-group pwd-wrap">
                         <span class="material-symbols-outlined">lock</span>
                         <input id="reg-password" type="password" name="password"
                                autocomplete="new-password" placeholder="••••••••"
                                class="<?= isset($errors['password']) ? 'input-error' : '' ?>">
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('reg-password', 'eye-icon-1')" tabindex="-1" title="Hiện/ẩn mật khẩu">
-                            <span class="material-symbols-outlined" id="eye-icon-1">visibility</span>
+                        <button type="button" class="pwd-toggle" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                            <span class="material-symbols-outlined">visibility</span>
                         </button>
                     </div>
                     <?php if (isset($errors['password'])): ?><p class="field-error"><?= h($errors['password']) ?></p><?php endif; ?>
@@ -64,8 +64,8 @@ $old    = $old ?? ['name' => '', 'email' => ''];
                         <input id="reg-confirm" type="password" name="password_confirm"
                                autocomplete="new-password" placeholder="••••••••"
                                class="<?= isset($errors['password_confirm']) ? 'input-error' : '' ?>">
-                        <button type="button" class="pwd-toggle" onclick="togglePwd('reg-confirm', 'eye-icon-2')" tabindex="-1" title="Hiện/ẩn mật khẩu">
-                            <span class="material-symbols-outlined" id="eye-icon-2">visibility</span>
+                        <button type="button" class="pwd-toggle" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                            <span class="material-symbols-outlined">visibility</span>
                         </button>
                     </div>
                     <?php if (isset($errors['password_confirm'])): ?><p class="field-error"><?= h($errors['password_confirm']) ?></p><?php endif; ?>
@@ -81,16 +81,3 @@ $old    = $old ?? ['name' => '', 'email' => ''];
         </div>
     </div>
 </div>
-<script>
-function togglePwd(inputId, eyeId) {
-    var inp = document.getElementById(inputId);
-    var eye = document.getElementById(eyeId);
-    if (inp.type === 'password') {
-        inp.type = 'text';
-        eye.textContent = 'visibility_off';
-    } else {
-        inp.type = 'password';
-        eye.textContent = 'visibility';
-    }
-}
-</script>

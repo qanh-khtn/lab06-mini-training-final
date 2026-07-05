@@ -28,7 +28,7 @@ function fmt_money(float $n): string {
 
 $careColors = [
     'new'        => 'var(--info)',
-    'contacted'  => '#0369a1',
+    'contacted'  => 'var(--primary)',
     'consulting' => 'var(--warning)',
     'enrolled'   => 'var(--success)',
     'dropped'    => 'var(--muted-clr)',
@@ -39,7 +39,7 @@ $payColors = [
     'refunded'  => 'var(--indigo)',
     'cancelled' => 'var(--danger)',
 ];
-$courseColors = ['#2563eb','#7c3aed','#0891b2','#16a34a','#ca8a04'];
+$courseColors = ['var(--primary)', 'var(--indigo)', 'var(--info)', 'var(--success)', 'var(--warning)'];
 
 $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 ?>
@@ -70,8 +70,8 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
         </div>
         <div class="metric-body">
             <span class="metric-num">
-                <?= number_format($enrolled) ?> 
-                <small style="font-size:13px; font-weight:700; color:var(--success); margin-left: 4px;"><?= $enrollRate ?>%</small>
+                <?= number_format($enrolled) ?>
+                <small class="text-success font-bold text-xs" style="margin-left:4px;"><?= $enrollRate ?>%</small>
             </span>
             <span class="metric-lbl">Đã ghi danh</span>
         </div>
@@ -99,7 +99,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 </div>
 
 <!-- ── Distributions ───────────────────────────────────────────── -->
-<div class="grid-2" style="margin-bottom:20px;">
+<div class="grid-2 mb-lg">
 
     <!-- Lead by status -->
     <div class="card">
@@ -148,9 +148,9 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
         </div>
 
         <?php if ($paidRevenue + $pendingRev > 0): ?>
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2);display:flex;gap:16px;flex-wrap:wrap;">
-            <span>Đã thu: <strong style="color:var(--success);"><?= number_format($paidRevenue, 0, ',', '.') ?> đ</strong></span>
-            <span>Chờ thu: <strong style="color:var(--warning);"><?= number_format($pendingRev, 0, ',', '.') ?> đ</strong></span>
+        <div class="revenue-summary">
+            <span>Đã thu: <strong class="text-success"><?= number_format($paidRevenue, 0, ',', '.') ?> đ</strong></span>
+            <span>Chờ thu: <strong class="text-warning"><?= number_format($pendingRev, 0, ',', '.') ?> đ</strong></span>
         </div>
         <?php endif; ?>
     </div>
@@ -158,7 +158,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 </div>
 
 <!-- ── Monthly revenue bar chart ───────────────────────────────── -->
-<div class="card" style="margin-bottom:20px;">
+<div class="card mb-lg">
     <div class="section-head">
         Doanh thu theo tháng (6 tháng gần nhất)
         <span>Tính theo phiếu đã thanh toán</span>
@@ -184,7 +184,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 </div>
 
 <!-- ── Revenue by course + Lead by course ──────────────────────── -->
-<div class="grid-2" style="margin-bottom:20px;">
+<div class="grid-2 mb-lg">
 
     <!-- Revenue by course table -->
     <div class="card">
@@ -193,22 +193,22 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
             <span>Chỉ phiếu đã thanh toán</span>
         </div>
         <?php if ($revenueByCourse === []): ?>
-            <p style="color:var(--text-2);font-size:14px;padding:8px 0;">Chưa có dữ liệu.</p>
+            <p class="text-muted" style="padding:8px 0;">Chưa có dữ liệu.</p>
         <?php else: ?>
         <table class="table" style="margin:-1px;">
             <thead>
                 <tr>
                     <th>Khóa học</th>
-                    <th style="text-align:right;">Số phiếu</th>
-                    <th style="text-align:right;">Doanh thu</th>
+                    <th class="text-right">Số phiếu</th>
+                    <th class="text-right">Doanh thu</th>
                 </tr>
             </thead>
             <tbody>
             <?php foreach ($revenueByCourse as $row): ?>
                 <tr>
                     <td><?= h($row['course_name']) ?></td>
-                    <td style="text-align:right;"><?= number_format((int)$row['cnt']) ?></td>
-                    <td style="text-align:right;font-weight:600;color:var(--success);"><?= number_format((float)$row['total'], 0, ',', '.') ?> đ</td>
+                    <td class="text-right"><?= number_format((int)$row['cnt']) ?></td>
+                    <td class="text-right font-bold text-success"><?= number_format((float)$row['total'], 0, ',', '.') ?> đ</td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -232,7 +232,7 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
                 $color = $courseColors[$ci++ % count($courseColors)];
             ?>
             <div class="distrib-row">
-                <span style="font-size:13px;color:var(--text-2);min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= h($label) ?></span>
+                <span class="text-muted course-label"><?= h($label) ?></span>
                 <div class="distrib-bar">
                     <div class="distrib-bar-fill" style="width:<?= $pct ?>%;background:<?= $color ?>;"></div>
                 </div>
@@ -249,9 +249,9 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
 <div class="card">
     <div class="section-head">
         Khách hàng mới nhất
-        <a href="/leads" style="font-size:13px;font-weight:500;">Xem tất cả →</a>
+        <a href="/leads" class="text-sm font-bold">Xem tất cả →</a>
     </div>
-    <div class="table-wrap" style="border:none;box-shadow:none;margin:0 -24px -24px;">
+    <div class="table-wrap recent-leads-table">
         <table class="table">
             <thead>
                 <tr>
@@ -265,9 +265,9 @@ $maxRevenue = max(array_map(fn($m) => $m['revenue'], $monthly) ?: [1]);
             <?php foreach ($recentLeads as $lead): ?>
                 <tr>
                     <td><strong><?= h($lead['full_name']) ?></strong></td>
-                    <td style="color:var(--text-2);"><?= h($lead['email']) ?></td>
+                    <td class="text-2"><?= h($lead['email']) ?></td>
                     <td><span class="badge badge-<?= h($lead['care_status']) ?>"><?= h($careLabels[$lead['care_status']] ?? $lead['care_status']) ?></span></td>
-                    <td style="color:var(--text-2);font-size:13px;"><?= h(substr($lead['created_at'], 0, 10)) ?></td>
+                    <td class="text-muted"><?= h(substr($lead['created_at'], 0, 10)) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

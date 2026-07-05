@@ -39,15 +39,14 @@ $old    = $old ?? ['email' => ''];
                         <span class="material-symbols-outlined">lock</span>
                         <input id="password" type="password" name="password"
                                autocomplete="current-password" placeholder="••••••••">
-                        <button type="button" class="pwd-toggle" onclick="togglePwd()" tabindex="-1" title="Hiện/ẩn mật khẩu">
-                            <span class="material-symbols-outlined" id="eye-icon">visibility</span>
+                        <button type="button" class="pwd-toggle" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                            <span class="material-symbols-outlined">visibility</span>
                         </button>
                     </div>
                 </div>
 
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
-                    <input type="checkbox" id="remember_me" name="remember_me" value="1"
-                           style="width:auto;margin:0;accent-color:var(--primary);">
+                <div class="remember-me-row">
+                    <input type="checkbox" id="remember_me" name="remember_me" value="1">
                     <label for="remember_me" class="text-2" style="margin:0;font-weight:400;">Nhớ tôi trong 30 ngày</label>
                 </div>
 
@@ -87,16 +86,3 @@ $old    = $old ?? ['email' => ''];
         </div>
     </div>
 </div>
-<script>
-function togglePwd() {
-    var inp = document.getElementById('password');
-    var eye = document.getElementById('eye-icon');
-    if (inp.type === 'password') {
-        inp.type = 'text';
-        eye.textContent = 'visibility_off';
-    } else {
-        inp.type = 'password';
-        eye.textContent = 'visibility';
-    }
-}
-</script>
