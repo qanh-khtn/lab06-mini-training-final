@@ -1307,6 +1307,29 @@ html[data-theme="dark"]  .theme-toggle .moon-icon { display: none; }
   font-size: 14px;
 }
 
+/* System status banner — a full sentence, so NOT the compact ink-stamp
+   badge (uppercase+rotate reads badly at sentence length). Sits on the
+   hero's colored gradient, needs its own contrast. */
+.status-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--r);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .32);
+}
+
+.status-banner .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.status-banner.status-ok .material-symbols-outlined { color: #A8F0C8; }
+.status-banner.status-error .material-symbols-outlined { color: #FFC1B3; }
+
 /* Feature link cards */
 .feature-card {
   background: var(--surface);

@@ -12,14 +12,14 @@
             
             <div class="mt-lg">
                 <?php if (!$dbOk): ?>
-                    <span class="badge badge-cancelled">
-                        <span class="material-symbols-outlined icon-sm">error</span>
+                    <span class="status-banner status-error">
+                        <span class="material-symbols-outlined">error</span>
                         Chưa kết nối được cơ sở dữ liệu — vui lòng kiểm tra cấu hình.
                     </span>
                 <?php else: ?>
-                    <span class="badge badge-enrolled">
-                        <span class="material-symbols-outlined icon-sm">check_circle</span>
-                        Hệ thống hoạt động ổn định &amp; Kết nối Database thành công
+                    <span class="status-banner status-ok">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        Hệ thống hoạt động ổn định &amp; kết nối cơ sở dữ liệu thành công
                     </span>
                 <?php endif; ?>
             </div>
