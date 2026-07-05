@@ -654,37 +654,9 @@ Toàn bộ mã nguồn được quản lý phiên bản trên GitHub với lịc
 % ============================================================
 \section{CÁC TÍNH NĂNG MỞ RỘNG (LÀM THÊM)}
 
-Ngoài các yêu cầu cơ bản của Lab05, em đã phát triển thêm nhiều tính năng bảo mật, quản lý dữ liệu và giao diện nhằm tăng tính thực tế cho ứng dụng Mini Training Center CRM. Toàn bộ các tính năng mở rộng này được tích hợp trực tiếp với cơ sở dữ liệu MySQL thông qua PDO, phù hợp với phạm vi của Lab05.
+Các tính năng mở rộng đã thực hiện ở đợt Lab05 (HTTP security headers, CSRF token, soft delete, remember me, thiết kế lại giao diện/dark mode, script sinh dữ liệu, service layer, tìm kiếm/lọc/phân trang, ẩn hiện mật khẩu, luồng đăng ký chờ duyệt, trang thống kê, log viewer) đã được trình bày đầy đủ kèm ảnh minh chứng trong \texttt{report\_lab05.tex} nộp cùng đợt trước, nên không lặp lại ở đây để tránh trùng lặp nội dung. Phần dưới đây chỉ trình bày các tính năng bổ sung \textbf{mới} phát triển thêm trong đợt Lab06 Final, tập trung vào phân quyền chi tiết theo người phụ trách, các thao tác hàng loạt trên dữ liệu, và kênh tiếp nhận lead tự động từ bên ngoài.
 
 \begin{enumerate}[label = \textbf{\arabic*.}, leftmargin = 0.5cm]
-
-    \item \textbf{HTTP Security Response Headers} — Bốn header bảo mật được gửi kèm mọi HTTP response qua \texttt{public/index.php}: \texttt{X-Frame-Options: DENY} chống Clickjacking, \texttt{X-Content-Type-Options: nosniff} chống MIME sniffing, \texttt{Referrer-Policy: strict-origin-when-cross-origin} hạn chế rò rỉ URL khi điều hướng, và \texttt{Content-Security-Policy} chỉ cho phép tải tài nguyên từ cùng origin, giảm thiểu rủi ro XSS cấp trình duyệt.
-
-    \item \textbf{CSRF Token cho mọi form POST} — Hàm \texttt{csrf\_token()} sinh token ngẫu nhiên 64 ký tự bằng \texttt{bin2hex(random\_bytes(32))}, lưu vào \texttt{\$\_SESSION}. Hàm \texttt{csrf\_verify()} dùng \texttt{hash\_equals()} để so sánh constant-time. Toàn bộ form POST trong hệ thống — bao gồm \texttt{/leads/store}, \texttt{/leads/delete}, \texttt{/payments/store}, \texttt{/login}, \texttt{/logout}, \texttt{/register}, \texttt{/admin/users/approve} và \texttt{/admin/users/reject} — đều yêu cầu token hợp lệ trước khi xử lý dữ liệu.
-
-    \item \textbf{Soft Delete qua cột \texttt{deleted\_at}} — Thay vì xóa hẳn bản ghi khỏi cơ sở dữ liệu, thao tác xóa chỉ gán giá trị thời gian hiện tại vào cột \texttt{deleted\_at DATETIME NULL}. Toàn bộ câu lệnh \texttt{SELECT} trong \texttt{LeadRepository} và \texttt{PaymentRepository} đều thêm điều kiện \texttt{deleted\_at IS NULL} vào mệnh đề \texttt{WHERE}, đảm bảo bản ghi đã xóa không hiển thị ở bất kỳ đâu trên giao diện. Dữ liệu vẫn còn trong bảng, có thể khôi phục hoặc kiểm tra lịch sử khi cần.
-
-    \item \textbf{Remember Me --- Ghi nhớ đăng nhập 30 ngày} — Khi người dùng tích ``Ghi nhớ đăng nhập'' và đăng nhập thành công, hệ thống sinh token 64 ký tự ngẫu nhiên, lưu \texttt{SHA-256(token)} vào \texttt{storage/remember\_tokens.json} cùng \texttt{expires\_at} (30 ngày), và gửi raw token xuống cookie \texttt{TC\_CRM\_REMEMBER} với flag \texttt{HttpOnly}. Mỗi lần xác thực qua cookie, token cũ bị xóa và token mới được phát hành (rotating token), đảm bảo mỗi token chỉ dùng được một lần.
-
-    \item \textbf{Thiết kế lại giao diện và Dark Mode Toggle} — Toàn bộ giao diện được viết lại với hệ thống CSS design token (\texttt{--primary}, \texttt{--sh-*}, \texttt{--r-*}), trang chủ có hero banner gradient, bảng dữ liệu dùng badge pill phân biệt trạng thái, thanh phân trang và form được đồng nhất phong cách. Màu sắc ghi đè hoàn toàn bởi selector \texttt{html[data-theme="dark"]} khi bật dark mode. Một đoạn script nhỏ trong \texttt{app.js} được tải trước phần body đọc \texttt{localStorage} và nhận biết cài đặt hệ thống, giúp tránh hiện tượng nhấp nháy giao diện (FOUC). Nút chuyển đổi hình tròn cố định góc dưới phải dùng SVG mặt trời/mặt trăng với hiệu ứng chuyển động 400ms.
-
-    \item \textbf{Script sinh dữ liệu ngẫu nhiên} — File \texttt{database/seed\_data.php} là script chạy từ dòng lệnh, nhận tham số \texttt{--leads=N --payments=M} để sinh số lượng bản ghi tùy chọn (mặc định 100 lead và 100 phiếu thanh toán). Dữ liệu sinh ra bao gồm tên tiếng Việt ngẫu nhiên, email không trùng lặp, trạng thái và khóa học phân phối đều. Tham số \texttt{--clear} xóa dữ liệu cũ trước khi nạp mới. Script giúp kiểm thử phân trang và bộ lọc với khối lượng dữ liệu lớn thực tế.
-
-    \item \textbf{Service Layer (LeadService, PaymentService)} — Tầng service được tách ra giữa Controller và Repository, đảm nhiệm toàn bộ logic nghiệp vụ: xác thực đầu vào, chuẩn hóa dữ liệu, gọi repository và xử lý ngoại lệ. \texttt{LeadController} và \texttt{PaymentController} trở thành thin controller, chỉ nhận request, gọi service và trả về response. Nhờ tách tầng này, logic nghiệp vụ có thể được kiểm thử độc lập mà không cần request HTTP thực sự.
-
-    \item \textbf{Tìm kiếm Lead và lọc theo trạng thái} — Trang \texttt{/leads} cho phép kết hợp đồng thời từ khóa tìm kiếm và bộ lọc trạng thái chăm sóc. Từ khóa được truyền vào MySQL dưới dạng \texttt{LIKE :kw} áp dụng cho cả ba cột \texttt{full\_name}, \texttt{email} và \texttt{phone}. Trạng thái lọc được ghép thêm vào mệnh đề \texttt{WHERE} bằng \texttt{:status}. Tất cả đều dùng prepared statement, không ghép chuỗi trực tiếp vào SQL. Từ khóa và trạng thái đang chọn được giữ nguyên khi chuyển trang hoặc thay đổi cột sắp xếp.
-
-    \item \textbf{Phân trang với MySQL \texttt{LIMIT}/\texttt{OFFSET}} — Thay vì cắt mảng bằng \texttt{array\_slice()} như Lab04, danh sách được phân trang trực tiếp ở tầng cơ sở dữ liệu: \texttt{LIMIT :limit OFFSET :offset} với tham số bind kiểu \texttt{PDO::PARAM\_INT}. Tổng số bản ghi được đếm bằng \texttt{countAll()} phù hợp với điều kiện tìm kiếm hiện tại để tính số trang chính xác. Thanh phân trang hiển thị các trang trong khoảng $\pm$2 trang so với trang hiện tại.
-
-    \item \textbf{Ẩn/hiện mật khẩu} — Trang đăng nhập và trang đăng ký đều có nút con mắt nằm bên trong ô nhập mật khẩu. Khi bấm, hàm JavaScript \texttt{togglePwd()} chuyển thuộc tính \texttt{type} của input giữa \texttt{password} và \texttt{text}, đồng thời đổi icon mắt mở/mắt đóng. Trang đăng ký có hai ô mật khẩu độc lập, mỗi ô có nút toggle riêng.
-
-    \item \textbf{Đăng ký tài khoản nhân viên mới} — Trang \texttt{/register} cho phép nhân viên mới tự tạo tài khoản với các trường họ tên, email, mật khẩu và xác nhận mật khẩu. Server xác thực định dạng email, độ dài mật khẩu tối thiểu 8 ký tự và kiểm tra hai ô mật khẩu khớp nhau trước khi lưu. Mật khẩu được băm bằng \texttt{password\_hash()} với thuật toán bcrypt cost 12. Tài khoản vừa tạo được lưu vào bảng \texttt{users} với \texttt{status = 'pending'} — không cho đăng nhập ngay và không tự động tạo session.
-
-    \item \textbf{Admin phê duyệt và từ chối tài khoản} — Trang \texttt{/admin/users/pending} chỉ dành cho tài khoản có vai trò \texttt{admin} (kiểm tra qua hàm \texttt{require\_admin()}). Trang hiển thị danh sách các tài khoản đang ở trạng thái \texttt{pending} với họ tên, email, ngày đăng ký và hai nút thao tác. Nút ``Phê duyệt'' gọi \texttt{POST /admin/users/approve} để cập nhật \texttt{status = 'active'} trong MySQL; nút ``Từ chối'' gọi \texttt{POST /admin/users/reject} để xóa bản ghi khỏi bảng. Khi người dùng có tài khoản \texttt{pending} cố đăng nhập, hệ thống hiển thị thông báo ``Tài khoản đang chờ admin phê duyệt'' thay vì báo sai mật khẩu.
-
-    \item \textbf{Trang thống kê và phân tích dữ liệu} — Route \texttt{GET /stats} thực thi bảy truy vấn MySQL độc lập để tổng hợp dữ liệu toàn hệ thống: bốn card số liệu tổng quan (tổng lead, tỉ lệ đã ghi danh, doanh thu đã thu, doanh thu chờ thu), phân bổ lead theo trạng thái chăm sóc, phân bổ phiếu thanh toán theo trạng thái, biểu đồ doanh thu sáu tháng gần nhất (tự động điền tháng thiếu bằng giá trị 0), doanh thu theo từng khóa học, và bảng sáu lead mới nhất. Toàn bộ biểu đồ được vẽ bằng CSS thuần, không dùng thư viện JavaScript ngoài.
-
-    \item \textbf{Nhật ký hệ thống (Log Viewer)} — Route \texttt{GET /admin/logs} chỉ dành cho admin, đọc file \texttt{storage/logs/app.log}, đảo ngược thứ tự để hiển thị dòng mới nhất trước. Mỗi dòng được phân tích cú pháp để tách timestamp và nội dung, sau đó phân loại tự động: nếu chứa \texttt{SQLSTATE}, \texttt{PDOException} hoặc \texttt{Fatal} thì xếp mức ``Lỗi'' (badge đỏ); nếu chứa \texttt{Warning}, \texttt{Deprecated} thì xếp mức ``Cảnh báo'' (badge vàng); còn lại là ``Info''. Trang hỗ trợ lọc theo mức độ qua dropdown và tìm kiếm toàn văn qua ô \texttt{?q=}. Giao diện tương thích hoàn toàn với dark mode thông qua CSS custom properties chung của hệ thống.
 
     \item \textbf{Đăng nhập nhanh qua Google/Facebook (mô phỏng)} — Trang \texttt{/login} có thêm hai nút ``Google'' và ``Facebook'' bên dưới form đăng nhập thường. Vì nằm ngoài phạm vi tích hợp OAuth thật, luồng này được mô phỏng hoàn toàn phía server: mỗi nút ứng với một tài khoản demo cố định (\texttt{google.demo@center.edu.vn}, \texttt{facebook.demo@center.edu.vn}); lần bấm đầu tiên hệ thống tự tạo tài khoản với vai trò \texttt{staff} và trạng thái \texttt{pending}, các lần bấm sau tái sử dụng đúng tài khoản đã tạo (không sinh trùng lặp). Tài khoản social vẫn phải đi qua đúng luồng chờ admin phê duyệt như tài khoản đăng ký tay, không có ngoại lệ bỏ qua kiểm duyệt.
 
@@ -706,174 +678,10 @@ Ngoài các yêu cầu cơ bản của Lab05, em đã phát triển thêm nhiề
 
 \end{enumerate}
 
-Sau đây là hình ảnh minh họa kết quả thực tế của từng tính năng mở rộng.
+Sau đây là hình ảnh minh họa kết quả thực tế của từng tính năng mở rộng nêu trên.
 
 % --------------------------------------------------------------
-\subsubsection*{1. Thiết kế giao diện và Dark Mode}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX05a_home_hero_cards.jpg}
-    \caption{Trang chủ sau khi thiết kế lại: hero banner gradient xanh-tím, hai card số liệu tổng quan và bốn card chức năng bên dưới}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX05b_navbar_logo_menu.jpg}
-    \caption{Thanh điều hướng: logo hình tốt nghiệp trong hộp gradient, tên người dùng hiển thị ở góc phải, link Thống kê và Duyệt tài khoản (chỉ hiện với admin)}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX05c_table_badges_pagination.jpg}
-    \caption{Bảng danh sách lead: badge pill phân biệt trạng thái bằng màu sắc, thanh phân trang dạng pill ở cuối bảng}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX05d_dark_mode_toggle.jpg}
-    \caption{Giao diện dark mode: toàn bộ màu nền, chữ, card và bảng chuyển sang tông tối; nút toggle hình tròn hiển thị icon mặt trăng}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{2. Script sinh dữ liệu ngẫu nhiên}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX01a_seed_terminal.jpg}
-    \caption{Chạy \texttt{php database/seed\_data.php --leads=200 --payments=150} trong terminal: script in ra số bản ghi đã tạo thành công}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX01b_seed_phpMyAdmin_count_leads.jpg}
-    \caption{phpMyAdmin chạy \texttt{SELECT COUNT(*) FROM leads WHERE deleted\_at IS NULL} — xác nhận số lead đã được nạp vào MySQL}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX01b_seed_phpMyAdmin_count_payments.jpg}
-    \caption{phpMyAdmin chạy \texttt{SELECT COUNT(*) FROM payments WHERE deleted\_at IS NULL} — xác nhận số phiếu thanh toán đã được nạp vào MySQL}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX01c_seed_pagination_page1.jpg}
-    \caption{Trang danh sách lead sau khi seed: thanh phân trang hiển thị tổng số trang tương ứng với dữ liệu vừa sinh}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{3. Service Layer}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX04a_service_LeadService_php.jpg}
-    \caption{Code \texttt{app/Services/LeadService.php}: phương thức \texttt{paginate()} nhận tham số từ controller, xác thực và gọi repository; toàn bộ logic nghiệp vụ tập trung tại đây}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX04b_controller_LeadController_index.jpg}
-    \caption{Code \texttt{LeadController::index()} sau khi tách service: controller chỉ đọc tham số GET, gọi \texttt{\$this->service->paginate()} và truyền kết quả vào view}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{4. Tìm kiếm và lọc theo trạng thái}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX03a_filter_status_enrolled.jpg}
-    \caption{Lọc theo trạng thái ``Đã ghi danh'': MySQL thực thi \texttt{WHERE care\_status = :status AND deleted\_at IS NULL}, danh sách chỉ hiển thị lead phù hợp}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX03b_filter_status_new.jpg}
-    \caption{Lọc theo trạng thái ``Mới'': kết quả cập nhật ngay, dropdown giữ nguyên lựa chọn khi chuyển trang}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX03c_filter_keyword_and_status.jpg}
-    \caption{Kết hợp từ khóa và lọc trạng thái cùng lúc: \texttt{WHERE (full\_name LIKE :kw OR email LIKE :kw OR phone LIKE :kw) AND care\_status = :status}}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{5. Soft Delete}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX02a_soft_delete_after_delete.jpg}
-    \caption{phpMyAdmin truy vấn trực tiếp bảng \texttt{leads}: bản ghi \texttt{id=1} của ``Võ Đức Long'' có cột \texttt{deleted\_at = 2026-06-20 16:41:53}, trong khi các bản ghi khác vẫn là \texttt{NULL} --- xác nhận soft delete không xóa dữ liệu thật}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX02b_soft_delete_phpMyAdmin_deleted_at.jpg}
-    \caption{phpMyAdmin chạy \texttt{WHERE deleted\_at IS NOT NULL LIMIT 5}: liệt kê các bản ghi đã bị soft delete kèm timestamp xóa --- dữ liệu vẫn còn trong bảng và có thể khôi phục}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{6. Ẩn/hiện mật khẩu}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX06a_login_eye_toggle.jpg}
-    \caption{Trang đăng nhập: nút con mắt nằm trong ô mật khẩu; bấm vào sẽ chuyển \texttt{type="password"} thành \texttt{type="text"} để hiện mật khẩu}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX06b_register_form.jpg}
-    \caption{Trang đăng ký: hai ô mật khẩu (mật khẩu và xác nhận) đều có nút toggle độc lập, tránh nhầm lẫn khi nhập}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{7. Đăng ký tài khoản và luồng chờ duyệt}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX06c_register_pending_flash.jpg}
-    \caption{Sau khi đăng ký thành công: trang chuyển về \texttt{/login} với flash ``Tài khoản đang chờ admin phê duyệt''; không tự động đăng nhập}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX07a_admin_pending_list.jpg}
-    \caption{Admin vào \texttt{/admin/users/pending}: bảng liệt kê tài khoản đang chờ duyệt kèm tên, email, ngày đăng ký và hai nút Phê duyệt/Từ chối}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX07b_admin_approve_success.jpg}
-    \caption{Sau khi admin bấm ``Phê duyệt'': MySQL cập nhật \texttt{status = 'active'}, trang hiển thị toast thành công, tài khoản vừa duyệt biến khỏi danh sách chờ}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX07c_user_login_after_approval.jpg}
-    \caption{Tài khoản nhân viên đăng nhập thành công sau khi được phê duyệt: tên hiển thị trên navbar, truy cập đầy đủ các module}
-\end{figure}
-
-% --------------------------------------------------------------
-\subsubsection*{8. Trang thống kê}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX08a_stats_metric_cards.jpg}
-    \caption{Bốn card số liệu tổng quan: tổng lead, tỉ lệ đã ghi danh, doanh thu đã thu và doanh thu chờ thu --- tất cả tính từ truy vấn MySQL trực tiếp}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX08b_stats_distribution_bars.jpg}
-    \caption{Phân bổ lead theo trạng thái chăm sóc và phân bổ thanh toán theo trạng thái: thanh ngang CSS với chiều rộng tỉ lệ phần trăm tính từ COUNT SQL}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX08c_stats_monthly_revenue_chart.jpg}
-    \caption{Biểu đồ doanh thu sáu tháng gần nhất: cột dọc CSS, PHP tự điền tháng thiếu bằng 0 để biểu đồ luôn đủ sáu cột liên tục}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX08d_stats_by_course.jpg}
-    \caption{Bảng doanh thu theo khóa học và thanh ngang lead theo khóa quan tâm: giúp nhận biết khóa nào đang thu hút và tạo doanh thu nhiều nhất}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/Lab05/bonus/BX08e_stats_recent_leads.jpg}
-    \caption{Bảng sáu lead mới nhất: hiển thị tên, email, khóa quan tâm, trạng thái và ngày tạo --- giúp theo dõi nhanh hoạt động tư vấn gần đây}
-\end{figure}
-
-Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trình bày các tính năng bổ sung phát triển thêm trong đợt Lab06 Final, tập trung vào phân quyền chi tiết theo người phụ trách, các thao tác hàng loạt trên dữ liệu, và kênh tiếp nhận lead tự động từ bên ngoài.
-
-% --------------------------------------------------------------
-\subsubsection*{9. Đăng nhập nhanh qua Google/Facebook (mô phỏng)}
+\subsubsection*{1. Đăng nhập nhanh qua Google/Facebook (mô phỏng)}
 
 \begin{figure}[H]
     \centering
@@ -892,7 +700,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{10. Lọc danh sách theo khoảng thời gian}
+\subsubsection*{2. Lọc danh sách theo khoảng thời gian}
 
 \begin{figure}[H]
     \centering
@@ -906,7 +714,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{11. Xuất danh sách ra CSV}
+\subsubsection*{3. Xuất danh sách ra CSV}
 
 \begin{figure}[H]
     \centering
@@ -920,7 +728,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{12. Chọn nhiều và xóa hàng loạt trong một giao dịch}
+\subsubsection*{4. Chọn nhiều và xóa hàng loạt trong một giao dịch}
 
 \begin{figure}[H]
     \centering
@@ -939,7 +747,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{13. Phím tắt bàn phím và phân trang dạng số}
+\subsubsection*{5. Phím tắt bàn phím và phân trang dạng số}
 
 \begin{figure}[H]
     \centering
@@ -953,7 +761,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{14. Phân quyền chi tiết theo người phụ trách (\texttt{assigned\_to})}
+\subsubsection*{6. Phân quyền chi tiết theo người phụ trách (\texttt{assigned\_to})}
 
 \begin{figure}[H]
     \centering
@@ -977,7 +785,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{15. Nhập hàng loạt Lead từ tệp CSV}
+\subsubsection*{7. Nhập hàng loạt Lead từ tệp CSV}
 
 \begin{figure}[H]
     \centering
@@ -996,7 +804,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{16. Bảng xếp hạng hiệu suất nhân viên (Leaderboard)}
+\subsubsection*{8. Bảng xếp hạng hiệu suất nhân viên (Leaderboard)}
 
 \begin{figure}[H]
     \centering
@@ -1010,7 +818,7 @@ Tiếp nối các tính năng mở rộng của Lab05, phần dưới đây trì
 \end{figure}
 
 % --------------------------------------------------------------
-\subsubsection*{17. Webhook tiếp nhận lead từ Facebook Messenger (mô phỏng)}
+\subsubsection*{9. Webhook tiếp nhận lead từ Facebook Messenger (mô phỏng)}
 
 \begin{figure}[H]
     \centering
